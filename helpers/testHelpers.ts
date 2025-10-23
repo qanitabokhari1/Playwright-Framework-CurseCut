@@ -21,7 +21,10 @@ export class TestHelpers {
   async authenticateWithCredits(credits: number): Promise<void> {
     await this.apiMocks.mockAuthenticationFlow(credits);
     await this.authPage.navigateTo(TestData.urls.base);
-    await this.authPage.login(TestData.realUser.email, TestData.realUser.password);
+    await this.authPage.login(
+      TestData.realUser.email,
+      TestData.realUser.password
+    );
     await this.authPage.verifyCreditsBalance(credits);
   }
 
@@ -47,7 +50,10 @@ export class TestHelpers {
    */
   async setupSufficientCreditsTest(): Promise<void> {
     await this.authPage.navigateTo(TestData.urls.base);
-    await this.authPage.login(TestData.realUser.email, TestData.realUser.password);
+    await this.authPage.login(
+      TestData.realUser.email,
+      TestData.realUser.password
+    );
   }
 
   /**

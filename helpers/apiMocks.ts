@@ -1,5 +1,4 @@
 import { Page } from '@playwright/test';
-import { TestData } from '../fixtures/testData';
 
 export class ApiMocks {
   private page: Page;

@@ -28,13 +28,12 @@ test.describe('Critical business logic - prevent double charging elevenlabs sync
     const initialCredits = parseFloat(
       initialCreditsText?.replace(/[^\d.]/g, '') || '0'
     );
-    console.log('Initial Credits:', initialCredits);
 
     // No mocking - let all APIs hit real backend to test actual credit deduction
 
     // Click process and wait for audio upload completion (REAL BACKEND)
     const audioResponsePromise = page.waitForResponse(
-      (res) => res.url().includes('/audio') && res.ok(),
+      res => res.url().includes('/audio') && res.ok(),
       { timeout: 30000 }
     );
     await audioPage.clickProcessButton();
@@ -42,7 +41,7 @@ test.describe('Critical business logic - prevent double charging elevenlabs sync
 
     // Wait for status completion (real backend processing)
     const statusResponsePromise = page.waitForResponse(
-      (res) => res.url().includes('/status/') && res.ok(),
+      res => res.url().includes('/status/') && res.ok(),
       { timeout: 60000 } // Increased timeout for real processing
     );
     await statusResponsePromise;
@@ -55,13 +54,12 @@ test.describe('Critical business logic - prevent double charging elevenlabs sync
     const finalCredits = parseFloat(
       finalCreditsText?.replace(/[^\d.]/g, '') || '0'
     );
-    console.log('Final Credits:', finalCredits);
 
     const expectedRemaining = parseFloat((initialCredits - 0.1).toFixed(3));
     const actualRemaining = parseFloat(finalCredits.toFixed(3));
-    
+
     expect(actualRemaining).toBe(expectedRemaining);
-    console.log(`Expected Remaining Credits: ${expectedRemaining}`);
+
     // Verify censored words appear in the table
     await page.getByRole('tab', { name: /Censored Words/i }).click();
     await expect(page.locator('table')).toContainText(

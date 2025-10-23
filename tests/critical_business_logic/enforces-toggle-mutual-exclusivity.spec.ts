@@ -8,7 +8,7 @@ test.describe('Critical business logic - toggle mutual exclusivity', () => {
   }) => {
     const helpers = new TestHelpers(page);
 
-    // Auth 
+    // Auth
     await helpers.setupSufficientCreditsTest();
 
     const audioPage = helpers.audioProcessingPage;

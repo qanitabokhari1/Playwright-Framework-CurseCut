@@ -6,7 +6,7 @@ test.describe('Critical business logic - approximate match censoring works', () 
   test('deepgram', async ({ page }) => {
     const helpers = new TestHelpers(page);
 
-        // Auth + credits and centralized censoring success mocks
+    // Auth + credits and centralized censoring success mocks
     await helpers.setupSufficientCreditsTest();
     await helpers.apiMocks.mockCensoringSuccess('deepgram');
 
