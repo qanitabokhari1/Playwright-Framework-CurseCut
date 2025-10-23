@@ -1,0 +1,87 @@
+name: E2E Full Tests with Code Quality
+
+# Workflow with code quality gate
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - 'tests/**'
+      - 'pages/**'
+      - 'helpers/**'
+      - 'fixtures/**'
+      - 'test-setup/**'
+      - 'type/**'
+      - '*.ts'
+      - '*.js'
+      - '*.json'
+      - 'eslint.config.js'
+      - 'playwright.config.ts'
+      - 'tsconfig.json'
+      - 'package.json'
+      - 'package-lock.json'
+  pull_request:
+    branches: [main, master]
+    paths:
+      - 'tests/**'
+      - 'pages/**'
+      - 'helpers/**'
+      - 'fixtures/**'
+      - 'test-setup/**'
+      - 'type/**'
+      - '*.ts'
+      - '*.js'
+      - '*.json'
+      - 'eslint.config.js'
+      - 'playwright.config.ts'
+      - 'tsconfig.json'
+      - 'package.json'
+      - 'package-lock.json'
+
+jobs:
+  lint-and-typecheck:
+    name: Lint & Type Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Install dependencies
+        run: npm ci
+      - name: Run ESLint
+        run: npm run lint
+      - name: Run Prettier check
+        run: npm run format:check
+      - name: Run TypeScript type checking
+        run: npx tsc --noEmit
+
+  test:
+    needs: lint-and-typecheck
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    env:
+      BASE_URL: https://frontend-dev-39a5.up.railway.app
+    container:
+      image: mcr.microsoft.com/playwright:v1.56.0-jammy
+    strategy:
+      fail-fast: false
+      matrix:
+        shardIndex: [1, 2, 3, 4]
+        shardTotal: [4]
+    steps:
+      - uses: actions/checkout@v5
+      - name: Install dependencies
+        run: npm ci
+      - name: Run Playwright tests
+        run: npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+      - name: Upload Playwright HTML Report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-${{ matrix.shardIndex }}
+          path: playwright-report/
+          retention-days: 30
+      - name: Upload test results
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ matrix.shardIndex }}
+          path: test-results/
+          retention-days: 30

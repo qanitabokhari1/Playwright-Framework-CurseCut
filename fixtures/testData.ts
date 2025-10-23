@@ -1,0 +1,80 @@
+import path from 'path';
+
+export const TestData = {
+  // User credentials
+  user: {
+    email: 'test@example.com',
+    password: 'password',
+    id: 'test-user',
+  },
+
+  // Real user credentials for testing
+  realUser: {
+    email: 'justsoharsh@gmail.com',
+    password: 'greenday7',
+    id: 'real-test-user',
+  },
+
+  // Credit scenarios
+  credits: {
+    zero: 0,
+    sufficient: 100,
+  },
+
+  // File paths - using absolute paths for Playwright
+  files: {
+    audio: path.resolve(__dirname, 'audio/short3Sec.mp3'),
+    censoredAudio: path.resolve(__dirname, 'audio/censored_audio.mp3'),
+    longAudio: path.resolve(__dirname, 'audio/46MinuteLong.mp3'),
+  },
+
+  // Censor words
+  censorWords: {
+    default: 'fuck',
+    approx: 'fuc',
+    test: 'test',
+  },
+
+  // API responses
+  apiResponses: {
+    login: {
+      access_token: 'mock-access-token',
+      token_type: 'bearer',
+      expires_in: 3600,
+      refresh_token: 'mock-refresh-token',
+      user: {
+        id: 'test-user',
+        email: 'test@example.com',
+      },
+    },
+  },
+
+  // URLs
+  urls: {
+    base: 'https://frontend-dev-39a5.up.railway.app',
+    cut: 'https://frontend-dev-39a5.up.railway.app/cut',
+    localBase: 'http://localhost:3000',
+    localCut: 'http://localhost:3000/cut',
+  },
+
+  // Processing variants
+  processingVariants: {
+    deepgram: {
+      isSong: false,
+      isPremium: false,
+      name: 'Deepgram',
+    },
+    'elevenlabs-sync': {
+      isSong: true,
+      isPremium: false,
+      name: 'ElevenLabs SYNC',
+    },
+    'elevenlabs-async': {
+      isSong: false,
+      isPremium: true,
+      name: 'ElevenLabs ASYNC',
+    },
+  },
+} as const;
+
+export type TestDataType = typeof TestData;
