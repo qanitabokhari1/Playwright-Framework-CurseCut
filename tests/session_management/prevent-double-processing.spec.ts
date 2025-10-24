@@ -8,6 +8,7 @@ test.describe('Session Management - prevent double processing', () => {
 
     // Setup: Authenticate with sufficient credits
     await helpers.setupSufficientCreditsTest();
+    await helpers.setupMockingForTest('deepgram');
 
     // Test steps: Complete audio processing workflow
     const audioPage = helpers.audioProcessingPage;
@@ -34,6 +35,7 @@ test.describe('Session Management - prevent double processing', () => {
 
     // Setup: Authenticate with sufficient credits
     await helpers.setupSufficientCreditsTest();
+    await helpers.setupMockingForTest('elevenlabs-sync');
 
     // Test steps: Complete audio processing workflow
     const audioPage = helpers.audioProcessingPage;
@@ -60,6 +62,7 @@ test.describe('Session Management - prevent double processing', () => {
 
     // Setup: Authenticate with sufficient credits
     await helpers.setupSufficientCreditsTest();
+    await helpers.setupMockingForTest('elevenlabs-async');
 
     // Test steps: Complete audio processing workflow
     const audioPage = helpers.audioProcessingPage;

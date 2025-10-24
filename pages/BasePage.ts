@@ -23,8 +23,8 @@ export class BasePage {
   }
 
   get processButton(): Locator {
-    // Use the same locator as the working test
-    return this.page.getByTestId('process-button');
+    // Use aria-label locator for process button
+    return this.page.getByRole('button', { name: 'Process' });
   }
 
   get uploadInput(): Locator {

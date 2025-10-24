@@ -133,8 +133,7 @@ export class AudioProcessingPage extends BasePage {
     await this.processButton.waitFor({ state: 'visible', timeout: 10000 });
     await expect(this.processButton).toBeEnabled();
 
-    // Force wait for any animations or state changes to complete
-    await this.page.waitForLoadState('networkidle');
+    // Short wait for any animations or state changes to complete
     await this.page.waitForTimeout(1000);
 
     // Click the process button with force if needed
@@ -241,11 +240,8 @@ export class AudioProcessingPage extends BasePage {
   }
 
   async waitForDownloadAndProcess(): Promise<void> {
-    // Click the process button
-    await this.processButton.click();
-
-    // Wait for processing to start (processing button should appear)
-    await this.verifyProcessingStarted();
+    // Use the robust clickProcessButton method with proper waits
+    await this.clickProcessButton();
 
     // Wait for processing to complete
     await this.page.waitForTimeout(5000);

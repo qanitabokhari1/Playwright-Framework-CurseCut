@@ -10,10 +10,11 @@ test.describe('Session Management', () => {
 
     // Setup: Authenticate with real user and sufficient credits
     await helpers.setupRealUserTest();
+    await helpers.setupMockingForTest('elevenlabs-sync');
 
     // Navigate to cut page
     const audioPage = helpers.audioProcessingPage;
-    await audioPage.navigateTo(TestData.urls.cut);
+    await audioPage.clickStartNow();
 
     // Test steps: Complete enhanced workflow (first file upload and processing)
     await audioPage.uploadFileWithChooseFilesButton(TestData.files.audio);

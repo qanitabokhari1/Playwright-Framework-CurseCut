@@ -17,6 +17,7 @@ e2e-full/
 │   │   ├── short30Sec.mp4
 │   │   └── short60Sec.mp4
 │   └── testData.ts              # Test data constants and configurations
+├── .env.example                 # Environment variables template
 ├── helpers/
 │   ├── apiMocks.ts              # API mocking utilities (auth, credits, cost, processing)
 │   └── testHelpers.ts           # High-level test helper methods
@@ -29,12 +30,13 @@ e2e-full/
 │   ├── global-teardown.ts       # Global test teardown
 │   └── page-setup.ts            # Page-specific setup utilities
 ├── tests/
-│   ├── critical_business_logic/ # Core business functionality tests (5 tests)
+│   ├── critical_business_logic/ # Core business functionality tests (6 tests)
 │   │   ├── approximate-match-censoring-works.spec.ts
 │   │   ├── exact-match-censoring-works.spec.ts
 │   │   ├── enforces-toggle-mutual-exclusivity.spec.ts
 │   │   ├── elevenlabs-sync-timeout-error.spec.ts
-│   │   └── route-46-video.spec.ts
+│   │   ├── route-46-video.spec.ts
+│   │   └── verify-prevent-double-charging-elevenlabs-sync.spec.ts
 │   └── session_management/      # Session and credit management tests (5 tests)
 │       ├── credits-0-deepgram.spec.ts
 │       ├── credits-0-elevenlabs-sync.spec.ts
@@ -87,6 +89,7 @@ e2e-full/
 
 - High-level test scenarios and workflow orchestration
 - Authentication setup methods (`setupZeroCreditsTest`, `setupSufficientCreditsTest`, `setupRealUserTest`)
+- Centralized API mocking with LIVE_MODE support (`setupMockingForTest`)
 - Complete workflow orchestration (`completeAudioProcessingWorkflow`)
 - Test-specific helper methods (`testInsufficientCredits`, `testDoubleProcessingPrevention`, `testFileSwitching`)
 - Centralized test setup and teardown utilities
@@ -105,7 +108,7 @@ e2e-full/
 
 Centralized test data including:
 
-- **User credentials**: Test user (`test@example.com`) and real user (`dummy2@gmail.com`) credentials
+- **User credentials**: Test user (`test@example.com`) and environment-based real user credentials
 - **Credit scenarios**: Zero credits (0) and sufficient credits (100) for testing different states
 - **File paths**: Audio files (`short3Sec.mp3`, `censored_audio.mp3`, `46MinuteLong.mp3`) with absolute paths
 - **API responses**: Login response structure with mock tokens and user data
@@ -115,15 +118,16 @@ Centralized test data including:
 
 ## 🚀 Test Cases
 
-The test suite includes comprehensive testing across two main categories with **10 total tests**:
+The test suite includes comprehensive testing across two main categories with **11 total tests**:
 
-### Critical Business Logic Tests (5 tests)
+### Critical Business Logic Tests (6 tests)
 
 1. **Approximate Match Censoring Works** - Tests AI-powered approximate word matching for censoring across all three processing variants (Deepgram, ElevenLabs sync, ElevenLabs async)
 2. **Exact Match Censoring Works** - Tests exact word matching for censoring across all three processing variants
 3. **Enforces Toggle Mutual Exclusivity** - Tests UI toggle behavior and state management
 4. **ElevenLabs Sync Timeout Error** - Tests error handling for timeout scenarios
 5. **Route 46 Video** - Tests video processing functionality
+6. **Verify Prevent Double Charging ElevenLabs Sync** - Tests actual credit deduction and censored words verification (ALWAYS uses real API)
 
 ### Session Management Tests (5 tests)
 
@@ -133,11 +137,36 @@ The test suite includes comprehensive testing across two main categories with **
 4. **File switching in same session** - Tests uploading new file and verifying previous state is cleared
 5. **Prevent double processing** - Tests that process button is disabled after processing begins across all variants
 
+## 🔧 Environment Setup
+
+### Required Environment Variables
+
+Create a `.env` file in the `playwright/e2e-full/` directory:
+
+```bash
+# Copy the example file
+cp .env.example .env
+
+# Edit with your actual credentials
+TEST_USER_EMAIL=your-test-email@example.com
+TEST_USER_PASSWORD=your-test-password
+LIVE_MODE=false
+```
+
+### Environment Variables
+
+- **`TEST_USER_EMAIL`**: Real test user email for authentication
+- **`TEST_USER_PASSWORD`**: Real test user password for authentication
+- **`LIVE_MODE`**: Set to `false` for mocked APIs (default), `true` for live API testing
+
 ## 🏃‍♂️ Running Tests
 
 ```bash
-# Run all tests
-npm test
+# Run all tests (mocked APIs - default)
+npm run test
+
+# Run tests against live APIs
+npm run test:live
 
 # Run specific test suite
 npx playwright test tests/session_management/
@@ -187,7 +216,7 @@ npx tsc --noEmit
 - **API mocking**: Comprehensive mocking for reliable test execution including Supabase auth
 - **Error Handling**: Tests timeout scenarios and error recovery
 - **Session Management**: Tests file switching and double-processing prevention
-- **Environment Configuration**: Support for different environments via environment variables
+- **Environment Configuration**: Support for different environments via environment variables with secure credential management
 - **Enhanced UI Testing**: Support for both legacy and enhanced UI workflows
 - **Comprehensive Reporting**: HTML, JSON, and JUnit test reports
 
@@ -197,9 +226,10 @@ npx tsc --noEmit
 2. Add test data to `fixtures/testData.ts` following the existing structure
 3. Create helper methods in `helpers/testHelpers.ts` for reusable workflows
 4. Add API mocking methods in `helpers/apiMocks.ts` for new endpoints
-5. Write test cases in `tests/` directory following the existing naming convention
-6. Add type definitions in `type/` directory if necessary
-7. Update this README with new test descriptions
+5. **For tests that call `clickProcessButton()`**: Add `await helpers.setupMockingForTest(variant)` before processing
+6. Write test cases in `tests/` directory following the existing naming convention
+7. Add type definitions in `type/` directory if necessary
+8. Update this README with new test descriptions
 
 ## 🎯 Best Practices
 
@@ -212,7 +242,8 @@ npx tsc --noEmit
 - Use data-testid attributes for reliable element selection
 - Implement proper error handling and timeout management
 - Write tests that are independent and can run in parallel
-- Use environment variables for configuration flexibility
+- Use environment variables for configuration flexibility and secure credential management
+- Use `setupMockingForTest()` for centralized API mocking with LIVE_MODE support
 
 ## 🛠️ Technical Stack
 

@@ -63,4 +63,22 @@ export class TestHelpers {
     await this.authPage.navigateTo(TestData.urls.base);
     await this.authPage.loginWithRealCredentials();
   }
+
+  /**
+   * Setup API mocking based on LIVE_MODE environment variable
+   * If LIVE_MODE=true, skip mocking and use real APIs
+   * If LIVE_MODE=false (default), setup mocks for the specified variant
+   */
+  async setupMockingForTest(
+    variant: 'deepgram' | 'elevenlabs-sync' | 'elevenlabs-async'
+  ): Promise<void> {
+    const isLiveMode = process.env.LIVE_MODE === 'true';
+
+    if (!isLiveMode) {
+      await this.apiMocks.mockCensoringSuccess(variant);
+      if (variant === 'elevenlabs-async') {
+        await this.apiMocks.mockUploadChunkAPI();
+      }
+    }
+  }
 }

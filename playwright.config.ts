@@ -1,16 +1,21 @@
 import { defineConfig, devices } from '@playwright/test';
+import { fileURLToPath } from 'url';
+import { dirname, resolve } from 'path';
 
 /**
  * @see https://playwright.dev/docs/test-configuration
  */
 
 import * as dotenv from 'dotenv';
-dotenv.config();
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+dotenv.config({ path: resolve(__dirname, '.env') });
 
 const BASE_URL = process.env.BASE_URL || 'http://localhost:3000';
 
 export default defineConfig({
   testDir: './tests',
+  outputDir: './test-results',
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
@@ -23,7 +28,7 @@ export default defineConfig({
   timeout: 60000,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: [
-    ['html'],
+    ['html', { outputFolder: 'playwright-report' }],
     ['json', { outputFile: 'test-results/results.json' }],
     ['junit', { outputFile: 'test-results/results.xml' }],
   ],
@@ -78,6 +83,6 @@ export default defineConfig({
   // },
 
   /* Global setup and teardown */
-  globalSetup: require.resolve('./test-setup/global-setup.ts'),
-  globalTeardown: require.resolve('./test-setup/global-teardown.ts'),
+  globalSetup: resolve(__dirname, './test-setup/global-setup.ts'),
+  globalTeardown: resolve(__dirname, './test-setup/global-teardown.ts'),
 });

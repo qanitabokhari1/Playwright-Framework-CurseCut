@@ -8,7 +8,7 @@ test.describe('Critical business logic - prevent double charging elevenlabs sync
   }) => {
     const helpers = new TestHelpers(page);
 
-    // Setup: Login with real user and mock sufficient credits
+    // Setup: Login with real user and sufficient credits
     await helpers.setupRealUserTest();
 
     const audioPage = helpers.audioProcessingPage;
@@ -30,6 +30,7 @@ test.describe('Critical business logic - prevent double charging elevenlabs sync
     );
 
     // No mocking - let all APIs hit real backend to test actual credit deduction
+    // This test specifically tests real credit deduction and processing
 
     // Click process and wait for audio upload completion (REAL BACKEND)
     const audioResponsePromise = page.waitForResponse(
@@ -59,7 +60,6 @@ test.describe('Critical business logic - prevent double charging elevenlabs sync
     const actualRemaining = parseFloat(finalCredits.toFixed(3));
 
     expect(actualRemaining).toBe(expectedRemaining);
-
     // Verify censored words appear in the table
     await page.getByRole('tab', { name: /Censored Words/i }).click();
     await expect(page.locator('table')).toContainText(

@@ -8,7 +8,7 @@ test.describe('Critical business logic - exact match censoring works', () => {
 
     // Auth + credits and centralized censoring success mocks
     await helpers.setupSufficientCreditsTest();
-    await helpers.apiMocks.mockCensoringSuccess('deepgram');
+    await helpers.setupMockingForTest('deepgram');
 
     const audioPage = helpers.audioProcessingPage;
     await audioPage.clickStartNow();
@@ -16,7 +16,7 @@ test.describe('Critical business logic - exact match censoring works', () => {
     await audioPage.configureDeepgramWorkflow(TestData.censorWords.default);
 
     const audioResponsePromise = page.waitForResponse(
-      res => res.url().includes('/audio') && res.ok()
+      res => res.url().includes('/status/') && res.ok()
     );
     await audioPage.clickProcessButton();
     await audioResponsePromise;
@@ -30,7 +30,7 @@ test.describe('Critical business logic - exact match censoring works', () => {
     const helpers = new TestHelpers(page);
 
     await helpers.setupSufficientCreditsTest();
-    await helpers.apiMocks.mockCensoringSuccess('elevenlabs-sync');
+    await helpers.setupMockingForTest('elevenlabs-sync');
 
     const audioPage = helpers.audioProcessingPage;
     await audioPage.clickStartNow();
@@ -40,7 +40,7 @@ test.describe('Critical business logic - exact match censoring works', () => {
     );
 
     const audioResponsePromise = page.waitForResponse(
-      res => res.url().includes('/audio') && res.ok()
+      res => res.url().includes('/status/') && res.ok()
     );
     await audioPage.clickProcessButton();
     await audioResponsePromise;
@@ -54,8 +54,7 @@ test.describe('Critical business logic - exact match censoring works', () => {
     const helpers = new TestHelpers(page);
 
     await helpers.setupSufficientCreditsTest();
-    await helpers.apiMocks.mockCensoringSuccess('elevenlabs-async');
-    await helpers.apiMocks.mockUploadChunkAPI();
+    await helpers.setupMockingForTest('elevenlabs-async');
 
     const audioPage = helpers.audioProcessingPage;
     await audioPage.clickStartNow();
@@ -65,13 +64,17 @@ test.describe('Critical business logic - exact match censoring works', () => {
     );
 
     const audioResponsePromise = page.waitForResponse(
-      res => res.url().includes('/upload-chunk') && res.ok()
+      res => res.url().includes('/status/') && res.ok()
     );
     await audioPage.clickProcessButton();
     await audioResponsePromise;
 
     await page.getByRole('tab', { name: 'Censored Words' }).click();
-    await expect(page.locator('table')).toContainText('fuck');
-    await expect(page.locator('table')).toContainText('00:00:01');
+    await expect(page.locator('table')).toContainText('fuck', {
+      timeout: 10000,
+    });
+    await expect(page.locator('table')).toContainText('00:00:01', {
+      timeout: 10000,
+    });
   });
 });

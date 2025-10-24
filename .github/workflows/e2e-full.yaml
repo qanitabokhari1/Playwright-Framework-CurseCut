@@ -3,39 +3,14 @@ name: E2E Full Tests with Code Quality
 # Workflow with code quality gate
 on:
   push:
-    branches: [main, master]
+    branches: [main, dev, qanita-qa-playwright]
     paths:
-      - 'tests/**'
-      - 'pages/**'
-      - 'helpers/**'
-      - 'fixtures/**'
-      - 'test-setup/**'
-      - 'type/**'
-      - '*.ts'
-      - '*.js'
-      - '*.json'
-      - 'eslint.config.js'
-      - 'playwright.config.ts'
-      - 'tsconfig.json'
-      - 'package.json'
-      - 'package-lock.json'
+      - 'playwright/e2e-full/**'
+
   pull_request:
-    branches: [main, master]
+    branches: [main, dev]
     paths:
-      - 'tests/**'
-      - 'pages/**'
-      - 'helpers/**'
-      - 'fixtures/**'
-      - 'test-setup/**'
-      - 'type/**'
-      - '*.ts'
-      - '*.js'
-      - '*.json'
-      - 'eslint.config.js'
-      - 'playwright.config.ts'
-      - 'tsconfig.json'
-      - 'package.json'
-      - 'package-lock.json'
+      - 'playwright/e2e-full/**'
 
 jobs:
   lint-and-typecheck:
@@ -45,19 +20,26 @@ jobs:
       - uses: actions/checkout@v5
       - name: Install dependencies
         run: npm ci
+        working-directory: playwright/e2e-full
       - name: Run ESLint
         run: npm run lint
+        working-directory: playwright/e2e-full
       - name: Run Prettier check
         run: npm run format:check
+        working-directory: playwright/e2e-full
       - name: Run TypeScript type checking
         run: npx tsc --noEmit
+        working-directory: playwright/e2e-full
 
   test:
     needs: lint-and-typecheck
     timeout-minutes: 60
     runs-on: ubuntu-latest
     env:
-      BASE_URL: https://frontend-dev-39a5.up.railway.app
+      BASE_URL: ${{ secrets.BASE_URL }}
+      LIVE_MODE: ${{ secrets.LIVE_MODE }}
+      TEST_USER_EMAIL: ${{ secrets.TEST_USER_EMAIL }}
+      TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
     container:
       image: mcr.microsoft.com/playwright:v1.56.0-jammy
     strategy:
@@ -69,8 +51,10 @@ jobs:
       - uses: actions/checkout@v5
       - name: Install dependencies
         run: npm ci
+        working-directory: playwright/e2e-full
       - name: Run Playwright tests
         run: npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+        working-directory: playwright/e2e-full
       - name: Upload Playwright HTML Report
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4

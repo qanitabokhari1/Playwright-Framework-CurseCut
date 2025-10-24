@@ -8,6 +8,7 @@ test.describe('ElevenLabs Sync Timeout Error', () => {
 
     // Setup authentication and credits
     await helpers.setupSufficientCreditsTest();
+    await helpers.setupMockingForTest('elevenlabs-sync');
 
     // Mock the /audio endpoint to start a job (inline mock for timeout testing)
     await page.route('**/audio', async route => {
@@ -56,7 +57,7 @@ test.describe('ElevenLabs Sync Timeout Error', () => {
 
     // Process the file and wait for timeout error
     const audioResponsePromise = page.waitForResponse(
-      res => res.url().includes('/audio') && res.ok()
+      res => res.url().includes('/status/') && res.ok()
     );
     await audioPage.clickProcessButton();
     await audioResponsePromise;
