@@ -182,6 +182,72 @@ export class ApiMocks {
     });
   }
 
+  /**
+   * Mock /audio job start and /status success response with a transcription
+   * that does NOT include the explicit censored word 'fuck' (used for "no words found" tests)
+   */
+  async mockNoFuckWord(
+    variant: 'deepgram' | 'elevenlabs-sync' | 'elevenlabs-async',
+    taskId: string = '6d22cbfc-60e5-4475-9ca3-3f71772ee2f9'
+  ): Promise<void> {
+    const modelInfo = {
+      deepgram: {
+        model: 'deepgram',
+        is_song: false,
+        is_premium: false,
+        using_premium_processing: false,
+      },
+      'elevenlabs-sync': {
+        model: 'elevenlabs',
+        is_song: true,
+        is_premium: false,
+        using_premium_processing: true,
+      },
+      'elevenlabs-async': {
+        model: 'elevenlabs',
+        is_song: false,
+        is_premium: true,
+        using_premium_processing: true,
+      },
+    }[variant];
+
+    // Mock the /audio start job response
+    await this.page.route('**/audio', async route => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          message: 'Job started',
+          task_id: taskId,
+          estimated_time: 9.768,
+          ...modelInfo,
+        }),
+      });
+    });
+
+    // Mock the /status endpoint to return a succeeded transcription that
+    // intentionally does NOT include the full word 'fuck' (so no censored words)
+    await this.page.route(`**/status/**`, async route => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          status: 'succeeded',
+          transcription: [
+            { word: 'Stupid', start: 0.019, end: 0.299 },
+            { word: 'white', start: 0.36, end: 0.519 },
+            { word: 'privileged', start: 0.639, end: 1.059 },
+            { word: 'f', start: 1.339, end: 1.619 },
+            { word: 'up', start: 1.759, end: 2.799 },
+          ],
+          file_url: null,
+          processing_type: 'browser',
+          words_to_censor: null,
+        }),
+      });
+    });
+  }
+
   // async mockCostAPI(cost: number): Promise<void> {
   //   // COMMENTED OUT - Using actual backend API
   //   await this.page.route('**/cost', async route => {
