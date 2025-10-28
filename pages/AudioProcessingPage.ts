@@ -232,7 +232,7 @@ export class AudioProcessingPage extends BasePage {
   }
 
   async uploadFileWithChooseFilesButton(fileName: string): Promise<void> {
-    await this.chooseFilesButton.click();
+    // await this.chooseFilesButton.click();
     await this.uploadInput.setInputFiles(fileName);
   }
 
@@ -320,7 +320,7 @@ export class AudioProcessingPage extends BasePage {
   async uploadReplacementFileWithChooseFilesButton(
     fileName: string
   ): Promise<void> {
-    await this.chooseFilesButton.click();
+    // await this.chooseFilesButton.click();
     await this.uploadInput.setInputFiles(fileName);
   }
 
