@@ -211,40 +211,67 @@ export class ApiMocks {
       },
     }[variant];
 
-    // Mock the /audio start job response
-    await this.page.route('**/audio', async route => {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({
-          message: 'Job started',
-          task_id: taskId,
-          estimated_time: 9.768,
-          ...modelInfo,
-        }),
+    if (variant === 'elevenlabs-async') {
+      // For async, mock the upload-chunk endpoint
+      await this.page.route('**/upload-chunk', async route => {
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            task_id: taskId,
+            estimated_time: 3.864,
+            upload_id: '17616397349478nlmg1h3t',
+            message: 'File successfully uploaded and processing started',
+            is_complete: true,
+          }),
+        });
       });
-    });
+    } else {
+      // For non-async variants, mock the audio endpoint
+      await this.page.route('**/audio', async route => {
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            message: 'Job started',
+            task_id: taskId,
+            estimated_time: 9.768,
+            ...modelInfo,
+          }),
+        });
+      });
+    }
 
-    // Mock the /status endpoint to return a succeeded transcription that
-    // intentionally does NOT include the full word 'fuck' (so no censored words)
+    // Mock the /status endpoint with appropriate response based on variant
     await this.page.route(`**/status/**`, async route => {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({
-          status: 'succeeded',
-          transcription: [
-            { word: 'Stupid', start: 0.019, end: 0.299 },
-            { word: 'white', start: 0.36, end: 0.519 },
-            { word: 'privileged', start: 0.639, end: 1.059 },
-            { word: 'f', start: 1.339, end: 1.619 },
-            { word: 'up', start: 1.759, end: 2.799 },
-          ],
-          file_url: null,
-          processing_type: 'browser',
-          words_to_censor: null,
-        }),
-      });
+      if (variant === 'elevenlabs-async') {
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            status: 'error',
+            message: 'No words found to censor in the transcription.'
+          }),
+        });
+      } else {
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            status: 'succeeded',
+            transcription: [
+              { word: 'Stupid', start: 0.019, end: 0.299 },
+              { word: 'white', start: 0.36, end: 0.519 },
+              { word: 'privileged', start: 0.639, end: 1.059 },
+              { word: 'f', start: 1.339, end: 1.619 },
+              { word: 'up', start: 1.759, end: 2.799 },
+            ],
+            file_url: null,
+            processing_type: 'browser',
+            words_to_censor: null,
+          }),
+        });
+      }
     });
   }
   /**
