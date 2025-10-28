@@ -76,7 +76,7 @@ export class AudioProcessingPage extends BasePage {
   }
 
   get noCensoredWordsMessage(): Locator {
-    return this. page.getByText('No words found.', { exact: true })
+    return this.page.getByText('No words found.', { exact: true }).or(this.page.getByText('No words found to censor in the transcription.', { exact: true }))
   }
 
   constructor(page: Page) {
