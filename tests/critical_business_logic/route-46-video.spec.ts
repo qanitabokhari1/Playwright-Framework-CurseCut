@@ -15,7 +15,7 @@ test.describe('Critical business logic - auto select premium for long media', ()
 
     // Enter workflow and upload a long file (>45 min)
     await audioPage.clickStartNow();
-    await audioPage.uploadAudioFile(TestData.files.longAudio);
+    await audioPage.uploadAudioFile(TestData.files.audio46Min);
 
     // If an informational dialog appears, acknowledge it
     const understandButton = page.getByRole('button', { name: 'I understand' });
