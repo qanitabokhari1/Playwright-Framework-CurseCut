@@ -7,9 +7,16 @@ test.describe('No words found scenario - ElevenLabs SYNC with clean files', () =
   }) => {
     const helpers = new TestHelpers(page);
     const audioPage = helpers.audioProcessingPage;
+    const isLiveMode = process.env.LIVE_MODE === 'true';
+
+    console.log('🔍 LIVE_MODE environment variable:', process.env.LIVE_MODE);
+    console.log('🔍 isLiveMode flag:', isLiveMode);
 
     await helpers.setupSufficientCreditsTest();
-    await helpers.apiMocks.mockNoFuckWord('elevenlabs-sync');
+    // Conditionally setup mocks based on LIVE_MODE flag
+    if (!isLiveMode) {
+      await helpers.apiMocks.mockNoFuckWord('elevenlabs-sync');
+    }
 
     await audioPage.clickStartNow();
     await audioPage.uploadAudioFile(TestData.files.short3Sec_cleaned);
@@ -19,6 +26,7 @@ test.describe('No words found scenario - ElevenLabs SYNC with clean files', () =
 
     await audioPage.clickProcessButton();
 
+    await page.waitForTimeout(isLiveMode ? 5000 : 2000);
     // Wait for processing and check for no censored words using POM locator
     await expect(audioPage.noCensoredWordsMessage).toBeVisible();
   });
