@@ -6,9 +6,20 @@ test.describe('Deepgram processing - 3sec file - credits and censoring', () => {
   test('3sec file - credits and censoring', async ({ page }) => {
     const helpers = new TestHelpers(page);
     const audioPage = helpers.audioProcessingPage;
+    const isLiveMode = process.env.LIVE_MODE === 'true';
+
+    console.log('🔍 LIVE_MODE environment variable:', process.env.LIVE_MODE);
+    console.log('🔍 isLiveMode flag:', isLiveMode);
 
     await helpers.setupSufficientCreditsTest();
-    await helpers.setupMockingForTest('deepgram');
+
+    // Conditionally setup mocks based on LIVE_MODE flag
+    if (!isLiveMode) {
+      console.log('📦 Setting up mocked APIs for deepgram');
+      await helpers.setupMockingForTest('deepgram');
+    } else {
+      console.log('🌐 Using real backend APIs (no mocking)');
+    }
 
     await audioPage.clickStartNow();
     await audioPage.uploadAudioFile(TestData.files.audio);
@@ -16,11 +27,49 @@ test.describe('Deepgram processing - 3sec file - credits and censoring', () => {
     await audioPage.selectPremiumOption(false);
     await audioPage.fillCensorWord(TestData.censorWords.default);
 
+    // Capture initial credits from UI
+    const initialCreditsText = await audioPage.creditsButton.textContent();
+    const initialCredits = parseFloat(
+      initialCreditsText?.replace(/[^\d.]/g, '') || '0'
+    );
+
+    console.log('💰 Initial credits (raw text):', initialCreditsText);
+    console.log('💰 Initial credits (parsed):', initialCredits);
+
     const statusResponsePromise = page.waitForResponse(
-      res => res.url().includes('/status/') && res.ok()
+      res => res.url().includes('/status/') && res.ok(),
+      { timeout: isLiveMode ? 180000 : 10000 }
     );
     await audioPage.clickProcessButton();
     await statusResponsePromise;
+
+    // Wait for UI to update after processing
+    await page.waitForTimeout(isLiveMode ? 5000 : 2000);
+
+    // Verify credits based on LIVE_MODE
+    const finalCreditsText = await audioPage.creditsButton.textContent();
+    const finalCredits = parseFloat(
+      finalCreditsText?.replace(/[^\d.]/g, '') || '0'
+    );
+
+    console.log('💰 Final credits (raw text):', finalCreditsText);
+    console.log('💰 Final credits (parsed):', finalCredits);
+
+    if (isLiveMode) {
+      // LIVE_MODE: Expect credits deducted by 0.1
+      const expectedRemaining = parseFloat((initialCredits - 0.1).toFixed(3));
+      const actualRemaining = parseFloat(finalCredits.toFixed(3));
+      console.log('✅ LIVE MODE - Expected credits:', expectedRemaining);
+      console.log('✅ LIVE MODE - Actual credits:', actualRemaining);
+      console.log('✅ LIVE MODE - Difference:', initialCredits - finalCredits);
+      expect(actualRemaining).toBe(expectedRemaining);
+    } else {
+      // MOCKED MODE: Expect credits to remain the same (no real deduction)
+      console.log('✅ MOCKED MODE - Expected credits (same as initial):', initialCredits);
+      console.log('✅ MOCKED MODE - Actual credits:', finalCredits);
+      console.log('✅ MOCKED MODE - Difference:', initialCredits - finalCredits);
+      expect(finalCredits).toBe(initialCredits);
+    }
 
     await page.getByRole('tab', { name: 'Censored Words' }).click();
     await page.locator('table').scrollIntoViewIfNeeded();

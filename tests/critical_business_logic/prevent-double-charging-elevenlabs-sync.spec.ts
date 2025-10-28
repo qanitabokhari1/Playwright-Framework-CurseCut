@@ -7,9 +7,15 @@ test.describe('Critical business logic - prevent double charging elevenlabs sync
     page,
   }) => {
     const helpers = new TestHelpers(page);
+    const isLiveMode = process.env.LIVE_MODE === 'true';
 
     // Setup: Login with real user and sufficient credits
     await helpers.setupRealUserTest();
+
+    // Conditionally setup mocks based on LIVE_MODE flag
+    if (!isLiveMode) {
+      await helpers.setupMockingForTest('elevenlabs-sync');
+    }
 
     const audioPage = helpers.audioProcessingPage;
 
@@ -29,37 +35,40 @@ test.describe('Critical business logic - prevent double charging elevenlabs sync
       initialCreditsText?.replace(/[^\d.]/g, '') || '0'
     );
 
-    // No mocking - let all APIs hit real backend to test actual credit deduction
-    // This test specifically tests real credit deduction and processing
-
-    // Click process and wait for audio upload completion (REAL BACKEND)
+    // Click process and wait for audio upload completion
     const audioResponsePromise = page.waitForResponse(
       res => res.url().includes('/audio') && res.ok(),
-      { timeout: 30000 }
+      { timeout: isLiveMode ? 180000 : 10000 }
     );
     await audioPage.clickProcessButton();
     await audioResponsePromise;
 
-    // Wait for status completion (real backend processing)
+    // Wait for status completion
     const statusResponsePromise = page.waitForResponse(
       res => res.url().includes('/status/') && res.ok(),
-      { timeout: 60000 } // Increased timeout for real processing
+      { timeout: isLiveMode ? 180000 : 10000 }
     );
     await statusResponsePromise;
 
     // Wait for UI to update after processing
-    await page.waitForTimeout(5000); // Increased wait for real backend
+    await page.waitForTimeout(isLiveMode ? 5000 : 2000);
 
-    // Verify credits deducted by 1 (cost is always 1 credit for this audio file)
+    // Verify credits based on LIVE_MODE
     const finalCreditsText = await audioPage.creditsButton.textContent();
     const finalCredits = parseFloat(
       finalCreditsText?.replace(/[^\d.]/g, '') || '0'
     );
 
-    const expectedRemaining = parseFloat((initialCredits - 0.1).toFixed(3));
-    const actualRemaining = parseFloat(finalCredits.toFixed(3));
+    if (isLiveMode) {
+      // LIVE_MODE: Expect credits deducted by 0.1
+      const expectedRemaining = parseFloat((initialCredits - 0.1).toFixed(3));
+      const actualRemaining = parseFloat(finalCredits.toFixed(3));
+      expect(actualRemaining).toBe(expectedRemaining);
+    } else {
+      // MOCKED MODE: Expect credits to remain the same (no real deduction)
+      expect(finalCredits).toBe(initialCredits);
+    }
 
-    expect(actualRemaining).toBe(expectedRemaining);
     // Verify censored words appear in the table
     await page.getByRole('tab', { name: /Censored Words/i }).click();
     await expect(page.locator('table')).toContainText(

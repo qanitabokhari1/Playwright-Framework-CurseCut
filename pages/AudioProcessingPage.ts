@@ -71,7 +71,11 @@ export class AudioProcessingPage extends BasePage {
 
   // File upload actions
   async uploadAudioFile(filePath: string): Promise<void> {
-    // Use the same method as the working test
+    await this.uploadInput.setInputFiles(filePath);
+  }
+
+  // Video file upload helper
+  async uploadVideoFile(filePath: string | { name: string; mimeType: string; buffer: Buffer }): Promise<void> {
     await this.uploadInput.setInputFiles(filePath);
   }
 
