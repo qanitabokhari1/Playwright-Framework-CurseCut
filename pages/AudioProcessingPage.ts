@@ -65,6 +65,20 @@ export class AudioProcessingPage extends BasePage {
     return this.page.locator('.absolute').first();
   }
 
+
+  get uploadInput(): Locator {
+    return this.page.getByTestId('upload-input');
+  }
+
+
+  get censoredWordsTab(): Locator {
+    return this.page.getByRole('tab', { name: 'Censored Words' });
+  }
+
+  get noCensoredWordsMessage(): Locator {
+    return this. page.getByText('No words found.', { exact: true })
+  }
+
   constructor(page: Page) {
     super(page);
   }
@@ -334,5 +348,29 @@ export class AudioProcessingPage extends BasePage {
 
     // Verify reprocess button is not visible after file switching
     await this.verifyReprocessButtonNotVisible();
+  }
+
+  async configureSongSettings(isSong: boolean, isPremium: boolean): Promise<void> {
+    // Reuse existing methods to avoid duplicated locator/click logic
+    await this.selectSongOption(isSong);
+    await this.selectPremiumOption(isPremium);
+  }
+
+  async enterCensorWord(word: string): Promise<void> {
+    await this.censorWordInput.click();
+    await this.censorWordInput.fill(word);
+  }
+
+  async processFileAndWaitForResponse(): Promise<void> {
+    const audioResponsePromise = this.page.waitForResponse(
+      res => res.url().includes('/audio') && res.ok()
+    );
+    await this.processButton.click();
+    await audioResponsePromise;
+  }
+
+  async verifyNoCensoredWordsFound(): Promise<void> {
+    await this.censoredWordsTab.click();
+    await expect(this.noCensoredWordsMessage).toBeVisible();
   }
 }
