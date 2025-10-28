@@ -53,7 +53,7 @@ test.describe('ElevenLabs SYNC processing - 30sec file - credits and censoring',
     // Process the file
     const statusResponsePromise = page.waitForResponse(
       res => res.url().includes('/status/') && res.ok(),
-      { timeout: isLiveMode ? 180000 : 10000 }
+      { timeout: isLiveMode ? 60000 : 10000 }
     );
     await audioPage.clickProcessButton();
     await statusResponsePromise;
