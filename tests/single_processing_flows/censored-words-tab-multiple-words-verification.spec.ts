@@ -11,7 +11,7 @@ test.describe('Censored Words tab verification - multiple words', () => {
     console.log('🔍 LIVE_MODE environment variable:', process.env.LIVE_MODE);
     console.log('🔍 isLiveMode flag:', isLiveMode);
 
-    await helpers.setupSufficientCreditsTest();
+     await helpers.setupRealUserTest();
 
     if (!isLiveMode) {
       // Use the 30-second file mock that includes multiple censored words

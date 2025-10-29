@@ -11,16 +11,16 @@ test.describe('View All Words tab verification - comprehensive', () => {
     console.log('🔍 LIVE_MODE environment variable:', process.env.LIVE_MODE);
     console.log('🔍 isLiveMode flag:', isLiveMode);
 
-    await helpers.setupSufficientCreditsTest();
+     await helpers.setupRealUserTest();
 
     if (!isLiveMode) {
       // Use the standard censoring success mock which includes the censored word
-      await helpers.setupMockingForTest('deepgram');
+      await helpers.setupMockingForTest('elevenlabs-sync');
     }
 
     await audioPage.clickStartNow();
     await audioPage.uploadAudioFile(TestData.files.audio);
-    await audioPage.selectSongOption(false);
+    await audioPage.selectSongOption(true);
     await audioPage.selectPremiumOption(false);
     await audioPage.fillCensorWord(TestData.censorWords.default);
 

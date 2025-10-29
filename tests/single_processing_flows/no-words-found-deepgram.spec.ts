@@ -11,7 +11,7 @@ test.describe('No words found scenario - Deepgram with clean files', () => {
     console.log('🔍 LIVE_MODE environment variable:', process.env.LIVE_MODE);
     console.log('🔍 isLiveMode flag:', isLiveMode);
 
-    await helpers.setupSufficientCreditsTest();
+     await helpers.setupRealUserTest();
 
     if (!isLiveMode) {
       await helpers.apiMocks.mockNoFuckWord('deepgram');
