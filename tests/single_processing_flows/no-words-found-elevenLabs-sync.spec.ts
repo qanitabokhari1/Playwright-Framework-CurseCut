@@ -12,7 +12,7 @@ test.describe('No words found scenario - ElevenLabs SYNC with clean files', () =
     console.log('🔍 LIVE_MODE environment variable:', process.env.LIVE_MODE);
     console.log('🔍 isLiveMode flag:', isLiveMode);
 
-    await helpers.setupSufficientCreditsTest();
+     await helpers.setupRealUserTest();
     // Conditionally setup mocks based on LIVE_MODE flag
     if (!isLiveMode) {
       await helpers.apiMocks.mockNoFuckWord('elevenlabs-sync');

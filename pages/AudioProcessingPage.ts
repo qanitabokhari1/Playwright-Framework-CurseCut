@@ -83,6 +83,15 @@ export class AudioProcessingPage extends BasePage {
     super(page);
   }
 
+  // Premium files area
+  get myPremiumFilesButton(): Locator {
+    return this.page.getByRole('button', { name: 'My Premium Files' });
+  }
+
+  get premiumDownloadButtons(): Locator {
+    return this.page.getByRole('button', { name: 'Download' });
+  }
+
   // File upload actions
   async uploadAudioFile(filePath: string): Promise<void> {
     await this.uploadInput.setInputFiles(filePath);
@@ -372,5 +381,18 @@ export class AudioProcessingPage extends BasePage {
   async verifyNoCensoredWordsFound(): Promise<void> {
     await this.censoredWordsTab.click();
     await expect(this.noCensoredWordsMessage).toBeVisible();
+  }
+
+  // Premium files helpers
+  async openMyPremiumFiles(): Promise<void> {
+    await this.myPremiumFilesButton.click({ force: true });
+  }
+
+  async expectPremiumFileVisibleByName(fileName: string, nthIndex: number): Promise<void> {
+    await expect(this.page.getByText(fileName).nth(nthIndex)).toBeVisible();
+  }
+
+  async clickPremiumDownloadAt(index: number): Promise<void> {
+    await this.premiumDownloadButtons.nth(index).click();
   }
 }

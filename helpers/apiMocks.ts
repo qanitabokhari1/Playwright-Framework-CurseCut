@@ -181,6 +181,28 @@ export class ApiMocks {
       });
     });
   }
+
+  async mockProcessedFilesAPI(): Promise<void> {
+    await this.page.route('**/processed-files', async route => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify([
+          {
+            file_name: '36325f7b-e259-4249-9dd2-07d9370e6f6f.mp3',
+            task_id: '6a68906d-b2d9-4148-b2f9-73f79f7e78ca',
+            original_file_name: 'short3Sec.mp3',
+            file_url:
+              'https://cursecut-uploads.s3.amazonaws.com/36325f7b-e259-4249-9dd2-07d9370e6f6f.mp3?AWSAccessKeyId=AKIAUAPBFKPPKOZQZINF&Signature=dyHdeaZRAM%2FOdWUqNzK202zhnvs%3D&Expires=1761782236',
+            clean_file_url:
+              'https://cursecut-uploads.s3.amazonaws.com/a4f146ba-612b-4220-a3b3-98ec838f7b7b.mp3?AWSAccessKeyId=AKIAUAPBFKPPKOZQZINF&Signature=4ZLe6d2hC16OQipo%2FQ6lTwCODdQ%3D&Expires=1761782238',
+            status: 'succeeded',
+            file_type: 'audio',
+          },
+        ]),
+      });
+    });
+  }
   
   /**
    * Mock /audio job start and /status success response with a transcription
