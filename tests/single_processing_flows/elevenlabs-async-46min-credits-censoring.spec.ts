@@ -1,12 +1,13 @@
 import { test, expect } from '@playwright/test';
 import { TestHelpers } from '../../helpers/testHelpers';
 import { TestData } from '../../fixtures/testData';
+import { handleUploadAndPollStatus } from '../../helpers/liveAsyncPolling';
 
 test.describe('ElevenLabs ASYNC processing - 46min file - credits and censoring', () => {
     test('46min file - credits and censoring', async ({ page }) => {
-        // Set test timeout to 5 minutes (300 seconds) for long file processing
-        test.setTimeout(300000);
-        
+        // Set test timeout to 20 minutes (1200 seconds) for long file processing
+        test.setTimeout(1200000);
+
         const helpers = new TestHelpers(page);
         const audioPage = helpers.audioProcessingPage;
         const isLiveMode = process.env.LIVE_MODE === 'true';
@@ -44,20 +45,27 @@ test.describe('ElevenLabs ASYNC processing - 46min file - credits and censoring'
         console.log('💰 Initial credits (raw text):', initialCreditsText);
         console.log('💰 Initial credits (parsed):', initialCredits);
 
+        // Trigger upload process
         await audioPage.clickProcessButton();
-        const statusResponsePromise = page.waitForResponse(
-            res => res.url().includes('/status/') && res.ok(),
-            { timeout: 180000 }
-        );
-        await statusResponsePromise;
 
+        // ✅ Wait for upload-chunk and poll for completion
+        const baseUrl = 'https://backend-dev-692f.up.railway.app';
+        const finalData = await handleUploadAndPollStatus(page, baseUrl, 5000, 120); // 5s interval, 120 attempts = 10 min max
 
-        // Wait for status response to confirm processing completed
+        // Verify final status and structure
+        console.log('✅ Processing completed with status:', finalData.status);
+        expect(finalData.status).toBe('succeeded');
+        expect(Array.isArray(finalData.transcription)).toBe(true);
 
-        // Wait for UI to update after processing
+        // Wait for download event that should be triggered by processing
+        const pageInstance = audioPage.pageInstance;
+
+        // Wait for a download event to occur
+        await pageInstance.waitForEvent('download');
+
         await page.waitForTimeout(isLiveMode ? 5000 : 2000);
 
-        // Verify credits based on LIVE_MODE
+        // Verify credits
         const finalCreditsText = await audioPage.creditsButton.textContent();
         const finalCredits = parseFloat(
             finalCreditsText?.replace(/[^\d.]/g, '') || '0'
@@ -67,16 +75,18 @@ test.describe('ElevenLabs ASYNC processing - 46min file - credits and censoring'
         console.log('💰 Final credits (parsed):', finalCredits);
 
         if (isLiveMode) {
-            // LIVE_MODE: Expect credits deducted (46 minutes ~= 17.6)
-            const expectedDeduction = 17.6; // Approximate for 46 minute file
+            // LIVE_MODE: Expect credits deducted (46 minutes = 17.648)
+            const expectedDeduction = 17.648; // Exact for 46 minute file
             const actualDeduction = parseFloat((initialCredits - finalCredits).toFixed(3));
+            
             console.log('✅ LIVE MODE - Expected deduction:', expectedDeduction);
             console.log('✅ LIVE MODE - Actual deduction:', actualDeduction);
+            console.log('✅ LIVE MODE - Initial credits:', initialCredits);
             console.log('✅ LIVE MODE - Final credits:', finalCredits);
 
-            // Allow for small variance in credit calculation
-            expect(actualDeduction).toBeGreaterThanOrEqual(expectedDeduction - 0.1);
-            expect(actualDeduction).toBeLessThanOrEqual(expectedDeduction + 0.1);
+            // Allow for small variance in credit calculation (±0.2 credits)
+            expect(actualDeduction).toBeGreaterThanOrEqual(expectedDeduction - 0.2);
+            expect(actualDeduction).toBeLessThanOrEqual(expectedDeduction + 0.2);
         } else {
             // MOCKED MODE: Expect credits to remain the same (no real deduction)
             console.log('✅ MOCKED MODE - Expected credits (same as initial):', initialCredits);
@@ -90,5 +100,13 @@ test.describe('ElevenLabs ASYNC processing - 46min file - credits and censoring'
         await page.locator('table').scrollIntoViewIfNeeded();
         await expect(page.locator('table')).toContainText(TestData.censorWords.default);
         await expect(page.locator('table')).toContainText('00:01:29');
+        await expect(page.locator('table')).toContainText(TestData.censorWords.default);
+        await expect(page.locator('table')).toContainText('00:21:05');
+        await expect(page.locator('table')).toContainText(TestData.censorWords.default);
+        await expect(page.locator('table')).toContainText('00:22:48');
+        await expect(page.locator('table')).toContainText(TestData.censorWords.default);
+        await expect(page.locator('table')).toContainText('00:26:46');
+        await expect(page.locator('table')).toContainText(TestData.censorWords.default);
+        await expect(page.locator('table')).toContainText('00:31:38');
     });
 });

@@ -81,10 +81,21 @@ test.describe('Session Management - prevent double processing', () => {
 
   test('elevenlabs async', async ({ page }) => {
     const helpers = new TestHelpers(page);
+    const isLiveMode = process.env.LIVE_MODE === 'true';
+
+    console.log('🔍 LIVE_MODE environment variable:', process.env.LIVE_MODE);
+    console.log('🔍 isLiveMode flag:', isLiveMode);
 
     // Setup: Authenticate with sufficient credits
     await helpers.setupSufficientCreditsTest();
-    await helpers.setupMockingForTest('elevenlabs-async');
+
+    // Conditionally setup mocks based on LIVE_MODE flag
+    if (!isLiveMode) {
+      console.log('📦 Setting up mocked APIs for elevenlabs-async');
+      await helpers.setupMockingForTest('elevenlabs-async');
+    } else {
+      console.log('🌐 Using real backend APIs (no mocking)');
+    }
 
     // Test steps: Complete audio processing workflow
     const audioPage = helpers.audioProcessingPage;

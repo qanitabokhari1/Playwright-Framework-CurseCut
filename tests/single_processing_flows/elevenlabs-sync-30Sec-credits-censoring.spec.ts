@@ -14,7 +14,7 @@ test.describe('ElevenLabs SYNC processing - 30sec file - credits and censoring',
     console.log('🔍 isLiveMode flag:', isLiveMode);
 
     // Setup authentication with sufficient credits
-    await helpers.setupSufficientCreditsTest();
+    await helpers.setupRealUserTest();
 
     // Setup mocking if not in live mode
     if (!isLiveMode) {

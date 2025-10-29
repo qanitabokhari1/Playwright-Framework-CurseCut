@@ -11,7 +11,7 @@ test.describe('Deepgram processing - 3sec file - credits and censoring', () => {
     console.log('🔍 LIVE_MODE environment variable:', process.env.LIVE_MODE);
     console.log('🔍 isLiveMode flag:', isLiveMode);
 
-    await helpers.setupSufficientCreditsTest();
+    await helpers.setupRealUserTest();
 
     // Conditionally setup mocks based on LIVE_MODE flag
     if (!isLiveMode) {
