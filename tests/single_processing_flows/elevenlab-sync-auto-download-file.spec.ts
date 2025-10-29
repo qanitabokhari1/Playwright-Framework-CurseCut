@@ -33,7 +33,7 @@ test.describe('ElevenLabs SYNC auto-download - file downloads automatically', ()
     const pageInstance = audioPage.pageInstance;
     const [download] = await Promise.all([
       pageInstance.waitForEvent('download'),
-      pageInstance.getByTestId('process-button').click(),
+      audioPage.clickProcessButton(),
     ]);
 
     expect(download).toBeTruthy();
