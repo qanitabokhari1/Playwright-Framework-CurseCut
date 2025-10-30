@@ -3,7 +3,7 @@ name: E2E Full Tests with Code Quality
 # Workflow with code quality gate
 on:
   push:
-    branches: [main, dev, qanita-qa-playwright]
+    branches: [main, dev, dev-musab]
     paths:
       - 'playwright/e2e-full/**'
 
