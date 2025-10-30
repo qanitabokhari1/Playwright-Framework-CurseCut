@@ -61,9 +61,9 @@ jobs:
       - name: Run Playwright tests (Shard ${{ matrix.shardIndex }})
         run: |
           if [ -z "${{ matrix.grep }}" ]; then
-            npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --grep-invert "30sec file - credits and censoring - elevenlabs sync"
+            npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --workers=2 --grep-invert "30sec file - credits and censoring - elevenlabs sync"
           else
-            npx playwright test --grep "${{ matrix.grep }}" --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+            npx playwright test --grep "${{ matrix.grep }}" --workers=2
           fi
       - name: Upload Playwright HTML Report
         if: ${{ !cancelled() }}
