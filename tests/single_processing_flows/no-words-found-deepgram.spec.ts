@@ -3,13 +3,14 @@ import { TestHelpers } from '../../helpers/testHelpers';
 import { TestData } from '../../fixtures/testData';
 
 test.describe('No words found scenario - Deepgram with clean files', () => {
-  test('No words found scenario - Deepgram with clean files', async ({ page }) => {
+  test('No words found scenario - Deepgram with clean files', async ({
+    page,
+  }) => {
     const helpers = new TestHelpers(page);
     const audioPage = helpers.audioProcessingPage;
     const isLiveMode = process.env.LIVE_MODE === 'true';
 
-
-     await helpers.setupRealUserTest();
+    await helpers.setupRealUserTest();
 
     if (!isLiveMode) {
       await helpers.apiMocks.mockNoFuckWord('deepgram');

@@ -8,8 +8,7 @@ test.describe('Censored Words tab verification - multiple words', () => {
     const audioPage = helpers.audioProcessingPage;
     const isLiveMode = process.env.LIVE_MODE === 'true';
 
-
-     await helpers.setupRealUserTest();
+    await helpers.setupRealUserTest();
 
     if (!isLiveMode) {
       // Use the 30-second file mock that includes multiple censored words
@@ -31,18 +30,17 @@ test.describe('Censored Words tab verification - multiple words', () => {
     // Verify multiple censored words are listed with timestamps
     const table = pageInstance.locator('table');
     await table.scrollIntoViewIfNeeded();
-    
-    // Verify exact matches for "fuck" variations
-      await expect(page.locator('table')).toContainText('Fuck');
-  await expect(page.locator('table')).toContainText('00:00:05');
-  await expect(page.locator('table')).toContainText('fuck');
-  await expect(page.locator('table')).toContainText('00:00:06');
-  await expect(page.locator('table')).toContainText('fuck');
-  await expect(page.locator('table')).toContainText('00:00:10');
-  await expect(page.locator('table')).toContainText('fuck');
-  await expect(page.locator('table')).toContainText('00:00:18');
-  await expect(page.locator('table')).toContainText('fuck');
-  await expect(page.locator('table')).toContainText('00:00:21');
 
+    // Verify exact matches for "fuck" variations
+    await expect(page.locator('table')).toContainText('Fuck');
+    await expect(page.locator('table')).toContainText('00:00:05');
+    await expect(page.locator('table')).toContainText('fuck');
+    await expect(page.locator('table')).toContainText('00:00:06');
+    await expect(page.locator('table')).toContainText('fuck');
+    await expect(page.locator('table')).toContainText('00:00:10');
+    await expect(page.locator('table')).toContainText('fuck');
+    await expect(page.locator('table')).toContainText('00:00:18');
+    await expect(page.locator('table')).toContainText('fuck');
+    await expect(page.locator('table')).toContainText('00:00:21');
   });
 });

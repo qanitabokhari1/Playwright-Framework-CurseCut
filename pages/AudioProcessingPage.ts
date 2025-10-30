@@ -65,18 +65,20 @@ export class AudioProcessingPage extends BasePage {
     return this.page.locator('.absolute').first();
   }
 
-
   get uploadInput(): Locator {
     return this.page.getByTestId('upload-input');
   }
-
 
   get censoredWordsTab(): Locator {
     return this.page.getByRole('tab', { name: 'Censored Words' });
   }
 
   get noCensoredWordsMessage(): Locator {
-    return this.page.getByText('No words found.', { exact: true }).or(this.page.getByText('No words found to censor in the transcription.', { exact: true }))
+    return this.page.getByText('No words found.', { exact: true }).or(
+      this.page.getByText('No words found to censor in the transcription.', {
+        exact: true,
+      })
+    );
   }
 
   constructor(page: Page) {
@@ -98,7 +100,9 @@ export class AudioProcessingPage extends BasePage {
   }
 
   // Video file upload helper
-  async uploadVideoFile(filePath: string | { name: string; mimeType: string; buffer: Buffer }): Promise<void> {
+  async uploadVideoFile(
+    filePath: string | { name: string; mimeType: string; buffer: Buffer }
+  ): Promise<void> {
     await this.uploadInput.setInputFiles(filePath);
   }
 
@@ -359,7 +363,10 @@ export class AudioProcessingPage extends BasePage {
     await this.verifyReprocessButtonNotVisible();
   }
 
-  async configureSongSettings(isSong: boolean, isPremium: boolean): Promise<void> {
+  async configureSongSettings(
+    isSong: boolean,
+    isPremium: boolean
+  ): Promise<void> {
     // Reuse existing methods to avoid duplicated locator/click logic
     await this.selectSongOption(isSong);
     await this.selectPremiumOption(isPremium);
@@ -388,7 +395,10 @@ export class AudioProcessingPage extends BasePage {
     await this.myPremiumFilesButton.click({ force: true });
   }
 
-  async expectPremiumFileVisibleByName(fileName: string, nthIndex: number): Promise<void> {
+  async expectPremiumFileVisibleByName(
+    fileName: string,
+    nthIndex: number
+  ): Promise<void> {
     await expect(this.page.getByText(fileName).nth(nthIndex)).toBeVisible();
   }
 

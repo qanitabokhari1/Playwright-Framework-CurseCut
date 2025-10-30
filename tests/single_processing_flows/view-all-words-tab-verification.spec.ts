@@ -8,8 +8,7 @@ test.describe('View All Words tab verification - comprehensive', () => {
     const audioPage = helpers.audioProcessingPage;
     const isLiveMode = process.env.LIVE_MODE === 'true';
 
-
-     await helpers.setupRealUserTest();
+    await helpers.setupRealUserTest();
 
     if (!isLiveMode) {
       // Use the standard censoring success mock which includes the censored word
@@ -29,7 +28,7 @@ test.describe('View All Words tab verification - comprehensive', () => {
     await pageInstance.getByRole('tab', { name: 'View All Words' }).click();
     const table = pageInstance.locator('table');
     await table.scrollIntoViewIfNeeded();
-//actual response and mock response miss-match, if change it can affect other tests
+    //actual response and mock response miss-match, if change it can affect other tests
     await expect(table).toContainText('Stupid');
     await expect(table).toContainText('00:00:00');
     await expect(table).toContainText('white');

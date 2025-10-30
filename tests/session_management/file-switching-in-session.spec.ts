@@ -9,14 +9,12 @@ test.describe('Session Management', () => {
     const helpers = new TestHelpers(page);
     const isLiveMode = process.env.LIVE_MODE === 'true';
 
-
     // Setup: Authenticate with real user and sufficient credits
     await helpers.setupRealUserTest();
 
     // Conditionally setup mocks based on LIVE_MODE flag
     if (!isLiveMode) {
       await helpers.setupMockingForTest('elevenlabs-sync');
-    } else {
     }
 
     // Navigate to cut page

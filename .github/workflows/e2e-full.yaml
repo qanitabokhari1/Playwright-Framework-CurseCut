@@ -51,7 +51,7 @@ jobs:
             grep: ''
           - shardIndex: 5
             shardTotal: 5
-            grep: 'elevenlabs-async-46min-credits-censoring' # 🎯 heavy test
+            grep: 'elevenlabs-async-46min-credits-censoring'
 
     steps:
       - uses: actions/checkout@v5

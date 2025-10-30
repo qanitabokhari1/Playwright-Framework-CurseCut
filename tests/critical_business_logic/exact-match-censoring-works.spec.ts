@@ -8,14 +8,12 @@ test.describe('Critical business logic - exact match censoring works', () => {
     const helpers = new TestHelpers(page);
     const isLiveMode = process.env.LIVE_MODE === 'true';
 
-
     // Auth + credits and centralized censoring success mocks
     await helpers.setupSufficientCreditsTest();
 
     // Conditionally setup mocks based on LIVE_MODE flag
     if (!isLiveMode) {
       await helpers.setupMockingForTest('deepgram');
-    } else {
     }
 
     const audioPage = helpers.audioProcessingPage;
@@ -41,13 +39,11 @@ test.describe('Critical business logic - exact match censoring works', () => {
     const helpers = new TestHelpers(page);
     const isLiveMode = process.env.LIVE_MODE === 'true';
 
-
     await helpers.setupSufficientCreditsTest();
 
     // Conditionally setup mocks based on LIVE_MODE flag
     if (!isLiveMode) {
       await helpers.setupMockingForTest('elevenlabs-sync');
-    } else {
     }
 
     const audioPage = helpers.audioProcessingPage;
@@ -73,17 +69,15 @@ test.describe('Critical business logic - exact match censoring works', () => {
 
   test('elevenlabs async', async ({ page }) => {
     test.setTimeout(300000);
-    
+
     const helpers = new TestHelpers(page);
     const isLiveMode = process.env.LIVE_MODE === 'true';
-
 
     await helpers.setupSufficientCreditsTest();
 
     // Conditionally setup mocks based on LIVE_MODE flag
     if (!isLiveMode) {
       await helpers.setupMockingForTest('elevenlabs-async');
-    } else {
     }
 
     const audioPage = helpers.audioProcessingPage;
@@ -97,8 +91,7 @@ test.describe('Critical business logic - exact match censoring works', () => {
     await audioPage.clickProcessButton();
 
     // ✅ Wait for upload-chunk and poll for completion
-    const baseUrl = 'https://backend-dev-692f.up.railway.app';
-    const finalData = await handleUploadAndPollStatus(page, baseUrl);
+    const finalData = await handleUploadAndPollStatus(page);
 
     // Verify final status and structure
     expect(finalData.status).toBe('succeeded');
