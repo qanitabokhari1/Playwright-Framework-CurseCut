@@ -1,199 +1,113 @@
-# E2E Test Suite - Audio Processing Platform
+# Playwright E2E Framework – CurseCut Audio/Video Censoring
 
-This test suite implements the Page Object Model pattern for comprehensive end-to-end testing of an audio processing platform with AI-powered censoring capabilities. The platform supports multiple processing variants including Deepgram and ElevenLabs (sync/async) for audio censoring workflows.
+TypeScript Playwright end-to-end framework using the Page Object Model to test an audio/video censoring web app across Deepgram and ElevenLabs (sync/async) flows. The suite supports deterministic API mocking by default and can switch to live backend testing with a single flag.
 
-## 📁 Project Structure
+## Project structure
 
 ```
-e2e-full/
+.
 ├── fixtures/
-│   ├── audio/                   # Audio test files (mp3)
-│   │   ├── audio.mp3
-│   │   ├── censored_audio.mp3
-│   │   ├── short3Sec.mp3
-│   │   └── 46MinuteLong.mp3
-│   ├── videos/                  # Video test files (mp4)
-│   │   ├── short3Sec.mp4
-│   │   ├── short30Sec.mp4
-│   │   └── short60Sec.mp4
-│   └── testData.ts              # Test data constants and configurations
-├── .env.example                 # Environment variables template
+│   ├── audio/                         # MP3 test assets (short3Sec.mp3, censored_audio.mp3, 46MinuteLong.mp3, ...)
+│   ├── videos/                        # MP4 test assets (short3Sec.mp4, short30Sec.mp4, short60Sec.mp4, ...)
+│   └── testData.ts                    # Centralized test constants (files, users, URLs, words)
 ├── helpers/
-│   ├── apiMocks.ts              # API mocking utilities (auth, credits, cost, processing)
-│   └── testHelpers.ts           # High-level test helper methods
+│   ├── apiMocks.ts                    # Route-level API mocks (credits, upload-chunk, status, processed files, variants)
+│   ├── liveAsyncPolling.ts            # Live async helper: wait for /upload-chunk final part, then poll /status until succeeded
+│   └── testHelpers.ts                 # High-level helpers (auth, mocking setup, flows)
 ├── pages/
-│   ├── BasePage.ts              # Base page object with common functionality
-│   ├── AuthPage.ts              # Authentication page object
-│   └── AudioProcessingPage.ts   # Audio processing page object
+│   ├── BasePage.ts                    # Common locators/actions + lightweight auth/credits mocks
+│   ├── AuthPage.ts                    # Login flow (form interactions + real creds)
+│   └── AudioProcessingPage.ts         # Processing UI, premium files helpers
 ├── test-setup/
-│   ├── global-setup.ts          # Global test setup
-│   ├── global-teardown.ts       # Global test teardown
-│   └── page-setup.ts            # Page-specific setup utilities
+│   ├── global-setup.ts                # Loads env
+│   ├── global-teardown.ts             # Cleanup hook
+│   └── page-setup.ts                  # Scenario-specific setup helpers
 ├── tests/
-│   ├── critical_business_logic/ # Core business functionality tests (6 tests)
+│   ├── critical_business_logic/       # Core behaviors (toggles, charging, timeouts, video)
 │   │   ├── approximate-match-censoring-works.spec.ts
 │   │   ├── exact-match-censoring-works.spec.ts
 │   │   ├── enforces-toggle-mutual-exclusivity.spec.ts
 │   │   ├── elevenlabs-sync-timeout-error.spec.ts
 │   │   ├── route-46-video.spec.ts
-│   │   └── verify-prevent-double-charging-elevenlabs-sync.spec.ts
-│   └── session_management/      # Session and credit management tests (5 tests)
-│       ├── credits-0-deepgram.spec.ts
-│       ├── credits-0-elevenlabs-sync.spec.ts
-│       ├── credits-0-elevenlabs-async.spec.ts
-│       ├── file-switching-in-session.spec.ts
-│       └── prevent-double-processing.spec.ts
-├── type/
-│   ├── index.ts                 # Re-exports all types
-│   ├── testConfig.ts            # Test configuration types
-│   ├── processing.ts            # Processing variant types
-│   ├── user.ts                  # User credential types
-│   ├── api.ts                   # API response types
-│   └── pageObject.ts            # Page object types
-├── playwright.config.ts         # Playwright configuration
-├── eslint.config.js            # ESLint configuration
-├── package.json                 # Dependencies and scripts
-└── tsconfig.json               # TypeScript configuration
+│   │   └── prevent-double-charging-elevenlabs-sync.spec.ts
+│   ├── session_management/            # Credits, prevention, switching
+│   │   ├── credits-0-deepgram.spec.ts
+│   │   ├── credits-0-elevenlabs-async.spec.ts
+│   │   ├── credits-0-elevenlabs-sync.spec.ts
+│   │   ├── file-switching-in-session.spec.ts
+│   │   └── prevent-double-processing.spec.ts
+│   └── single_processing_flows/       # Variant-specific flows and UI verifications
+│       ├── censored-words-tab-multiple-words-verification.spec.ts
+│       ├── deepgram-3Sec-credits-censoring.spec.ts
+│       ├── deepgram-auto-download-file.spec.ts
+│       ├── elevenlab-async-auto-download-file.spec.ts
+│       ├── elevenlab-sync-auto-download-file.spec.ts
+│       ├── elevenlabs-async-46min-credits-censoring.spec.ts
+│       ├── elevenlabs-sync-30Sec-credits-censoring.spec.ts
+│       ├── no-words-found-deepgram.spec.ts
+│       ├── no-words-found-elevenLabs-sync.spec.ts
+│       ├── no-words-found-elevenlabs-async.spec.ts
+│       ├── premium-files-apperance-and-download.spec.ts
+│       ├── processing-tags-browser-vs-premium.spec.ts
+│       └── view-all-words-tab-verification.spec.ts
+├── type/                              # TS types used across the suite
+│   ├── api.ts
+│   ├── index.ts
+│   ├── pageObject.ts
+│   ├── processing.ts
+│   ├── testConfig.ts
+│   └── user.ts
+├── playwright-report/                 # HTML report output
+├── test-results/                      # JSON/JUnit outputs
+├── playwright.config.ts               # Base URL, reporters, timeouts, projects
+├── eslint.config.js                   # ESLint + Prettier config
+├── tsconfig.json                      # TS strict config + path aliases
+└── package.json                       # Scripts and dependencies
 ```
 
-## 🧩 Page Objects
+## Environment configuration
 
-### BasePage
+Create a `.env` file at the repository root:
 
-- Common functionality shared across all pages
-- API mocking methods (`mockSupabaseLogin`, `mockCreditsAPI`)
-- Common locators (`creditsButton`, `loginButton`, `processButton`, `uploadInput`, `startNowButton`)
-- Utility methods for element interactions and expectations
-- Navigation and element waiting methods
+```
+# Backend base URL for the app under test
+BASE_URL=https://frontend-dev-39a5.up.railway.app
 
-### AuthPage
+# Real user credentials (used by real login flow)
+TEST_USER_EMAIL=your-email@example.com
+TEST_USER_PASSWORD=your-password
 
-- Login form interactions (`emailInput`, `passwordInput`, `signInButton`)
-- Authentication flow management (`login`, `loginWithRealCredentials`)
-- User verification methods (`verifyLoggedIn`, `verifyCreditsBalance`)
-- Modal/dialog handling for login forms
-- Page state verification and error handling
-
-### AudioProcessingPage
-
-- File upload functionality (`uploadAudioFile`, `uploadFirstFile`, `uploadReplacementFile`)
-- Audio processing configuration for all variants (Deepgram, ElevenLabs sync/async)
-- Form interactions (`configureDeepgramWorkflow`, `configureElevenLabsSyncWorkflow`, `configureElevenLabsAsyncWorkflow`)
-- Processing workflow management (`clickProcessButton`, `verifyProcessingStarted`)
-- Enhanced workflow methods for new UI features
-- File switching and reprocessing verification
-
-## 🔧 Helper Classes
-
-### TestHelpers
-
-- High-level test scenarios and workflow orchestration
-- Authentication setup methods (`setupZeroCreditsTest`, `setupSufficientCreditsTest`, `setupRealUserTest`)
-- Centralized API mocking with LIVE_MODE support (`setupMockingForTest`)
-- Complete workflow orchestration (`completeAudioProcessingWorkflow`)
-- Test-specific helper methods (`testInsufficientCredits`, `testDoubleProcessingPrevention`, `testFileSwitching`)
-- Centralized test setup and teardown utilities
-
-### ApiMocks
-
-- Comprehensive API endpoint mocking (`mockSupabaseLogin`, `mockCreditsAPI`, `mockCostAPI`, `mockSubscriptionAPI`)
-- Authentication flow mocking (`mockAuthenticationFlow`)
-- Processing API mocking for all variants (`mockProcessingAPI`, `mockCensoringSuccess`)
-- Error response simulation (`mockErrorResponse`)
-- Dynamic cost API mocking and upload chunk handling (`mockUploadChunkAPI`)
-
-## 📊 Test Data
-
-### TestData
-
-Centralized test data including:
-
-- **User credentials**: Test user (`test@example.com`) and environment-based real user credentials
-- **Credit scenarios**: Zero credits (0) and sufficient credits (100) for testing different states
-- **File paths**: Audio files (`short3Sec.mp3`, `censored_audio.mp3`, `46MinuteLong.mp3`) with absolute paths
-- **API responses**: Login response structure with mock tokens and user data
-- **URLs**: Base URL configuration with environment variable support
-- **Processing variants**: Configuration for Deepgram, ElevenLabs sync, and ElevenLabs async workflows
-- **Censor words**: Default (`fuck`), approximate (`fuc`), and test words for different scenarios
-
-## 🚀 Test Cases
-
-The test suite includes comprehensive testing across two main categories with **11 total tests**:
-
-### Critical Business Logic Tests (6 tests)
-
-1. **Approximate Match Censoring Works** - Tests AI-powered approximate word matching for censoring across all three processing variants (Deepgram, ElevenLabs sync, ElevenLabs async)
-2. **Exact Match Censoring Works** - Tests exact word matching for censoring across all three processing variants
-3. **Enforces Toggle Mutual Exclusivity** - Tests UI toggle behavior and state management
-4. **ElevenLabs Sync Timeout Error** - Tests error handling for timeout scenarios
-5. **Route 46 Video** - Tests video processing functionality
-6. **Verify Prevent Double Charging ElevenLabs Sync** - Tests actual credit deduction and censored words verification (ALWAYS uses real API)
-
-### Session Management Tests (5 tests)
-
-1. **Process button disabled when user has insufficient credits - Deepgram** - Tests credit validation for Deepgram variant
-2. **Process button disabled when user has insufficient credits - ElevenLabs SYNC** - Tests credit validation for ElevenLabs sync variant
-3. **Process button disabled when user has insufficient credits - ElevenLabs ASYNC** - Tests credit validation for ElevenLabs async variant
-4. **File switching in same session** - Tests uploading new file and verifying previous state is cleared
-5. **Prevent double processing** - Tests that process button is disabled after processing begins across all variants
-
-## 🔧 Environment Setup
-
-### Required Environment Variables
-
-Create a `.env` file in the `playwright/e2e-full/` directory:
-
-```bash
-# Copy the example file
-cp .env.example .env
-
-# Edit with your actual credentials
-TEST_USER_EMAIL=your-test-email@example.com
-TEST_USER_PASSWORD=your-test-password
+# Mocking vs live backend
+# false => use Playwright route mocks (default)
+# true  => hit the real backend services
 LIVE_MODE=false
 ```
 
-### Environment Variables
+Notes
+- `playwright.config.ts` loads `.env` from the repo root. `BASE_URL` defaults to `http://localhost:3000` if not set.
+- `fixtures/testData.ts` includes hardcoded URLs/files; navigation uses `AuthPage.navigateTo(TestData.urls.base)`.
 
-- **`TEST_USER_EMAIL`**: Real test user email for authentication
-- **`TEST_USER_PASSWORD`**: Real test user password for authentication
-- **`LIVE_MODE`**: Set to `false` for mocked APIs (default), `true` for live API testing
+## Installation and scripts
 
-## 🏃‍♂️ Running Tests
+```
+npm ci                         # install deps
+npm run test:install           # install Playwright browsers
 
-```bash
-# Run all tests (mocked APIs - default)
-npm run test
+# Run all tests (mocked APIs – default)
+npm test
 
-# Run tests against live APIs
+# Run against live backend
 npm run test:live
 
-# Run specific test suite
-npx playwright test tests/session_management/
-npx playwright test tests/critical_business_logic/
-
-# Run tests in headed mode
+# Headed / UI / Debug
 npm run test:headed
-
-# Run tests with UI mode
 npm run test:ui
-
-# Run tests with debug mode
 npm run test:debug
 
-# Generate test report
-npm run test:report
+# Reports
+npm run test:report            # opens HTML report
 
-# Install Playwright browsers
-npm run test:install
-
-# Code generation
-npm run test:codegen
-
-# Update snapshots
-npm run test:update-snapshots
-
-# Lint and format and type
+# Quality
 npm run lint
 npm run lint:fix
 npm run format
@@ -201,79 +115,93 @@ npm run format:check
 npx tsc --noEmit
 ```
 
-## 📝 Key Features
+## Mocking vs live mode
 
-- **Audio/video Processing Focus**: Specialized testing for AI-powered audio/video censoring platform
-- **Multi-Provider Support**: Tests Deepgram and ElevenLabs (sync/async) processing variants
-- **Credit Management**: Comprehensive testing of credit-based processing restrictions
-- **File Handling**: Support for both audio (MP3) and video (MP4) file processing
-- **Cost API Integration**: Dynamic cost mocking for processing fee calculations
-- **Maintainable**: Page objects encapsulate page-specific logic with comprehensive locators
-- **Reusable**: Common functionality is centralized in base classes and helper methods
-- **Type-safe**: Full TypeScript support with proper type definitions and path aliases
-- **Scalable**: Easy to add new pages and test scenarios with modular architecture
-- **Parallel execution**: Tests can run in parallel for faster execution
-- **API mocking**: Comprehensive mocking for reliable test execution including Supabase auth
-- **Error Handling**: Tests timeout scenarios and error recovery
-- **Session Management**: Tests file switching and double-processing prevention
-- **Environment Configuration**: Support for different environments via environment variables with secure credential management
-- **Enhanced UI Testing**: Support for both legacy and enhanced UI workflows
-- **Comprehensive Reporting**: HTML, JSON, and JUnit test reports
+- `LIVE_MODE=false` (default): deterministic tests via route mocks
+	- `TestHelpers.setupMockingForTest(variant)` wires core mocks per variant
+		- `ApiMocks.mockCensoringSuccess(variant)` – mocks `/audio` job start and `/status` success with a transcript
+		- For async variant, also calls `ApiMocks.mockUploadChunkAPI()` to satisfy `/upload-chunk`
+	- Credits are mocked via `ApiMocks.mockAuthenticationFlow(credits)` during auth setup
+	- Premium listing can be mocked via `ApiMocks.mockProcessedFilesAPI()` so “My Premium Files” shows entries
 
-## 🔄 Adding New Tests
+- `LIVE_MODE=true`: real backend
+	- No route intercepts for processing; timeouts may be higher in some specs
+	- Real login is performed using `TEST_USER_EMAIL` / `TEST_USER_PASSWORD`
+	- For ElevenLabs async live runs, `helpers/liveAsyncPolling.ts` provides `handleUploadAndPollStatus(page)` to wait on the app’s own polling
 
-1. Create new page objects in `pages/` directory extending `BasePage`
-2. Add test data to `fixtures/testData.ts` following the existing structure
-3. Create helper methods in `helpers/testHelpers.ts` for reusable workflows
-4. Add API mocking methods in `helpers/apiMocks.ts` for new endpoints
-5. **For tests that call `clickProcessButton()`**: Add `await helpers.setupMockingForTest(variant)` before processing
-6. Write test cases in `tests/` directory following the existing naming convention
-7. Add type definitions in `type/` directory if necessary
-8. Update this README with new test descriptions
+Additional targeted mocks available in `helpers/apiMocks.ts`
+- `mockProcessedFilesAPI()` – return a list for “My Premium Files” (drives appearance + download event)
+- `mockNoFuckWord(variant)` – status without the explicit word (for “no words found” checks)
+- `mockElevenLabsSync30SecFile()` – longer transcript fixture for sync
+- `mock46MinutesAudioFile()` – very long transcript fixture (video/long-audio route)
 
-## 🎯 Best Practices
+Commented-out (not used by default)
+- `mockSupabaseLogin`, `mockProcessingAPI`, `mockErrorResponse`, `mockCostAPI`, `mockSubscriptionAPI` are present but disabled since the suite hits the real auth/processing by default and only mocks what’s needed for determinism.
 
-- Use descriptive test names that clearly indicate what is being tested
-- Keep page objects focused on single responsibility with clear method names
-- Leverage helper methods for common workflows to reduce code duplication
-- Mock external dependencies appropriately using the `ApiMocks` class
-- Use proper TypeScript types for better maintainability and IDE support
-- Follow the existing folder structure for consistency
-- Use data-testid attributes for reliable element selection
-- Implement proper error handling and timeout management
-- Write tests that are independent and can run in parallel
-- Use environment variables for configuration flexibility and secure credential management
-- Use `setupMockingForTest()` for centralized API mocking with LIVE_MODE support
+## Key page objects and helpers
 
-## 🛠️ Technical Stack
+- `BasePage`
+	- Common locators: `creditsButton`, `loginButton`, `processButton`, `uploadInput`, `startNowButton`
+	- Utilities: navigation and expectation helpers
+	- Lightweight mocks: `mockSupabaseLogin()`, `mockCreditsAPI()` (used rarely; prefer `ApiMocks`)
 
-### Dependencies
+- `AuthPage`
+	- `login()` and `loginWithRealCredentials()` use the real auth form
+	- `verifyCreditsBalance()` for post-login UI state
 
-- **@playwright/test**: ^1.56.1 - Main testing framework
-- **playwright**: ^1.56.1 - Browser automation
-- **typescript**: ^5.0.0 - Type safety and modern JavaScript features
-- **dotenv**: ^17.2.3 - Environment variable management
+- `AudioProcessingPage`
+	- Form interactions: song/premium toggles, censor words, replacements
+	- Processing: `clickStartNow()`, `clickProcessButton()`, `verifyProcessingStarted()`
+	- Premium files: `openMyPremiumFiles()`, `expectPremiumFileVisibleByName()`, `clickPremiumDownloadAt()`
 
-### Development Dependencies
+- `TestHelpers`
+	- Auth setup: `setupZeroCreditsTest()`, `setupSufficientCreditsTest()`, `setupRealUserTest()`
+	- Mocking: `setupMockingForTest('deepgram'|'elevenlabs-sync'|'elevenlabs-async')`
+	- Composes page objects for concise tests
 
-- **@eslint/js**: ^9.38.0 - ESLint JavaScript configuration
-- **@typescript-eslint/eslint-plugin**: ^8.46.1 - TypeScript ESLint rules
-- **@typescript-eslint/parser**: ^8.46.1 - TypeScript parser for ESLint
-- **eslint**: ^9.38.0 - Code linting
-- **eslint-config-prettier**: ^10.1.8 - Prettier integration for ESLint
-- **eslint-plugin-prettier**: ^5.5.4 - Prettier as ESLint rule
-- **prettier**: ^3.6.2 - Code formatting
-- **@types/node**: ^20.0.0 - Node.js type definitions
+- `liveAsyncPolling`
+	- `handleUploadAndPollStatus(page)` – waits for final `/upload-chunk` and subsequent `/status/{taskId}` success when running live async flows
 
-### Configuration
+## Example: Premium files – appearance and download (mocked)
 
-- **Playwright Config**: Supports Chromium browser, parallel execution, HTML/JSON/JUnit reporting
-- **TypeScript Config**: ES2020 target, strict mode, path aliases for clean imports
-- **ESLint Config**: TypeScript-aware linting with Prettier integration
-- **Environment Support**: Configurable base URL and CI/CD optimizations
+Scenario (when `LIVE_MODE=false`)
+1) Call `helpers.setupMockingForTest('elevenlabs-async')` so `/upload-chunk` and `/status` are mocked
+2) Call `helpers.apiMocks.mockProcessedFilesAPI()` so the “My Premium Files” list is populated
+3) Click “My Premium Files”, verify `short3Sec.mp3` appears, click “Download” and assert a browser download event fires
 
-### Browser Support
+This flow is implemented in `tests/single_processing_flows/premium-files-apperance-and-download.spec.ts` and will also work against the live backend by running `npm run test:live` (in live mode it will rely on real data instead of the mocked list).
 
-- **Primary**: Chromium (Desktop Chrome)
-- **Optional**: Firefox and WebKit (commented out for faster execution)
-- **Mobile**: Mobile Chrome and Safari (commented out, available for activation)
+## Tests overview
+
+Folders
+- `critical_business_logic/` – approximate/exact matching, toggle exclusivity, timeout handling, charging, video route
+- `session_management/` – credits=0 states, file switching, double processing prevention
+- `single_processing_flows/` – per-variant flows, word tabs, premium list/download, tags
+
+Reports
+- HTML: `playwright-report/index.html`
+- JSON: `test-results/results.json`
+- JUnit: `test-results/results.xml`
+
+## Adding tests
+
+1) Create or extend a page object under `pages/`
+2) Add/adjust constants in `fixtures/testData.ts`
+3) Reuse `TestHelpers` for auth and mocking (`setupMockingForTest(...)`)
+4) For mocked runs add explicit mocks as needed (e.g., `mockProcessedFilesAPI()`)
+5) Place the spec under the appropriate folder in `tests/`
+6) Keep tests independent and parallel-safe; avoid test order coupling
+
+## Troubleshooting
+
+- Login fails in CI/headless: ensure `BASE_URL`, `TEST_USER_EMAIL`, and `TEST_USER_PASSWORD` are set and the site is reachable from the runner.
+- Timeouts in live mode: increase test timeouts or rely on mocks by switching `LIVE_MODE=false`.
+- Selectors flaky after UI changes: update `pages/*` locators rather than inlining in tests.
+- Prettier/ESLint issues: run `npm run lint:fix` and `npm run format`.
+
+## Tech stack
+
+- Playwright `@playwright/test` with Chromium project
+- TypeScript with strict config and path aliases
+- ESLint + Prettier
+- Dotenv for configuration
