@@ -189,13 +189,15 @@ export class ApiMocks {
         contentType: 'application/json',
         body: JSON.stringify([
           {
-            "file_name": "9a699a97-a78d-4f4b-ab05-434d2eade4dc.mp3",
-            "task_id": "a8bc43fe-748e-40cf-89f6-a8e3e8351956",
-            "original_file_name": "short3Sec.mp3",
-            "file_url": "https://cursecut-uploads.s3.amazonaws.com/9a699a97-a78d-4f4b-ab05-434d2eade4dc.mp3?AWSAccessKeyId=AKIAUAPBFKPPKOZQZINF&Signature=1ZN1lZV7M4zwvTD6G4FGe68NCYY%3D&Expires=1761863607",
-            "clean_file_url": "https://cursecut-uploads.s3.amazonaws.com/7f97c568-7e6b-4f15-b15e-406fda131619.mp3?AWSAccessKeyId=AKIAUAPBFKPPKOZQZINF&Signature=1V8dItI9EtuL1dsg3Hx0uTJL7LQ%3D&Expires=1761863609",
-            "status": "succeeded",
-            "file_type": "audio"
+            file_name: '9a699a97-a78d-4f4b-ab05-434d2eade4dc.mp3',
+            task_id: 'a8bc43fe-748e-40cf-89f6-a8e3e8351956',
+            original_file_name: 'short3Sec.mp3',
+            file_url:
+              'https://cursecut-uploads.s3.amazonaws.com/9a699a97-a78d-4f4b-ab05-434d2eade4dc.mp3?AWSAccessKeyId=AKIAUAPBFKPPKOZQZINF&Signature=1ZN1lZV7M4zwvTD6G4FGe68NCYY%3D&Expires=1761863607',
+            clean_file_url:
+              'https://cursecut-uploads.s3.amazonaws.com/7f97c568-7e6b-4f15-b15e-406fda131619.mp3?AWSAccessKeyId=AKIAUAPBFKPPKOZQZINF&Signature=1V8dItI9EtuL1dsg3Hx0uTJL7LQ%3D&Expires=1761863609',
+            status: 'succeeded',
+            file_type: 'audio',
           },
         ]),
       });
