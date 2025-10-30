@@ -8,8 +8,6 @@ test.describe('Censored Words tab verification - multiple words', () => {
     const audioPage = helpers.audioProcessingPage;
     const isLiveMode = process.env.LIVE_MODE === 'true';
 
-    console.log('🔍 LIVE_MODE environment variable:', process.env.LIVE_MODE);
-    console.log('🔍 isLiveMode flag:', isLiveMode);
 
      await helpers.setupRealUserTest();
 

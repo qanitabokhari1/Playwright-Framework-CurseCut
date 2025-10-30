@@ -7,8 +7,6 @@ test.describe('My Premium Files - appearance and download functionality', () => 
   }) => {
     // Force live mode for this test
     const isLiveMode = true;
-    console.log('🔍 isLiveMode flag:', isLiveMode);
-
     // Use helpers and POM for auth and page actions
     const helpers = new TestHelpers(page);
     const audioPage = helpers.audioProcessingPage;

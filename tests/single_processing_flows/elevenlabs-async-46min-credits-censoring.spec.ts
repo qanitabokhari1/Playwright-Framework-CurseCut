@@ -12,18 +12,14 @@ test.describe('ElevenLabs ASYNC processing - 46min file - credits and censoring'
         const audioPage = helpers.audioProcessingPage;
         const isLiveMode = process.env.LIVE_MODE === 'true';
 
-        console.log('🔍 LIVE_MODE environment variable:', process.env.LIVE_MODE);
-        console.log('🔍 isLiveMode flag:', isLiveMode);
 
         await helpers.setupRealUserTest();
 
         // Conditionally setup mocks based on LIVE_MODE flag
         if (!isLiveMode) {
-            console.log('📦 Setting up mocked APIs for elevenlabs-async 46min file');
             await helpers.apiMocks.mock46MinutesAudioFile();
             await helpers.apiMocks.mockUploadChunkAPI();
         } else {
-            console.log('🌐 Using real backend APIs (no mocking)');
         }
 
         await audioPage.clickStartNow();
@@ -42,8 +38,6 @@ test.describe('ElevenLabs ASYNC processing - 46min file - credits and censoring'
             initialCreditsText?.replace(/[^\d.]/g, '') || '0'
         );
 
-        console.log('💰 Initial credits (raw text):', initialCreditsText);
-        console.log('💰 Initial credits (parsed):', initialCredits);
 
         // Trigger upload process
         await audioPage.clickProcessButton();
@@ -53,7 +47,6 @@ test.describe('ElevenLabs ASYNC processing - 46min file - credits and censoring'
         const finalData = await handleUploadAndPollStatus(page, baseUrl, 5000, 120); // 5s interval, 120 attempts = 10 min max
 
         // Verify final status and structure
-        console.log('✅ Processing completed with status:', finalData.status);
         expect(finalData.status).toBe('succeeded');
         expect(Array.isArray(finalData.transcription)).toBe(true);
 
@@ -71,27 +64,16 @@ test.describe('ElevenLabs ASYNC processing - 46min file - credits and censoring'
             finalCreditsText?.replace(/[^\d.]/g, '') || '0'
         );
 
-        console.log('💰 Final credits (raw text):', finalCreditsText);
-        console.log('💰 Final credits (parsed):', finalCredits);
 
         if (isLiveMode) {
             // LIVE_MODE: Expect credits deducted (46 minutes = 17.648)
             const expectedDeduction = 17.648; // Exact for 46 minute file
             const actualDeduction = parseFloat((initialCredits - finalCredits).toFixed(3));
-            
-            console.log('✅ LIVE MODE - Expected deduction:', expectedDeduction);
-            console.log('✅ LIVE MODE - Actual deduction:', actualDeduction);
-            console.log('✅ LIVE MODE - Initial credits:', initialCredits);
-            console.log('✅ LIVE MODE - Final credits:', finalCredits);
-
             // Allow for small variance in credit calculation (±0.2 credits)
             expect(actualDeduction).toBeGreaterThanOrEqual(expectedDeduction - 0.2);
             expect(actualDeduction).toBeLessThanOrEqual(expectedDeduction + 0.2);
         } else {
             // MOCKED MODE: Expect credits to remain the same (no real deduction)
-            console.log('✅ MOCKED MODE - Expected credits (same as initial):', initialCredits);
-            console.log('✅ MOCKED MODE - Actual credits:', finalCredits);
-            console.log('✅ MOCKED MODE - Difference:', initialCredits - finalCredits);
             expect(finalCredits).toBe(initialCredits);
         }
 

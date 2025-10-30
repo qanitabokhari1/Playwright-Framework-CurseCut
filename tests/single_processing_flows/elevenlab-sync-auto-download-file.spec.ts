@@ -9,16 +9,11 @@ test.describe('ElevenLabs SYNC auto-download - file downloads automatically', ()
     const helpers = new TestHelpers(page);
     const audioPage = helpers.audioProcessingPage;
     const isLiveMode = process.env.LIVE_MODE === 'true';
-    console.log('🔍 LIVE_MODE environment variable:', process.env.LIVE_MODE);
-    console.log('🔍 isLiveMode flag:', isLiveMode);
 
     // Ensure user is logged in (real backend flow)
     await helpers.setupRealUserTest();
     // Setup mocks unless LIVE_MODE is true
     if (!isLiveMode) {
-      console.log(
-        '📦 Setting up mocked APIs for elevenlabs-sync auto-download'
-      );
       await helpers.setupMockingForTest('elevenlabs-sync');
     }
 
@@ -37,9 +32,5 @@ test.describe('ElevenLabs SYNC auto-download - file downloads automatically', ()
     ]);
 
     expect(download).toBeTruthy();
-    console.log(
-      '🎯 Download event triggered successfully:',
-      download.suggestedFilename()
-    );
   });
 });

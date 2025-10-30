@@ -8,17 +8,13 @@ test.describe('Deepgram processing - 3sec file - credits and censoring', () => {
     const audioPage = helpers.audioProcessingPage;
     const isLiveMode = process.env.LIVE_MODE === 'true';
 
-    console.log('🔍 LIVE_MODE environment variable:', process.env.LIVE_MODE);
-    console.log('🔍 isLiveMode flag:', isLiveMode);
 
     await helpers.setupRealUserTest();
 
     // Conditionally setup mocks based on LIVE_MODE flag
     if (!isLiveMode) {
-      console.log('📦 Setting up mocked APIs for deepgram');
       await helpers.setupMockingForTest('deepgram');
     } else {
-      console.log('🌐 Using real backend APIs (no mocking)');
     }
 
     await audioPage.clickStartNow();
@@ -33,8 +29,6 @@ test.describe('Deepgram processing - 3sec file - credits and censoring', () => {
       initialCreditsText?.replace(/[^\d.]/g, '') || '0'
     );
 
-    console.log('💰 Initial credits (raw text):', initialCreditsText);
-    console.log('💰 Initial credits (parsed):', initialCredits);
 
     const statusResponsePromise = page.waitForResponse(
       res => res.url().includes('/status/') && res.ok(),
@@ -52,22 +46,14 @@ test.describe('Deepgram processing - 3sec file - credits and censoring', () => {
       finalCreditsText?.replace(/[^\d.]/g, '') || '0'
     );
 
-    console.log('💰 Final credits (raw text):', finalCreditsText);
-    console.log('💰 Final credits (parsed):', finalCredits);
 
     if (isLiveMode) {
       // LIVE_MODE: Expect credits deducted by 0.1
       const expectedRemaining = parseFloat((initialCredits - 0.1).toFixed(3));
       const actualRemaining = parseFloat(finalCredits.toFixed(3));
-      console.log('✅ LIVE MODE - Expected credits:', expectedRemaining);
-      console.log('✅ LIVE MODE - Actual credits:', actualRemaining);
-      console.log('✅ LIVE MODE - Difference:', initialCredits - finalCredits);
       expect(actualRemaining).toBe(expectedRemaining);
     } else {
       // MOCKED MODE: Expect credits to remain the same (no real deduction)
-      console.log('✅ MOCKED MODE - Expected credits (same as initial):', initialCredits);
-      console.log('✅ MOCKED MODE - Actual credits:', finalCredits);
-      console.log('✅ MOCKED MODE - Difference:', initialCredits - finalCredits);
       expect(finalCredits).toBe(initialCredits);
     }
 

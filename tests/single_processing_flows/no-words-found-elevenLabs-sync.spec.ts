@@ -8,10 +8,6 @@ test.describe('No words found scenario - ElevenLabs SYNC with clean files', () =
     const helpers = new TestHelpers(page);
     const audioPage = helpers.audioProcessingPage;
     const isLiveMode = process.env.LIVE_MODE === 'true';
-
-    console.log('🔍 LIVE_MODE environment variable:', process.env.LIVE_MODE);
-    console.log('🔍 isLiveMode flag:', isLiveMode);
-
      await helpers.setupRealUserTest();
     // Conditionally setup mocks based on LIVE_MODE flag
     if (!isLiveMode) {
