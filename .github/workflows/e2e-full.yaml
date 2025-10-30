@@ -2,10 +2,10 @@ name: E2E Full Tests with Code Quality
 
 on:
   push:
-    branches: [main, dev, dev-saad]
+    branches: [main, dev, dev-musab]
 
   pull_request:
-    branches: [main, dev, dev-saad]
+    branches: [main, dev, dev-musab]
 
 jobs:
   lint-and-typecheck:
