@@ -1,11 +1,14 @@
 name: E2E Full Tests with Code Quality
 
+# Workflow with code quality gate
 on:
   push:
-    branches: [main, dev, dev-musab]
+    branches: [main, dev, qanita-qa-playwright]
+    paths:
+      - 'playwright/e2e-full/**'
 
   pull_request:
-    branches: [main, dev, dev-musab]
+    branches: [main, dev]
 
 jobs:
   lint-and-typecheck:
@@ -19,8 +22,10 @@ jobs:
         run: npm run lint
       - name: Run Prettier check
         run: npm run format:check
+        working-directory: playwright/e2e-full
       - name: Run TypeScript type checking
         run: npx tsc --noEmit
+
 
   test:
     needs: lint-and-typecheck
@@ -37,43 +42,16 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - shardIndex: 1
-            shardTotal: 7
-            grep: ''
-          - shardIndex: 2
-            shardTotal: 7
-            grep: ''
-          - shardIndex: 3
-            shardTotal: 7
-            grep: ''
-          - shardIndex: 4
-            shardTotal: 7
-            grep: ''
-          - shardIndex: 5
-            shardTotal: 7
-            grep: ''
-          - shardIndex: 6
-            shardTotal: 7
-            grep: ''
-          - shardIndex: 7
-            shardTotal: 7
-            grep: ''
-          - shardIndex: 1
-            shardTotal: 1
-            grep: 'elevenlabs-async-46min-credits-censoring'
-
+        shardIndex: [1, 2, 3, 4]
+        shardTotal: [4]
     steps:
       - uses: actions/checkout@v5
       - name: Install dependencies
         run: npm ci
-      - name: Run Playwright tests (Shard ${{ matrix.shardIndex }})
-        run: |
-          if [ -z "${{ matrix.grep }}" ]; then
-            npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --grep-invert "30sec file - credits and censoring - elevenlabs sync"
-          else
-            npx playwright test --grep "${{ matrix.grep }}" --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
-          fi
+        working-directory: playwright/e2e-full
+      - name: Run Playwright tests
+        run: npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+        working-directory: playwright/e2e-full
       - name: Upload Playwright HTML Report
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4
