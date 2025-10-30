@@ -17,7 +17,6 @@ test.describe('ElevenLabs SYNC processing - 30sec file - credits and censoring',
     // Setup mocking if not in live mode
     if (!isLiveMode) {
       await helpers.apiMocks.mockElevenLabsSync30SecFile();
-    } else {
     }
 
     await page.waitForTimeout(isLiveMode ? 5000 : 2000);

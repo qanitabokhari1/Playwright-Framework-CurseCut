@@ -83,7 +83,6 @@ test.describe('Critical business logic - exact match censoring works', () => {
     // Conditionally setup mocks based on LIVE_MODE flag
     if (!isLiveMode) {
       await helpers.setupMockingForTest('elevenlabs-async');
-    } else {
     }
 
     const audioPage = helpers.audioProcessingPage;

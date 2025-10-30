@@ -16,7 +16,6 @@ test.describe('Session Management', () => {
     // Conditionally setup mocks based on LIVE_MODE flag
     if (!isLiveMode) {
       await helpers.setupMockingForTest('elevenlabs-sync');
-    } else {
     }
 
     // Navigate to cut page

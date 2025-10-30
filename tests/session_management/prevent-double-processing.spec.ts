@@ -81,7 +81,6 @@ test.describe('Session Management - prevent double processing', () => {
     // Conditionally setup mocks based on LIVE_MODE flag
     if (!isLiveMode) {
       await helpers.setupMockingForTest('elevenlabs-async');
-    } else {
     }
 
     // Test steps: Complete audio processing workflow

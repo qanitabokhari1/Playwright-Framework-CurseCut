@@ -19,7 +19,6 @@ test.describe('ElevenLabs ASYNC processing - 46min file - credits and censoring'
         if (!isLiveMode) {
             await helpers.apiMocks.mock46MinutesAudioFile();
             await helpers.apiMocks.mockUploadChunkAPI();
-        } else {
         }
 
         await audioPage.clickStartNow();

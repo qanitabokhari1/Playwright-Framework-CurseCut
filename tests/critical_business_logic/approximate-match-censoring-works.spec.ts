@@ -81,7 +81,6 @@ test.describe('Critical business logic - approximate match censoring works', () 
 
     if (!isLiveMode) {
       await helpers.setupMockingForTest('elevenlabs-async');
-    } else {
     }
 
     const audioPage = helpers.audioProcessingPage;

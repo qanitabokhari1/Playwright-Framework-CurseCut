@@ -14,7 +14,6 @@ test.describe('Deepgram processing - 3sec file - credits and censoring', () => {
     // Conditionally setup mocks based on LIVE_MODE flag
     if (!isLiveMode) {
       await helpers.setupMockingForTest('deepgram');
-    } else {
     }
 
     await audioPage.clickStartNow();
