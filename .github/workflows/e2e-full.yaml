@@ -50,14 +50,17 @@ jobs:
           - shardIndex: 4
             shardTotal: 7
             grep: ''
+          - shardIndex: 5
+            shardTotal: 7
+            grep: ''
           - shardIndex: 6
             shardTotal: 7
             grep: ''
           - shardIndex: 7
             shardTotal: 7
             grep: ''
-          - shardIndex: 5
-            shardTotal: 5
+          - shardIndex: 1
+            shardTotal: 1
             grep: 'elevenlabs-async-46min-credits-censoring'
 
     steps:
@@ -69,7 +72,7 @@ jobs:
           if [ -z "${{ matrix.grep }}" ]; then
             npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --grep-invert "30sec file - credits and censoring - elevenlabs sync"
           else
-            npx playwright test --grep "${{ matrix.grep }}"
+            npx playwright test --grep "${{ matrix.grep }}" --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
           fi
       - name: Upload Playwright HTML Report
         if: ${{ !cancelled() }}
