@@ -5,22 +5,14 @@ test.describe('My Premium Files - appearance and download functionality', () => 
   test('My Premium Files - appearance and download functionality', async ({
     page,
   }) => {
-    const isLiveMode = process.env.LIVE_MODE === 'true';
-    console.log('🔍 LIVE_MODE environment variable:', process.env.LIVE_MODE);
+    // Force live mode for this test
+    const isLiveMode = true;
     console.log('🔍 isLiveMode flag:', isLiveMode);
 
     // Use helpers and POM for auth and page actions
     const helpers = new TestHelpers(page);
     const audioPage = helpers.audioProcessingPage;
     await helpers.setupRealUserTest();
-
-    if (!isLiveMode) {
-      console.log(
-        '📦 Setting up mocked APIs for elevenlabs-async premium flow'
-      );
-      await helpers.setupMockingForTest('elevenlabs-async');
-      await helpers.apiMocks.mockProcessedFilesAPI();
-    }
 
     // --- Step 6: Start processing flow ---
     await audioPage.clickStartNow();
