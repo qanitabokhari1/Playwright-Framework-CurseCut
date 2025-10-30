@@ -84,6 +84,7 @@ LIVE_MODE=false
 ```
 
 Notes
+
 - `playwright.config.ts` loads `.env` from the repo root. `BASE_URL` defaults to `http://localhost:3000` if not set.
 - `fixtures/testData.ts` includes hardcoded URLs/files; navigation uses `AuthPage.navigateTo(TestData.urls.base)`.
 
@@ -118,79 +119,84 @@ npx tsc --noEmit
 ## Mocking vs live mode
 
 - `LIVE_MODE=false` (default): deterministic tests via route mocks
-	- `TestHelpers.setupMockingForTest(variant)` wires core mocks per variant
-		- `ApiMocks.mockCensoringSuccess(variant)` – mocks `/audio` job start and `/status` success with a transcript
-		- For async variant, also calls `ApiMocks.mockUploadChunkAPI()` to satisfy `/upload-chunk`
-	- Credits are mocked via `ApiMocks.mockAuthenticationFlow(credits)` during auth setup
-	- Premium listing can be mocked via `ApiMocks.mockProcessedFilesAPI()` so “My Premium Files” shows entries
+  - `TestHelpers.setupMockingForTest(variant)` wires core mocks per variant
+    - `ApiMocks.mockCensoringSuccess(variant)` – mocks `/audio` job start and `/status` success with a transcript
+    - For async variant, also calls `ApiMocks.mockUploadChunkAPI()` to satisfy `/upload-chunk`
+  - Credits are mocked via `ApiMocks.mockAuthenticationFlow(credits)` during auth setup
+  - Premium listing can be mocked via `ApiMocks.mockProcessedFilesAPI()` so “My Premium Files” shows entries
 
 - `LIVE_MODE=true`: real backend
-	- No route intercepts for processing; timeouts may be higher in some specs
-	- Real login is performed using `TEST_USER_EMAIL` / `TEST_USER_PASSWORD`
-	- For ElevenLabs async live runs, `helpers/liveAsyncPolling.ts` provides `handleUploadAndPollStatus(page)` to wait on the app’s own polling
+  - No route intercepts for processing; timeouts may be higher in some specs
+  - Real login is performed using `TEST_USER_EMAIL` / `TEST_USER_PASSWORD`
+  - For ElevenLabs async live runs, `helpers/liveAsyncPolling.ts` provides `handleUploadAndPollStatus(page)` to wait on the app’s own polling
 
 Additional targeted mocks available in `helpers/apiMocks.ts`
+
 - `mockProcessedFilesAPI()` – return a list for “My Premium Files” (drives appearance + download event)
 - `mockNoFuckWord(variant)` – status without the explicit word (for “no words found” checks)
 - `mockElevenLabsSync30SecFile()` – longer transcript fixture for sync
 - `mock46MinutesAudioFile()` – very long transcript fixture (video/long-audio route)
 
 Commented-out (not used by default)
+
 - `mockSupabaseLogin`, `mockProcessingAPI`, `mockErrorResponse`, `mockCostAPI`, `mockSubscriptionAPI` are present but disabled since the suite hits the real auth/processing by default and only mocks what’s needed for determinism.
 
 ## Key page objects and helpers
 
 - `BasePage`
-	- Common locators: `creditsButton`, `loginButton`, `processButton`, `uploadInput`, `startNowButton`
-	- Utilities: navigation and expectation helpers
-	- Lightweight mocks: `mockSupabaseLogin()`, `mockCreditsAPI()` (used rarely; prefer `ApiMocks`)
+  - Common locators: `creditsButton`, `loginButton`, `processButton`, `uploadInput`, `startNowButton`
+  - Utilities: navigation and expectation helpers
+  - Lightweight mocks: `mockSupabaseLogin()`, `mockCreditsAPI()` (used rarely; prefer `ApiMocks`)
 
 - `AuthPage`
-	- `login()` and `loginWithRealCredentials()` use the real auth form
-	- `verifyCreditsBalance()` for post-login UI state
+  - `login()` and `loginWithRealCredentials()` use the real auth form
+  - `verifyCreditsBalance()` for post-login UI state
 
 - `AudioProcessingPage`
-	- Form interactions: song/premium toggles, censor words, replacements
-	- Processing: `clickStartNow()`, `clickProcessButton()`, `verifyProcessingStarted()`
-	- Premium files: `openMyPremiumFiles()`, `expectPremiumFileVisibleByName()`, `clickPremiumDownloadAt()`
+  - Form interactions: song/premium toggles, censor words, replacements
+  - Processing: `clickStartNow()`, `clickProcessButton()`, `verifyProcessingStarted()`
+  - Premium files: `openMyPremiumFiles()`, `expectPremiumFileVisibleByName()`, `clickPremiumDownloadAt()`
 
 - `TestHelpers`
-	- Auth setup: `setupZeroCreditsTest()`, `setupSufficientCreditsTest()`, `setupRealUserTest()`
-	- Mocking: `setupMockingForTest('deepgram'|'elevenlabs-sync'|'elevenlabs-async')`
-	- Composes page objects for concise tests
+  - Auth setup: `setupZeroCreditsTest()`, `setupSufficientCreditsTest()`, `setupRealUserTest()`
+  - Mocking: `setupMockingForTest('deepgram'|'elevenlabs-sync'|'elevenlabs-async')`
+  - Composes page objects for concise tests
 
 - `liveAsyncPolling`
-	- `handleUploadAndPollStatus(page)` – waits for final `/upload-chunk` and subsequent `/status/{taskId}` success when running live async flows
+  - `handleUploadAndPollStatus(page)` – waits for final `/upload-chunk` and subsequent `/status/{taskId}` success when running live async flows
 
 ## Example: Premium files – appearance and download (mocked)
 
 Scenario (when `LIVE_MODE=false`)
-1) Call `helpers.setupMockingForTest('elevenlabs-async')` so `/upload-chunk` and `/status` are mocked
-2) Call `helpers.apiMocks.mockProcessedFilesAPI()` so the “My Premium Files” list is populated
-3) Click “My Premium Files”, verify `short3Sec.mp3` appears, click “Download” and assert a browser download event fires
+
+1. Call `helpers.setupMockingForTest('elevenlabs-async')` so `/upload-chunk` and `/status` are mocked
+2. Call `helpers.apiMocks.mockProcessedFilesAPI()` so the “My Premium Files” list is populated
+3. Click “My Premium Files”, verify `short3Sec.mp3` appears, click “Download” and assert a browser download event fires
 
 This flow is implemented in `tests/single_processing_flows/premium-files-apperance-and-download.spec.ts` and will also work against the live backend by running `npm run test:live` (in live mode it will rely on real data instead of the mocked list).
 
 ## Tests overview
 
 Folders
+
 - `critical_business_logic/` – approximate/exact matching, toggle exclusivity, timeout handling, charging, video route
 - `session_management/` – credits=0 states, file switching, double processing prevention
 - `single_processing_flows/` – per-variant flows, word tabs, premium list/download, tags
 
 Reports
+
 - HTML: `playwright-report/index.html`
 - JSON: `test-results/results.json`
 - JUnit: `test-results/results.xml`
 
 ## Adding tests
 
-1) Create or extend a page object under `pages/`
-2) Add/adjust constants in `fixtures/testData.ts`
-3) Reuse `TestHelpers` for auth and mocking (`setupMockingForTest(...)`)
-4) For mocked runs add explicit mocks as needed (e.g., `mockProcessedFilesAPI()`)
-5) Place the spec under the appropriate folder in `tests/`
-6) Keep tests independent and parallel-safe; avoid test order coupling
+1. Create or extend a page object under `pages/`
+2. Add/adjust constants in `fixtures/testData.ts`
+3. Reuse `TestHelpers` for auth and mocking (`setupMockingForTest(...)`)
+4. For mocked runs add explicit mocks as needed (e.g., `mockProcessedFilesAPI()`)
+5. Place the spec under the appropriate folder in `tests/`
+6. Keep tests independent and parallel-safe; avoid test order coupling
 
 ## Troubleshooting
 
