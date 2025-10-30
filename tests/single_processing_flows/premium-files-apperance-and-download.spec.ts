@@ -8,7 +8,16 @@ test.describe('My Premium Files - appearance and download functionality', () => 
     // Use helpers and POM for auth and page actions
     const helpers = new TestHelpers(page);
     const audioPage = helpers.audioProcessingPage;
+    const isLiveMode = process.env.LIVE_MODE === 'true';
     await helpers.setupRealUserTest();
+
+    // When not in LIVE_MODE, setup API mocks so premium files populate and download works deterministically
+    if (!isLiveMode) {
+      // Mock processing flow endpoints for premium (async) path and upload chunk
+      await helpers.setupMockingForTest('elevenlabs-async');
+      // Mock the processed files listing endpoint so "My Premium Files" shows an entry
+      await helpers.apiMocks.mockProcessedFilesAPI();
+    }
 
     // --- Step 6: Start processing flow ---
     await audioPage.clickStartNow();

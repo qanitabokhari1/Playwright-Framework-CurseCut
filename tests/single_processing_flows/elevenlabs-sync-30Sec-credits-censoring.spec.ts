@@ -10,7 +10,6 @@ test.describe('ElevenLabs SYNC processing - 30sec file - credits and censoring',
     const audioPage = helpers.audioProcessingPage;
     const isLiveMode = process.env.LIVE_MODE === 'true';
 
-
     // Setup authentication with sufficient credits
     await helpers.setupRealUserTest();
 

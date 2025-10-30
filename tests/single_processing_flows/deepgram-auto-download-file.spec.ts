@@ -3,7 +3,9 @@ import { TestHelpers } from '../../helpers/testHelpers';
 import { TestData } from '../../fixtures/testData';
 
 test.describe('Deepgram auto-download - file downloads automatically', () => {
-  test('Deepgram auto-download - file downloads automatically', async ({ page }) => {
+  test('Deepgram auto-download - file downloads automatically', async ({
+    page,
+  }) => {
     const helpers = new TestHelpers(page);
     const audioPage = helpers.audioProcessingPage;
     const isLiveMode = process.env.LIVE_MODE === 'true';

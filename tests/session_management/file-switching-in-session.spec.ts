@@ -9,7 +9,6 @@ test.describe('Session Management', () => {
     const helpers = new TestHelpers(page);
     const isLiveMode = process.env.LIVE_MODE === 'true';
 
-
     // Setup: Authenticate with real user and sufficient credits
     await helpers.setupRealUserTest();
 

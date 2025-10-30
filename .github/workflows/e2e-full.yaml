@@ -1,11 +1,12 @@
 name: E2E Full Tests with Code Quality
 
+# Workflow with code quality gate
 on:
   push:
-    branches: [main, dev, dev-saad]
+    branches: [main, dev, dev-musab]
 
   pull_request:
-    branches: [main, dev, dev-saad]
+    branches: [main, dev, dev-musab]
 
 jobs:
   lint-and-typecheck:
@@ -26,6 +27,7 @@ jobs:
     needs: lint-and-typecheck
     timeout-minutes: 60
     runs-on: ubuntu-latest
+    environment: Framework
     env:
       BASE_URL: ${{ secrets.BASE_URL }}
       LIVE_MODE: ${{ secrets.LIVE_MODE }}
@@ -38,31 +40,32 @@ jobs:
       matrix:
         include:
           - shardIndex: 1
-            shardTotal: 5
+            shardTotal: 4
             grep: ''
           - shardIndex: 2
-            shardTotal: 5
+            shardTotal: 4
             grep: ''
           - shardIndex: 3
-            shardTotal: 5
+            shardTotal: 4
             grep: ''
           - shardIndex: 4
-            shardTotal: 5
+            shardTotal: 4
             grep: ''
+          # Dedicated job for the heavy test; use a unique shardIndex for artifact naming
           - shardIndex: 5
             shardTotal: 5
-            grep: 'elevenlabs-async-46min-credits-censoring' # 🎯 heavy test
-
+            grep: 'elevenlabs-async-46min-credits-censoring'
     steps:
       - uses: actions/checkout@v5
       - name: Install dependencies
         run: npm ci
-      - name: Run Playwright tests (Shard ${{ matrix.shardIndex }})
+      - name: Run Playwright tests
         run: |
           if [ -z "${{ matrix.grep }}" ]; then
-            npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --grep-invert "30sec file - credits and censoring - elevenlabs sync"
+            npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --grep-invert "elevenlabs-async-46min-credits-censoring"
           else
-            npx playwright test --grep "${{ matrix.grep }}" --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+            # Run the heavy test in isolation (no sharding here)
+            npx playwright test --grep "${{ matrix.grep }}"
           fi
       - name: Upload Playwright HTML Report
         if: ${{ !cancelled() }}

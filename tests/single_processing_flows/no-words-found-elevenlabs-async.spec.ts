@@ -10,8 +10,8 @@ test.describe('No words found scenario - ElevenLabs ASYNC with clean files', () 
     const audioPage = helpers.audioProcessingPage;
     const isLiveMode = process.env.LIVE_MODE === 'true';
 
-     await helpers.setupRealUserTest();
-    
+    await helpers.setupRealUserTest();
+
     // Conditionally setup mocks based on LIVE_MODE flag
     if (!isLiveMode) {
       await helpers.apiMocks.mockNoFuckWord('elevenlabs-async');

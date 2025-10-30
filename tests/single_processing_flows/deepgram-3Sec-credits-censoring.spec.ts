@@ -8,7 +8,6 @@ test.describe('Deepgram processing - 3sec file - credits and censoring', () => {
     const audioPage = helpers.audioProcessingPage;
     const isLiveMode = process.env.LIVE_MODE === 'true';
 
-
     await helpers.setupRealUserTest();
 
     // Conditionally setup mocks based on LIVE_MODE flag
@@ -28,7 +27,6 @@ test.describe('Deepgram processing - 3sec file - credits and censoring', () => {
       initialCreditsText?.replace(/[^\d.]/g, '') || '0'
     );
 
-
     const statusResponsePromise = page.waitForResponse(
       res => res.url().includes('/status/') && res.ok(),
       { timeout: isLiveMode ? 60000 : 10000 }
@@ -44,7 +42,6 @@ test.describe('Deepgram processing - 3sec file - credits and censoring', () => {
     const finalCredits = parseFloat(
       finalCreditsText?.replace(/[^\d.]/g, '') || '0'
     );
-
 
     if (isLiveMode) {
       // LIVE_MODE: Expect credits deducted by 0.1
