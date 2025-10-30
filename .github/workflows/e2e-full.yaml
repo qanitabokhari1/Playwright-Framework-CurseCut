@@ -39,16 +39,22 @@ jobs:
       matrix:
         include:
           - shardIndex: 1
-            shardTotal: 5
+            shardTotal: 7
             grep: ''
           - shardIndex: 2
-            shardTotal: 5
+            shardTotal: 7
             grep: ''
           - shardIndex: 3
-            shardTotal: 5
+            shardTotal: 7
             grep: ''
           - shardIndex: 4
-            shardTotal: 5
+            shardTotal: 7
+            grep: ''
+          - shardIndex: 6
+            shardTotal: 7
+            grep: ''
+          - shardIndex: 7
+            shardTotal: 7
             grep: ''
           - shardIndex: 5
             shardTotal: 5
@@ -61,9 +67,9 @@ jobs:
       - name: Run Playwright tests (Shard ${{ matrix.shardIndex }})
         run: |
           if [ -z "${{ matrix.grep }}" ]; then
-            npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --workers=2 --grep-invert "30sec file - credits and censoring - elevenlabs sync"
+            npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --grep-invert "30sec file - credits and censoring - elevenlabs sync"
           else
-            npx playwright test --grep "${{ matrix.grep }}" --workers=2
+            npx playwright test --grep "${{ matrix.grep }}"
           fi
       - name: Upload Playwright HTML Report
         if: ${{ !cancelled() }}
