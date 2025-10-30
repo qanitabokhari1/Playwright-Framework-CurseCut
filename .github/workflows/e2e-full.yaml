@@ -26,6 +26,7 @@ jobs:
     needs: lint-and-typecheck
     timeout-minutes: 60
     runs-on: ubuntu-latest
+    environment: Framework
     env:
       BASE_URL: ${{ secrets.BASE_URL }}
       LIVE_MODE: ${{ secrets.LIVE_MODE }}
