@@ -65,13 +65,44 @@ export class AudioProcessingPage extends BasePage {
     return this.page.locator('.absolute').first();
   }
 
+  get uploadInput(): Locator {
+    return this.page.getByTestId('upload-input');
+  }
+
+  get censoredWordsTab(): Locator {
+    return this.page.getByRole('tab', { name: 'Censored Words' });
+  }
+
+  get noCensoredWordsMessage(): Locator {
+    return this.page.getByText('No words found.', { exact: true }).or(
+      this.page.getByText('No words found to censor in the transcription.', {
+        exact: true,
+      })
+    );
+  }
+
   constructor(page: Page) {
     super(page);
   }
 
+  // Premium files area
+  get myPremiumFilesButton(): Locator {
+    return this.page.getByRole('button', { name: 'My Premium Files' });
+  }
+
+  get premiumDownloadButtons(): Locator {
+    return this.page.getByRole('button', { name: 'Download' });
+  }
+
   // File upload actions
   async uploadAudioFile(filePath: string): Promise<void> {
-    // Use the same method as the working test
+    await this.uploadInput.setInputFiles(filePath);
+  }
+
+  // Video file upload helper
+  async uploadVideoFile(
+    filePath: string | { name: string; mimeType: string; buffer: Buffer }
+  ): Promise<void> {
     await this.uploadInput.setInputFiles(filePath);
   }
 
@@ -214,7 +245,7 @@ export class AudioProcessingPage extends BasePage {
   }
 
   async uploadFileWithChooseFilesButton(fileName: string): Promise<void> {
-    await this.chooseFilesButton.click();
+    // await this.chooseFilesButton.click();
     await this.uploadInput.setInputFiles(fileName);
   }
 
@@ -302,7 +333,7 @@ export class AudioProcessingPage extends BasePage {
   async uploadReplacementFileWithChooseFilesButton(
     fileName: string
   ): Promise<void> {
-    await this.chooseFilesButton.click();
+    // await this.chooseFilesButton.click();
     await this.uploadInput.setInputFiles(fileName);
   }
 
@@ -330,5 +361,48 @@ export class AudioProcessingPage extends BasePage {
 
     // Verify reprocess button is not visible after file switching
     await this.verifyReprocessButtonNotVisible();
+  }
+
+  async configureSongSettings(
+    isSong: boolean,
+    isPremium: boolean
+  ): Promise<void> {
+    // Reuse existing methods to avoid duplicated locator/click logic
+    await this.selectSongOption(isSong);
+    await this.selectPremiumOption(isPremium);
+  }
+
+  async enterCensorWord(word: string): Promise<void> {
+    await this.censorWordInput.click();
+    await this.censorWordInput.fill(word);
+  }
+
+  async processFileAndWaitForResponse(): Promise<void> {
+    const audioResponsePromise = this.page.waitForResponse(
+      res => res.url().includes('/audio') && res.ok()
+    );
+    await this.processButton.click();
+    await audioResponsePromise;
+  }
+
+  async verifyNoCensoredWordsFound(): Promise<void> {
+    await this.censoredWordsTab.click();
+    await expect(this.noCensoredWordsMessage).toBeVisible();
+  }
+
+  // Premium files helpers
+  async openMyPremiumFiles(): Promise<void> {
+    await this.myPremiumFilesButton.click({ force: true });
+  }
+
+  async expectPremiumFileVisibleByName(
+    fileName: string,
+    nthIndex: number
+  ): Promise<void> {
+    await expect(this.page.getByText(fileName).nth(nthIndex)).toBeVisible();
+  }
+
+  async clickPremiumDownloadAt(index: number): Promise<void> {
+    await this.premiumDownloadButtons.nth(index).click();
   }
 }

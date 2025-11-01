@@ -3,14 +3,10 @@ name: E2E Full Tests with Code Quality
 # Workflow with code quality gate
 on:
   push:
-    branches: [main, dev, qanita-qa-playwright]
-    paths:
-      - 'playwright/e2e-full/**'
+    branches: [main, dev, dev-musab]
 
   pull_request:
-    branches: [main, dev]
-    paths:
-      - 'playwright/e2e-full/**'
+    branches: [main, dev, dev-musab]
 
 jobs:
   lint-and-typecheck:
@@ -20,21 +16,18 @@ jobs:
       - uses: actions/checkout@v5
       - name: Install dependencies
         run: npm ci
-        working-directory: playwright/e2e-full
       - name: Run ESLint
         run: npm run lint
-        working-directory: playwright/e2e-full
       - name: Run Prettier check
         run: npm run format:check
-        working-directory: playwright/e2e-full
       - name: Run TypeScript type checking
         run: npx tsc --noEmit
-        working-directory: playwright/e2e-full
 
   test:
     needs: lint-and-typecheck
     timeout-minutes: 60
     runs-on: ubuntu-latest
+    environment: Framework
     env:
       BASE_URL: ${{ secrets.BASE_URL }}
       LIVE_MODE: ${{ secrets.LIVE_MODE }}
@@ -45,16 +38,35 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shardIndex: [1, 2, 3, 4]
-        shardTotal: [4]
+        include:
+          - shardIndex: 1
+            shardTotal: 4
+            grep: ''
+          - shardIndex: 2
+            shardTotal: 4
+            grep: ''
+          - shardIndex: 3
+            shardTotal: 4
+            grep: ''
+          - shardIndex: 4
+            shardTotal: 4
+            grep: ''
+          # Dedicated job for the heavy test; use a unique shardIndex for artifact naming
+          - shardIndex: 5
+            shardTotal: 5
+            grep: 'elevenlabs-async-46min-credits-censoring'
     steps:
       - uses: actions/checkout@v5
       - name: Install dependencies
         run: npm ci
-        working-directory: playwright/e2e-full
       - name: Run Playwright tests
-        run: npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
-        working-directory: playwright/e2e-full
+        run: |
+          if [ -z "${{ matrix.grep }}" ]; then
+            npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --grep-invert "elevenlabs-async-46min-credits-censoring"
+          else
+            # Run the heavy test in isolation (no sharding here)
+            npx playwright test --grep "${{ matrix.grep }}"
+          fi
       - name: Upload Playwright HTML Report
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4

@@ -7,10 +7,15 @@ test.describe('Session Management', () => {
     page,
   }) => {
     const helpers = new TestHelpers(page);
+    const isLiveMode = process.env.LIVE_MODE === 'true';
 
     // Setup: Authenticate with real user and sufficient credits
     await helpers.setupRealUserTest();
-    await helpers.setupMockingForTest('elevenlabs-sync');
+
+    // Conditionally setup mocks based on LIVE_MODE flag
+    if (!isLiveMode) {
+      await helpers.setupMockingForTest('elevenlabs-sync');
+    }
 
     // Navigate to cut page
     const audioPage = helpers.audioProcessingPage;
@@ -30,7 +35,7 @@ test.describe('Session Management', () => {
     );
 
     // Wait for UI to update after file upload
-    await page.waitForTimeout(2000);
+    await page.waitForTimeout(isLiveMode ? 5000 : 2000);
 
     // Assertion: Verify reprocess button is not visible (state was cleared)
     await audioPage.verifyReprocessButtonNotVisible();

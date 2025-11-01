@@ -2,31 +2,23 @@ import { test, expect } from '@playwright/test';
 import { TestHelpers } from '../../helpers/testHelpers';
 import { TestData } from '../../fixtures/testData';
 
-test.describe('Critical business logic - prevent double charging elevenlabs sync', () => {
-  test('should charge correct amount and show censored words after processing', async ({
-    page,
-  }) => {
+test.describe('Deepgram processing - 3sec file - credits and censoring', () => {
+  test('3sec file - credits and censoring', async ({ page }) => {
     const helpers = new TestHelpers(page);
+    const audioPage = helpers.audioProcessingPage;
     const isLiveMode = process.env.LIVE_MODE === 'true';
 
-    // Setup: Login with real user and sufficient credits
     await helpers.setupRealUserTest();
 
     // Conditionally setup mocks based on LIVE_MODE flag
     if (!isLiveMode) {
-      await helpers.setupMockingForTest('elevenlabs-sync');
+      await helpers.setupMockingForTest('deepgram');
     }
 
-    const audioPage = helpers.audioProcessingPage;
-
-    // Click Start Now button (already on home page after login)
     await audioPage.clickStartNow();
-
-    // Upload audio file
     await audioPage.uploadAudioFile(TestData.files.audio);
-
-    // Select song-yes and enter exact match censor word
-    await audioPage.songYesButton.click();
+    await audioPage.selectSongOption(false);
+    await audioPage.selectPremiumOption(false);
     await audioPage.fillCensorWord(TestData.censorWords.default);
 
     // Capture initial credits from UI
@@ -35,19 +27,11 @@ test.describe('Critical business logic - prevent double charging elevenlabs sync
       initialCreditsText?.replace(/[^\d.]/g, '') || '0'
     );
 
-    // Click process and wait for audio upload completion
-    const audioResponsePromise = page.waitForResponse(
-      res => res.url().includes('/audio') && res.ok(),
-      { timeout: isLiveMode ? 180000 : 10000 }
-    );
-    await audioPage.clickProcessButton();
-    await audioResponsePromise;
-
-    // Wait for status completion
     const statusResponsePromise = page.waitForResponse(
       res => res.url().includes('/status/') && res.ok(),
-      { timeout: isLiveMode ? 180000 : 10000 }
+      { timeout: isLiveMode ? 60000 : 10000 }
     );
+    await audioPage.clickProcessButton();
     await statusResponsePromise;
 
     // Wait for UI to update after processing
@@ -69,11 +53,11 @@ test.describe('Critical business logic - prevent double charging elevenlabs sync
       expect(finalCredits).toBe(initialCredits);
     }
 
-    // Verify censored words appear in the table
-    await page.getByRole('tab', { name: /Censored Words/i }).click();
+    await page.getByRole('tab', { name: 'Censored Words' }).click();
+    await page.locator('table').scrollIntoViewIfNeeded();
     await expect(page.locator('table')).toContainText(
       TestData.censorWords.default
     );
-    await expect(page.locator('table')).toContainText(/00:00:0[0-9]/);
+    await expect(page.locator('table')).toContainText('00:00:01');
   });
 });

@@ -5,10 +5,15 @@ import { TestData } from '../../fixtures/testData';
 test.describe('Session Management - prevent double processing', () => {
   test('deepgram', async ({ page }) => {
     const helpers = new TestHelpers(page);
+    const isLiveMode = process.env.LIVE_MODE === 'true';
 
     // Setup: Authenticate with sufficient credits
     await helpers.setupSufficientCreditsTest();
-    await helpers.setupMockingForTest('deepgram');
+
+    // Conditionally setup mocks based on LIVE_MODE flag
+    if (!isLiveMode) {
+      await helpers.setupMockingForTest('deepgram');
+    }
 
     // Test steps: Complete audio processing workflow
     const audioPage = helpers.audioProcessingPage;
@@ -32,10 +37,15 @@ test.describe('Session Management - prevent double processing', () => {
 
   test('elevenlabs sync', async ({ page }) => {
     const helpers = new TestHelpers(page);
+    const isLiveMode = process.env.LIVE_MODE === 'true';
 
     // Setup: Authenticate with sufficient credits
     await helpers.setupSufficientCreditsTest();
-    await helpers.setupMockingForTest('elevenlabs-sync');
+
+    // Conditionally setup mocks based on LIVE_MODE flag
+    if (!isLiveMode) {
+      await helpers.setupMockingForTest('elevenlabs-sync');
+    }
 
     // Test steps: Complete audio processing workflow
     const audioPage = helpers.audioProcessingPage;
@@ -59,10 +69,15 @@ test.describe('Session Management - prevent double processing', () => {
 
   test('elevenlabs async', async ({ page }) => {
     const helpers = new TestHelpers(page);
+    const isLiveMode = process.env.LIVE_MODE === 'true';
 
     // Setup: Authenticate with sufficient credits
     await helpers.setupSufficientCreditsTest();
-    await helpers.setupMockingForTest('elevenlabs-async');
+
+    // Conditionally setup mocks based on LIVE_MODE flag
+    if (!isLiveMode) {
+      await helpers.setupMockingForTest('elevenlabs-async');
+    }
 
     // Test steps: Complete audio processing workflow
     const audioPage = helpers.audioProcessingPage;

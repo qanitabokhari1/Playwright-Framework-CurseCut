@@ -28,8 +28,14 @@ export const TestData = {
   // File paths - using absolute paths for Playwright
   files: {
     audio: path.resolve(__dirname, 'audio/short3Sec.mp3'),
+    audio30Sec: path.resolve(__dirname, 'audio/short30Sec.mp3'),
     censoredAudio: path.resolve(__dirname, 'audio/censored_audio.mp3'),
-    longAudio: path.resolve(__dirname, 'audio/46MinuteLong.mp3'),
+    audio46Min: path.resolve(__dirname, 'audio/46MinuteLong.mp3'),
+    short3Sec_cleaned: path.resolve(__dirname, 'audio/short3Sec_cleaned.mp3'),
+  },
+  videoFiles: {
+    video: path.resolve(__dirname, 'videos/short3Sec.mp4'),
+    video30Sec: path.resolve(__dirname, 'videos/short30Sec.mp4'),
   },
 
   // Censor words
