@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { TestHelpers } from '../../helpers/testHelpers';
 import { TestData } from '../../fixtures/testData';
-test.describe('My Premium Files - appearance and download functionality', () => {
+test.describe('testUser4', () => {
   test('My Premium Files - appearance and download functionality', async ({
     page,
   }) => {
@@ -9,7 +9,7 @@ test.describe('My Premium Files - appearance and download functionality', () => 
     const helpers = new TestHelpers(page);
     const audioPage = helpers.audioProcessingPage;
     const isLiveMode = process.env.LIVE_MODE === 'true';
-    await helpers.setupRealUserTest();
+    await helpers.setupTestUser4();
 
     // When not in LIVE_MODE, setup API mocks so premium files populate and download works deterministically
     if (!isLiveMode) {
@@ -32,13 +32,14 @@ test.describe('My Premium Files - appearance and download functionality', () => 
     // Enter censor word
     await audioPage.fillCensorWord(TestData.censorWords.default);
 
+    // Start processing
+    await audioPage.clickProcessButton();
+
     // Wait for backend response during processing
     const audioResponsePromise = page.waitForResponse(
       res => res.url().includes('/upload-chunk') && res.ok()
     );
 
-    // Start processing
-    await audioPage.clickProcessButton();
     await audioResponsePromise;
 
     // Navigate to premium files section

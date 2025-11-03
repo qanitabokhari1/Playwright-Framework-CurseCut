@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { TestHelpers } from '../../helpers/testHelpers';
 import { TestData } from '../../fixtures/testData';
 
-test.describe('Session Management', () => {
+test.describe('testUser2', () => {
   test('Process button disabled when user has insufficient credits - Deepgram', async ({
     page,
   }) => {

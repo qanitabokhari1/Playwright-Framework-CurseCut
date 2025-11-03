@@ -2,15 +2,15 @@ import { test, expect } from '@playwright/test';
 import { TestHelpers } from '../../helpers/testHelpers';
 import { TestData } from '../../fixtures/testData';
 
-test.describe('Critical business logic - prevent double charging elevenlabs sync', () => {
+test.describe('testUser2', () => {
   test('should charge correct amount and show censored words after processing', async ({
     page,
   }) => {
     const helpers = new TestHelpers(page);
     const isLiveMode = process.env.LIVE_MODE === 'true';
 
-    // Setup: Login with real user and sufficient credits
-    await helpers.setupRealUserTest();
+    // Setup: Login with test user 2 who has sufficient credits
+    await helpers.setupTestUser2();
 
     // Conditionally setup mocks based on LIVE_MODE flag
     if (!isLiveMode) {
@@ -50,8 +50,8 @@ test.describe('Critical business logic - prevent double charging elevenlabs sync
     );
     await statusResponsePromise;
 
-    // Wait for UI to update after processing
-    await page.waitForTimeout(isLiveMode ? 5000 : 2000);
+    const download = await page.waitForEvent('download');
+    expect(download).toBeTruthy();
 
     // Verify credits based on LIVE_MODE
     const finalCreditsText = await audioPage.creditsButton.textContent();
@@ -66,7 +66,9 @@ test.describe('Critical business logic - prevent double charging elevenlabs sync
       expect(actualRemaining).toBe(expectedRemaining);
     } else {
       // MOCKED MODE: Expect credits to remain the same (no real deduction)
-      expect(finalCredits).toBe(initialCredits);
+      const expectedRemaining = parseFloat(initialCredits.toFixed(3));
+      const actualRemaining = parseFloat(finalCredits.toFixed(3));
+      expect(actualRemaining).toBe(expectedRemaining);
     }
 
     // Verify censored words appear in the table

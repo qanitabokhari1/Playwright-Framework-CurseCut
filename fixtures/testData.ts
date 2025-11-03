@@ -6,10 +6,30 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 
 export const TestData = {
   // User credentials
-  user: {
-    email: 'test@example.com',
-    password: 'password',
-    id: 'test-user',
+  testUser1: {
+    email: process.env.TEST_USER_1_EMAIL || '',
+    password: process.env.TEST_USER_1_PASSWORD || '',
+    id: 'test-user-1',
+  },
+  testUser2: {
+    email: process.env.TEST_USER_2_EMAIL || '',
+    password: process.env.TEST_USER_2_PASSWORD || '',
+    id: 'test-user-2',
+  },
+  testUser3: {
+    email: process.env.TEST_USER_3_EMAIL || '',
+    password: process.env.TEST_USER_3_PASSWORD || '',
+    id: 'test-user-3',
+  },
+  testUser4: {
+    email: process.env.TEST_USER_4_EMAIL || '',
+    password: process.env.TEST_USER_4_PASSWORD || '',
+    id: 'test-user-4',
+  },
+  testUser5: {
+    email: process.env.TEST_USER_5_EMAIL || '',
+    password: process.env.TEST_USER_5_PASSWORD || '',
+    id: 'test-user-5',
   },
 
   // Real user credentials for testing
@@ -32,6 +52,7 @@ export const TestData = {
     censoredAudio: path.resolve(__dirname, 'audio/censored_audio.mp3'),
     audio46Min: path.resolve(__dirname, 'audio/46MinuteLong.mp3'),
     short3Sec_cleaned: path.resolve(__dirname, 'audio/short3Sec_cleaned.mp3'),
+    short30Sec_cleaned: path.resolve(__dirname, 'audio/short30Sec_cleaned.mp3'),
   },
   videoFiles: {
     video: path.resolve(__dirname, 'videos/short3Sec.mp4'),

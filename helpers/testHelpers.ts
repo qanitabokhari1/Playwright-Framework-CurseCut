@@ -63,6 +63,30 @@ export class TestHelpers {
     await this.authPage.navigateTo(TestData.urls.base);
     await this.authPage.loginWithRealCredentials();
   }
+  async setupTestUser1(): Promise<void> {
+    await this.authPage.navigateTo(TestData.urls.base);
+    await this.authPage.loginWithTestUser1();
+  }
+
+  async setupTestUser2(): Promise<void> {
+    await this.authPage.navigateTo(TestData.urls.base);
+    await this.authPage.loginWithTestUser2();
+  }
+
+  async setupTestUser3(): Promise<void> {
+    await this.authPage.navigateTo(TestData.urls.base);
+    await this.authPage.loginWithTestUser3();
+  }
+
+  async setupTestUser4(): Promise<void> {
+    await this.authPage.navigateTo(TestData.urls.base);
+    await this.authPage.loginWithTestUser4();
+  }
+
+  async setupTestUser5(): Promise<void> {
+    await this.authPage.navigateTo(TestData.urls.base);
+    await this.authPage.loginWithTestUser5();
+  }
 
   /**
    * Setup API mocking based on LIVE_MODE environment variable

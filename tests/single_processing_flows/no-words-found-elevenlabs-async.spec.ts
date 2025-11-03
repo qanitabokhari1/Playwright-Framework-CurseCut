@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { TestHelpers } from '../../helpers/testHelpers';
 import { TestData } from '../../fixtures/testData';
 
-test.describe('No words found scenario - ElevenLabs ASYNC with clean files', () => {
+test.describe('testUser4', () => {
   test('No words found scenario - ElevenLabs ASYNC with clean files', async ({
     page,
   }) => {
@@ -10,7 +10,7 @@ test.describe('No words found scenario - ElevenLabs ASYNC with clean files', () 
     const audioPage = helpers.audioProcessingPage;
     const isLiveMode = process.env.LIVE_MODE === 'true';
 
-    await helpers.setupRealUserTest();
+    await helpers.setupTestUser4();
 
     // Conditionally setup mocks based on LIVE_MODE flag
     if (!isLiveMode) {

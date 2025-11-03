@@ -2,14 +2,14 @@ import { test, expect } from '@playwright/test';
 import { TestHelpers } from '../../helpers/testHelpers';
 import { TestData } from '../../fixtures/testData';
 
-test.describe('Critical business logic - toggle mutual exclusivity', () => {
+test.describe('testUser1', () => {
   test('mutually exclusive yes toggles and initial unselected state (0 credits)', async ({
     page,
   }) => {
     const helpers = new TestHelpers(page);
 
     // Auth
-    await helpers.setupSufficientCreditsTest();
+    await helpers.setupTestUser1();
 
     const audioPage = helpers.audioProcessingPage;
 

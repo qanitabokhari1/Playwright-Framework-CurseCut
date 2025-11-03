@@ -3,13 +3,13 @@ import { TestHelpers } from '../../helpers/testHelpers';
 import { TestData } from '../../fixtures/testData';
 import { handleUploadAndPollStatus } from '../../helpers/liveAsyncPolling';
 
-test.describe('Critical business logic - exact match censoring works', () => {
+test.describe('testUser1', () => {
   test('deepgram', async ({ page }) => {
     const helpers = new TestHelpers(page);
     const isLiveMode = process.env.LIVE_MODE === 'true';
 
     // Auth + credits and centralized censoring success mocks
-    await helpers.setupSufficientCreditsTest();
+    await helpers.setupTestUser1();
 
     // Conditionally setup mocks based on LIVE_MODE flag
     if (!isLiveMode) {
@@ -39,7 +39,7 @@ test.describe('Critical business logic - exact match censoring works', () => {
     const helpers = new TestHelpers(page);
     const isLiveMode = process.env.LIVE_MODE === 'true';
 
-    await helpers.setupSufficientCreditsTest();
+    await helpers.setupTestUser1();
 
     // Conditionally setup mocks based on LIVE_MODE flag
     if (!isLiveMode) {
@@ -73,7 +73,7 @@ test.describe('Critical business logic - exact match censoring works', () => {
     const helpers = new TestHelpers(page);
     const isLiveMode = process.env.LIVE_MODE === 'true';
 
-    await helpers.setupSufficientCreditsTest();
+    await helpers.setupTestUser1();
 
     // Conditionally setup mocks based on LIVE_MODE flag
     if (!isLiveMode) {

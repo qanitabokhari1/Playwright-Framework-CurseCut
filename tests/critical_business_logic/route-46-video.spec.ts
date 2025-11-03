@@ -2,14 +2,14 @@ import { test, expect } from '@playwright/test';
 import { TestHelpers } from '../../helpers/testHelpers';
 import { TestData } from '../../fixtures/testData';
 
-test.describe('Critical business logic - auto select premium for long media', () => {
+test.describe('testUser2', () => {
   test('auto-selects premium-yes for >45 min upload and leaves song-yes unselected (0 credits)', async ({
     page,
   }) => {
     const helpers = new TestHelpers(page);
 
     // Setup with sufficient credits
-    await helpers.setupSufficientCreditsTest();
+    await helpers.setupTestUser2();
 
     const audioPage = helpers.audioProcessingPage;
 

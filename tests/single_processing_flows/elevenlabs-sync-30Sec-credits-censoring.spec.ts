@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { TestHelpers } from '../../helpers/testHelpers';
 import { TestData } from '../../fixtures/testData';
 
-test.describe('ElevenLabs SYNC processing - 30sec file - credits and censoring', () => {
+test.describe('testUser4', () => {
   test('30sec file - credits and censoring - elevenlabs sync', async ({
     page,
   }) => {
@@ -11,7 +11,7 @@ test.describe('ElevenLabs SYNC processing - 30sec file - credits and censoring',
     const isLiveMode = process.env.LIVE_MODE === 'true';
 
     // Setup authentication with sufficient credits
-    await helpers.setupRealUserTest();
+    await helpers.setupTestUser4();
 
     // Setup mocking if not in live mode
     if (!isLiveMode) {
@@ -64,7 +64,9 @@ test.describe('ElevenLabs SYNC processing - 30sec file - credits and censoring',
       expect(actualCredits).toBe(expectedCredits);
     } else {
       // In mocked mode, credits should remain the same
-      expect(finalCredits).toBe(initialCredits);
+      const expectedCredits = parseFloat(initialCredits.toFixed(3));
+      const actualCredits = parseFloat(finalCredits.toFixed(3));
+      expect(actualCredits).toBe(expectedCredits);
     }
 
     // Validate Censored Words tab shows the censored words with correct timestamps

@@ -128,6 +128,23 @@ export class AuthPage extends BasePage {
     await this.login(TestData.realUser.email, TestData.realUser.password);
   }
 
+  // Login with test users
+  async loginWithTestUser1(): Promise<void> {
+    await this.login(TestData.testUser1.email, TestData.testUser1.password);
+  }
+  async loginWithTestUser2(): Promise<void> {
+    await this.login(TestData.testUser2.email, TestData.testUser2.password);
+  }
+  async loginWithTestUser3(): Promise<void> {
+    await this.login(TestData.testUser3.email, TestData.testUser3.password);
+  }
+  async loginWithTestUser4(): Promise<void> {
+    await this.login(TestData.testUser4.email, TestData.testUser4.password);
+  }
+  async loginWithTestUser5(): Promise<void> {
+    await this.login(TestData.testUser5.email, TestData.testUser5.password);
+  }
+
   // Verification methods
   async verifyLoggedIn(): Promise<void> {
     await this.expectElementToContainText(this.creditsButton, '0');

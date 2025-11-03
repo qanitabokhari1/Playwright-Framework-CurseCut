@@ -3,7 +3,7 @@ import { TestHelpers } from '../../helpers/testHelpers';
 import { TestData } from '../../fixtures/testData';
 import { handleUploadAndPollStatus } from '../../helpers/liveAsyncPolling';
 
-test.describe('ElevenLabs ASYNC processing - 46min file - credits and censoring', () => {
+test.describe('testUser5', () => {
   test('46min file - credits and censoring', async ({ page }) => {
     // Set test timeout to 20 minutes (1200 seconds) for long file processing
     test.setTimeout(1200000);
@@ -12,7 +12,7 @@ test.describe('ElevenLabs ASYNC processing - 46min file - credits and censoring'
     const audioPage = helpers.audioProcessingPage;
     const isLiveMode = process.env.LIVE_MODE === 'true';
 
-    await helpers.setupRealUserTest();
+    await helpers.setupTestUser5();
 
     // Conditionally setup mocks based on LIVE_MODE flag
     if (!isLiveMode) {
