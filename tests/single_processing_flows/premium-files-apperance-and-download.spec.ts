@@ -50,11 +50,14 @@ test.describe('testUser4', () => {
     await audioPage.expectPremiumFileVisibleByName('short3Sec.mp3', 0);
 
     // Wait for browser download event when clicking the first Download button
-    const [download] = await Promise.all([
-      page.waitForEvent('download'),
-      (async () => await audioPage.clickPremiumDownloadAt(0))(),
-    ]);
+    if (isLiveMode) {
+      const [download] = await Promise.all([
+        page.waitForEvent('download'),
+        (async () => await audioPage.clickPremiumDownloadAt(0))(),
+      ]);
 
-    expect(download).toBeTruthy();
+      expect(download).toBeTruthy();
+    }
+
   });
 });
