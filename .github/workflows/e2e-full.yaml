@@ -31,6 +31,8 @@ jobs:
     env:
       BASE_URL: ${{ secrets.BASE_URL }}
       LIVE_MODE: ${{ secrets.LIVE_MODE }}
+      TEST_USER_EMAIL: ${{ secrets.TEST_USER_EMAIL }}
+      TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
       TEST_USER_1_EMAIL: ${{ secrets.TEST_USER_1_EMAIL }}
       TEST_USER_1_PASSWORD: ${{ secrets.TEST_USER_1_PASSWORD }}
       TEST_USER_2_EMAIL: ${{ secrets.TEST_USER_2_EMAIL }}

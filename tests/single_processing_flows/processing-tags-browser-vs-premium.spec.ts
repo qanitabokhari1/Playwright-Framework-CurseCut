@@ -22,7 +22,7 @@ test.describe('testUser4', () => {
     const helpers = new TestHelpers(page);
     const audioPage = helpers.audioProcessingPage;
 
-    await helpers.setupRealUserTest();
+    await helpers.setupTestUser4();
 
     await audioPage.clickStartNow();
     await audioPage.uploadAudioFile(TestData.files.audio);

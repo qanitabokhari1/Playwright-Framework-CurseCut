@@ -152,6 +152,7 @@ export class AuthPage extends BasePage {
   }
 
   async verifyCreditsBalance(credits: number): Promise<void> {
+    await this.page.waitForTimeout(3000)
     await this.expectElementToContainText(
       this.creditsButton,
       credits.toString()
