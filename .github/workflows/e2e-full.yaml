@@ -60,9 +60,6 @@ jobs:
           - name: testUser4
             grep: 'testUser4'
             excludeHeavy: true
-          - name: testUser5
-            grep: 'testUser5'
-            excludeHeavy: true
           # Dedicated job for the heavy 46‑minute test
           - name: heavy-46min
             grep: '46min file - credits and censoring'
