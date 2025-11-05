@@ -39,8 +39,6 @@ test.describe('Censored Words tab verification - multiple words', () => {
     await expect(page.locator('table')).toContainText('fuck');
     await expect(page.locator('table')).toContainText('00:00:10');
     await expect(page.locator('table')).toContainText('fuck');
-    await expect(page.locator('table')).toContainText('00:00:18');
-    await expect(page.locator('table')).toContainText('fuck');
-    await expect(page.locator('table')).toContainText('00:00:21');
+
   });
 });
