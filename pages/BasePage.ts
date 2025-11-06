@@ -23,8 +23,8 @@ export class BasePage {
   }
 
   get processButton(): Locator {
-    // Use aria-label locator for process button
-    return this.page.getByRole('button', { name: 'Process' });
+    // Use data-testid to avoid strict mode ambiguity with "Re-process"
+    return this.page.getByTestId('process-button');
   }
 
   get uploadInput(): Locator {

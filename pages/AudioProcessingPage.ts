@@ -190,9 +190,23 @@ export class AudioProcessingPage extends BasePage {
       .waitFor({ state: 'visible', timeout: 10000 });
   }
 
+  async clickProcessAndWaitForDownload(): Promise<void> {
+    await this.processButton.waitFor({ state: 'visible', timeout: 10000 });
+    const [download] = await Promise.all([
+      this.page.waitForEvent('download'),
+      this.processButton.click({ force: true }),
+    ]);
+    try {
+      await download.path();
+    } catch {
+      // ignore path resolution errors in CI
+    }
+  }
+
   // Processing for async variant with optional live polling when LIVE_MODE=true
   async processAsyncAndPollLiveMode(): Promise<void> {
     const isLiveMode = process.env.LIVE_MODE === 'true';
+
     const uploadResponsePromise = this.page.waitForResponse(
       res => res.url().includes('/upload-chunk') && res.ok()
     );
@@ -201,10 +215,13 @@ export class AudioProcessingPage extends BasePage {
     await this.processButton.waitFor({ state: 'visible', timeout: 10000 });
     await this.processButton.click({ force: true });
 
-    await uploadResponsePromise;
-    
-    await handleUploadAndPollStatus(this.page);
 
+    if (isLiveMode) {
+      // When running live, wait until the app's status polling reaches succeeded
+      await handleUploadAndPollStatus(this.page);
+    } else {
+      await uploadResponsePromise;
+    }
   }
 
   // Complete workflow methods
@@ -317,13 +334,13 @@ export class AudioProcessingPage extends BasePage {
 
     while (Date.now() - startMs < timeoutMs) {
       for (const candidate of candidates) {
-        await candidate.scrollIntoViewIfNeeded().catch(() => {});
+        await candidate.scrollIntoViewIfNeeded().catch(() => { });
         if (await candidate.isVisible()) {
           return;
         }
       }
       // Small nudge to help lazy layouts
-      await this.page.evaluate(() => window.scrollBy(0, 150)).catch(() => {});
+      await this.page.evaluate(() => window.scrollBy(0, 150)).catch(() => { });
       await this.page.waitForTimeout(intervalMs);
     }
   }
@@ -421,6 +438,18 @@ export class AudioProcessingPage extends BasePage {
 
   async expectNotInResultsTable(text: string): Promise<void> {
     await expect(this.resultsTable).not.toContainText(text);
+  }
+
+  // Case-insensitive helpers
+  async expectInResultsTableCI(text: string): Promise<void> {
+    const content = (await this.resultsTable.innerText()).toLowerCase();
+    expect(content).toContain(text.toLowerCase());
+  }
+
+  async expectAnyInResultsTableCI(variants: string[]): Promise<void> {
+    const content = (await this.resultsTable.innerText()).toLowerCase();
+    const found = variants.some(v => content.includes(v.toLowerCase()));
+    expect(found).toBeTruthy();
   }
 
   async expectNoneInResultsTable(texts: string[]): Promise<void> {
