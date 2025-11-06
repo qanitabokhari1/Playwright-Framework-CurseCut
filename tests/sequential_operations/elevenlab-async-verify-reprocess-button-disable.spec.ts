@@ -2,27 +2,62 @@ import { test, expect } from '@playwright/test';
 import { TestHelpers } from '../../helpers/testHelpers';
 import { TestData } from '../../fixtures/testData';
 
-test.describe('testUser1', () => {
-  test('ElevenLabs ASYNC → verify reprocess button disabled', async ({ page }) => {
-    const helpers = new TestHelpers(page);
-    const audioPage = helpers.audioProcessingPage;
+test.describe('testUser3', () => {
+  test('ElevenLabs ASYNC → verify reprocess button disabled', async ({
+    page,
+  }) => {
+    const h = new TestHelpers(page);
+
     const isLiveMode = process.env.LIVE_MODE === 'true';
-
-    await helpers.setupTestUser2();
-
     if (!isLiveMode) {
-      await helpers.setupMockingForTest('elevenlabs-async');
+      await h.apiMocks.mock30SecFileAsyncFlow();
     }
 
-    await audioPage.clickStartNow();
-    await audioPage.uploadAudioFile(TestData.files.audio);
-    // ElevenLabs ASYNC: isSong=false, isPremium=true
-    await audioPage.selectSongOption(false);
-    await audioPage.selectPremiumOption(true);
-    await audioPage.fillCensorWord(TestData.censorWords.default);
+    // Login as test user 3
+    await h.setupTestUser3();
+    await expect(page.getByTestId('login-button')).toBeHidden();
 
-    await audioPage.clickProcessButton();
+    // Start flow
+    await h.audioProcessingPage.clickStartNow();
 
-    await expect(page.getByTestId('reprocess-button')).toBeDisabled();
+    // Upload test file
+    await h.audioProcessingPage.uploadAudioFile(TestData.files.audio30Sec);
+
+    // Configure ASYNC: song no, premium yes; exact word
+    await h.audioProcessingPage.selectSongOption(false);
+    await h.audioProcessingPage.selectPremiumOption(true);
+    await h.audioProcessingPage.fillCensorWord(TestData.censorWords.default);
+
+    // Process the file (with live polling when LIVE_MODE=true)
+    await h.audioProcessingPage.processAsyncAndPollLiveMode();
+
+    // Validate Censored Words tab shows the censored word with correct timestamp
+    await h.audioProcessingPage.openCensoredWordsTab();
+    for (const text of [     
+      'fuck',
+      '00:00:05',
+      'fuck',
+      '00:00:06',
+      'fuck',
+      '00:00:10',
+      'fuck',
+      '00:00:18',
+      'fuck',
+      '00:00:21',
+    ]) {
+      await h.audioProcessingPage.expectInResultsTable(text);
+    }
+
+    // Verify first processing does not include broader variants
+    await h.audioProcessingPage.expectNoneInResultsTable([
+      'fucking',
+      'fuckers',
+      'fucked',
+      'twats',
+      'twat',
+    ]);
+
+    // Validate Reprocess button is disabled and Process button is enabled
+    await h.audioProcessingPage.verifyReprocessButtonDisabled();
   });
 });
