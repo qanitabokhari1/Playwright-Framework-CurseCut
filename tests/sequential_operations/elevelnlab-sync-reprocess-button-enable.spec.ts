@@ -3,31 +3,101 @@ import { TestHelpers } from '../../helpers/testHelpers';
 import { TestData } from '../../fixtures/testData';
 
 test.describe('testUser2', () => {
-  test('ElevenLabs SYNC → Reprocess (free) - verify button enabled', async ({ page }) => {
+  test('ElevenLabs SYNC → Reprocess (free) - verify button enabled', async ({
+    page,
+  }) => {
     const helpers = new TestHelpers(page);
-    const audioPage = helpers.audioProcessingPage;
+
     const isLiveMode = process.env.LIVE_MODE === 'true';
-
-    await helpers.setupTestUser2();
-
     if (!isLiveMode) {
-      await helpers.setupMockingForTest('deepgram');
+      await helpers.apiMocks.mock30SecFile();
     }
 
-    await audioPage.clickStartNow();
-    await audioPage.uploadAudioFile(TestData.files.audio);
-    await audioPage.selectSongOption(true);
-    await audioPage.selectPremiumOption(false);
-    await audioPage.fillCensorWord(TestData.censorWords.default);
+    // Login as test user 2
+    await helpers.setupTestUser2();
+    await expect(page.getByTestId('login-button')).toBeHidden();
 
-    await audioPage.clickProcessButton();
-   
+    // Start flow
+    await helpers.audioProcessingPage.clickStartNow();
 
-    // Verify reprocess button enabled (align with example style)
-    await expect(page.getByTestId('reprocess-button')).toBeEnabled();
-    
-    // {await page.waitForTimeout(3000);}
-    await expect(page.getByText('Cost: Free')).toBeVisible();
+    // Upload test file
+    await helpers.audioProcessingPage.uploadAudioFile(TestData.files.audio30Sec);
 
+    // Configure SYNC: song yes, premium no; exact word
+    await helpers.audioProcessingPage.selectSongOption(true);
+    await helpers.audioProcessingPage.selectPremiumOption(false);
+    await helpers.audioProcessingPage.fillCensorWord(TestData.censorWords.default);
+
+    // Process and wait for /audio
+    await helpers.audioProcessingPage.processFileAndWaitForResponse();
+
+    // Verify censored words
+    await helpers.audioProcessingPage.openCensoredWordsTab();
+    for (const text of [
+      'fuck',
+      '00:00:05',
+      'fuck',
+      '00:00:06',
+      'fuck',
+      '00:00:10',
+      'fuck',
+      '00:00:18',
+      'fuck',
+      '00:00:21',
+    ]) {
+      await helpers.audioProcessingPage.expectInResultsTable(text);
+    }
+
+    // Verify first processing does not include broader variants
+    await helpers.audioProcessingPage.expectNoneInResultsTable([
+      'fucking',
+      'fuckers',
+      'fucked',
+      'twats',
+      'twat',
+    ]);
+
+    const initialCredits = await helpers.authPage.getCreditsAmount();
+
+    // Reprocess with approx words
+    await helpers.audioProcessingPage.fillApproxWord('fuck twats');
+    await helpers.audioProcessingPage.clickReprocessAndWaitForDownload();
+
+    await helpers.audioProcessingPage.openCensoredWordsTab();
+    for (const text of [
+      'twats',
+      '00:00:02',
+      'fuck',
+      '00:00:05',
+      'fuckers',
+      '00:00:05',
+      'fucking',
+      '00:00:07',
+      'fucking',
+      '00:00:09',
+      'fuck',
+      '00:00:10',
+      'fucking',
+      '00:00:11',
+      'twats',
+      '00:00:11',
+      'fuck',
+      '00:00:18',
+      'fucking',
+      '00:00:19',
+      'fuck',
+      '00:00:21',
+      'fucking',
+      '00:00:23',
+      'fuck',
+      '00:00:26',
+      'fucking',
+      '00:00:28',
+    ]) {
+      await helpers.audioProcessingPage.expectInResultsTable(text);
+    }
+
+    const finalCredits = await helpers.authPage.getCreditsAmount();
+    expect(finalCredits).toBe(initialCredits);
   });
 });
