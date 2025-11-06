@@ -77,7 +77,7 @@ test.describe('testUser2', () => {
       const audioResponseAgain = page.waitForResponse(
       res => res.url().includes('/audio') && res.ok()
     );
-    console.log(`Initial credits: ${initialCredits}`);
+  
     await page.getByTestId('process-button').click();
     await audioResponseAgain;
     await page.waitForTimeout(isLiveMode ? 5000 : 2000);
