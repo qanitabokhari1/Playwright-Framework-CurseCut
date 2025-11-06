@@ -7,6 +7,7 @@ test.describe('testUser2', () => {
     page,
   }) => {
     const helpers = new TestHelpers(page);
+    const audioPage = helpers.audioProcessingPage;
 
     const isLiveMode = process.env.LIVE_MODE === 'true';
     if (!isLiveMode) {
@@ -18,21 +19,21 @@ test.describe('testUser2', () => {
     await expect(page.getByTestId('login-button')).toBeHidden();
 
     // Start flow
-    await helpers.audioProcessingPage.clickStartNow();
+    await audioPage.clickStartNow();
 
     // Upload test file
-    await helpers.audioProcessingPage.uploadAudioFile(TestData.files.audio30Sec);
+    await audioPage.uploadAudioFile(TestData.files.audio30Sec);
 
     // Configure SYNC: song yes, premium no; exact word
-    await helpers.audioProcessingPage.selectSongOption(true);
-    await helpers.audioProcessingPage.selectPremiumOption(false);
-    await helpers.audioProcessingPage.fillCensorWord(TestData.censorWords.default);
+    await audioPage.selectSongOption(true);
+    await audioPage.selectPremiumOption(false);
+    await audioPage.fillCensorWord(TestData.censorWords.default);
 
     // Process and wait for /audio
-    await helpers.audioProcessingPage.processFileAndWaitForResponse();
+    await audioPage.processFileAndWaitForResponse();
 
     // Verify censored words
-    await helpers.audioProcessingPage.openCensoredWordsTab();
+    await audioPage.openCensoredWordsTab();
     for (const text of [
       'fuck',
       '00:00:05',
@@ -45,11 +46,11 @@ test.describe('testUser2', () => {
       'fuck',
       '00:00:21',
     ]) {
-      await helpers.audioProcessingPage.expectInResultsTable(text);
+      await audioPage.expectInResultsTable(text);
     }
 
     // Verify first processing does not include broader variants
-    await helpers.audioProcessingPage.expectNoneInResultsTable([
+    await audioPage.expectNoneInResultsTable([
       'fucking',
       'fuckers',
       'fucked',
@@ -60,10 +61,10 @@ test.describe('testUser2', () => {
     const initialCredits = await helpers.authPage.getCreditsAmount();
 
     // Reprocess with approx words
-    await helpers.audioProcessingPage.fillApproxWord('fuck twats');
-    await helpers.audioProcessingPage.clickReprocessAndWaitForDownload();
+    await audioPage.fillApproxWord('fuck twats');
+    await audioPage.clickReprocessAndWaitForDownload();
 
-    await helpers.audioProcessingPage.openCensoredWordsTab();
+    await audioPage.openCensoredWordsTab();
     for (const text of [
       'twats',
       '00:00:02',
@@ -94,7 +95,7 @@ test.describe('testUser2', () => {
       'fucking',
       '00:00:28',
     ]) {
-      await helpers.audioProcessingPage.expectInResultsTable(text);
+      await audioPage.expectInResultsTable(text);
     }
 
     const finalCredits = await helpers.authPage.getCreditsAmount();
