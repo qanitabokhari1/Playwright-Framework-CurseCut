@@ -299,7 +299,7 @@ export class ApiMocks {
   /**
    * Mock /audio and /status for 30sec ElevenLabs SYNC file with extended transcription
    */
-  async mockElevenLabsSync30SecFile(
+  async mock30SecFile(
     taskId: string = '6d22cbfc-60e5-4475-9ca3-3f71772ee2f9'
   ): Promise<void> {
     await this.page.route('**/audio', async route => {
@@ -314,6 +314,19 @@ export class ApiMocks {
           is_song: true,
           is_premium: false,
           using_premium_processing: true,
+        }),
+      });
+    });
+    await this.page.route('**/upload-chunk', async route => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          task_id: '6d22cbfc-60e5-4475-9ca3-3f71772ee2f9',
+          estimated_time: 401.1022041,
+          upload_id: '1760998827958qln1ob0cc',
+          message: 'File successfully uploaded and processing started',
+          is_complete: true,
         }),
       });
     });

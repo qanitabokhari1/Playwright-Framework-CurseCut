@@ -12,7 +12,7 @@ test.describe('testUser3', () => {
 
     if (!isLiveMode) {
       // Use the 30-second file mock that includes multiple censored words
-      await helpers.apiMocks.mockElevenLabsSync30SecFile();
+      await helpers.apiMocks.mock30SecFile();
     }
 
     await audioPage.clickStartNow();

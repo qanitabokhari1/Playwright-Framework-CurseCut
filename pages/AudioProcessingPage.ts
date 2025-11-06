@@ -1,6 +1,7 @@
 import { Page, Locator, expect } from '@playwright/test';
 import { BasePage } from './BasePage';
 import { TestData } from '../fixtures/testData';
+import { handleUploadAndPollStatus } from '../helpers/liveAsyncPolling';
 
 export class AudioProcessingPage extends BasePage {
   // Audio processing form locators
@@ -61,6 +62,10 @@ export class AudioProcessingPage extends BasePage {
     return this.page.getByRole('button', { name: 'Re-process' });
   }
 
+  get reprocessButtonByTestId(): Locator {
+    return this.page.getByTestId('reprocess-button');
+  }
+
   get absoluteElement(): Locator {
     return this.page.locator('.absolute').first();
   }
@@ -71,6 +76,10 @@ export class AudioProcessingPage extends BasePage {
 
   get censoredWordsTab(): Locator {
     return this.page.getByRole('tab', { name: 'Censored Words' });
+  }
+
+  get resultsTable(): Locator {
+    return this.page.locator('table');
   }
 
   get noCensoredWordsMessage(): Locator {
@@ -179,6 +188,23 @@ export class AudioProcessingPage extends BasePage {
     await this.page
       .getByRole('button', { name: /processing/i })
       .waitFor({ state: 'visible', timeout: 10000 });
+  }
+
+  // Processing for async variant with optional live polling when LIVE_MODE=true
+  async processAsyncAndPollLiveMode(): Promise<void> {
+    const isLiveMode = process.env.LIVE_MODE === 'true';
+    const uploadResponsePromise = this.page.waitForResponse(
+      res => res.url().includes('/upload-chunk') && res.ok()
+    );
+
+    // Ensure process button is clickable
+    await this.processButton.waitFor({ state: 'visible', timeout: 10000 });
+    await this.processButton.click({ force: true });
+
+    await uploadResponsePromise;
+    
+    await handleUploadAndPollStatus(this.page);
+
   }
 
   // Complete workflow methods
@@ -383,6 +409,56 @@ export class AudioProcessingPage extends BasePage {
     );
     await this.processButton.click();
     await audioResponsePromise;
+  }
+
+  async openCensoredWordsTab(): Promise<void> {
+    await this.censoredWordsTab.click();
+  }
+
+  async expectInResultsTable(text: string): Promise<void> {
+    await expect(this.resultsTable).toContainText(text);
+  }
+
+  async expectNotInResultsTable(text: string): Promise<void> {
+    await expect(this.resultsTable).not.toContainText(text);
+  }
+
+  async expectNoneInResultsTable(texts: string[]): Promise<void> {
+    for (const t of texts) {
+      await this.expectNotInResultsTable(t);
+    }
+  }
+
+  async clickReprocessButton(): Promise<void> {
+    // Prefer data-testid, fallback to role
+    const candidates: Locator[] = [
+      this.reprocessButtonByTestId,
+      this.reprocessButton,
+    ];
+    for (const btn of candidates) {
+      if (await btn.isVisible().catch(() => false)) {
+        await btn.click({ force: true });
+        return;
+      }
+    }
+    throw new Error('Reprocess button not found');
+  }
+
+  async clickReprocessAndWaitForDownload(): Promise<void> {
+    const [download] = await Promise.all([
+      this.page.waitForEvent('download'),
+      this.clickReprocessButton(),
+    ]);
+    // Ensure the download completes; ignore errors if path not available
+    try {
+      await download.path();
+    } catch {
+      // Some browsers may not provide a local path (e.g., in CI); continue
+    }
+  }
+
+  async verifyReprocessButtonDisabled(): Promise<void> {
+    await expect(this.reprocessButtonByTestId).toBeDisabled();
   }
 
   async verifyNoCensoredWordsFound(): Promise<void> {

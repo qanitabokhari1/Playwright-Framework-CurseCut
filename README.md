@@ -134,7 +134,7 @@ Additional targeted mocks available in `helpers/apiMocks.ts`
 
 - `mockProcessedFilesAPI()` – return a list for “My Premium Files” (drives appearance + download event)
 - `mockNoFuckWord(variant)` – status without the explicit word (for “no words found” checks)
-- `mockElevenLabsSync30SecFile()` – longer transcript fixture for sync
+- `mock30SecFile()` – longer transcript fixture for sync
 - `mock46MinutesAudioFile()` – very long transcript fixture (video/long-audio route)
 
 Commented-out (not used by default)

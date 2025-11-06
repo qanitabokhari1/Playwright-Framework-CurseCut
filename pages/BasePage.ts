@@ -120,4 +120,11 @@ export class BasePage {
       });
     });
   }
+
+  // Parse numeric credits from the credits button
+  async getCreditsAmount(): Promise<number> {
+    const text = await this.creditsButton.textContent();
+    const value = parseFloat(text?.replace(/[^\d.]/g, '') ?? '0');
+    return Number.isFinite(value) ? value : 0;
+  }
 }

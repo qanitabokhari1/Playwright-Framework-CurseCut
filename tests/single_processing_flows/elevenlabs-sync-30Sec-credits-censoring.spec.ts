@@ -15,7 +15,7 @@ test.describe('testUser4', () => {
 
     // Setup mocking if not in live mode
     if (!isLiveMode) {
-      await helpers.apiMocks.mockElevenLabsSync30SecFile();
+      await helpers.apiMocks.mock30SecFile();
     }
 
     await page.waitForTimeout(isLiveMode ? 5000 : 2000);
