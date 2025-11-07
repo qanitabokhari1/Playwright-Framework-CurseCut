@@ -35,7 +35,6 @@ test.describe('testUser4', () => {
     const audioResponsePromise = page.waitForResponse(
       res => res.url().includes('/audio') && res.ok()
     );
-    console.log(`Initial credits: ${initialCredits}`);
     await page.getByTestId('process-button').click();
     await audioResponsePromise;
 
@@ -88,10 +87,9 @@ test.describe('testUser4', () => {
       const actualRemaining = parseFloat(creditsAfterFirst.toFixed(1));
       expect(actualRemaining).toBe(expectedRemaining);
     }
-    console.log(`Credits after first processing: ${creditsAfterFirst}`);
     // Update approx words and process again (charged)
     await helpers.audioProcessingPage.fillApproxWord('fuck twats');
-        const audioResponseAgain = page.waitForResponse(
+    const audioResponseAgain = page.waitForResponse(
       res => res.url().includes('/audio') && res.ok()
     );
     await page.getByTestId('process-button').click();
@@ -110,7 +108,7 @@ test.describe('testUser4', () => {
     } catch {
       // No download occurred; acceptable
     }
-    
+
     // Validate expanded censored words and timestamps
     await helpers.audioProcessingPage.openCensoredWordsTab();
     for (const text of [
@@ -159,6 +157,5 @@ test.describe('testUser4', () => {
       const actualRemaining = parseFloat(finalCredits.toFixed(1));
       expect(actualRemaining).toBe(expectedRemaining);
     }
-    console.log(`Final credits: ${finalCredits}`);
   });
 });

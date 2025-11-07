@@ -215,7 +215,6 @@ export class AudioProcessingPage extends BasePage {
     await this.processButton.waitFor({ state: 'visible', timeout: 10000 });
     await this.processButton.click({ force: true });
 
-
     if (isLiveMode) {
       // When running live, wait until the app's status polling reaches succeeded
       await handleUploadAndPollStatus(this.page);
@@ -334,13 +333,13 @@ export class AudioProcessingPage extends BasePage {
 
     while (Date.now() - startMs < timeoutMs) {
       for (const candidate of candidates) {
-        await candidate.scrollIntoViewIfNeeded().catch(() => { });
+        await candidate.scrollIntoViewIfNeeded().catch(() => {});
         if (await candidate.isVisible()) {
           return;
         }
       }
       // Small nudge to help lazy layouts
-      await this.page.evaluate(() => window.scrollBy(0, 150)).catch(() => { });
+      await this.page.evaluate(() => window.scrollBy(0, 150)).catch(() => {});
       await this.page.waitForTimeout(intervalMs);
     }
   }

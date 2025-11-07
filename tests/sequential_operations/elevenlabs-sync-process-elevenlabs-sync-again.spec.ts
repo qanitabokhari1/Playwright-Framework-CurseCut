@@ -3,7 +3,9 @@ import { TestHelpers } from '../../helpers/testHelpers';
 import { TestData } from '../../fixtures/testData';
 
 test.describe('testUser2', () => {
-  test('ElevenLabs SYNC → Process ElevenLabs SYNC again (charged)', async ({ page }) => {
+  test('ElevenLabs SYNC → Process ElevenLabs SYNC again (charged)', async ({
+    page,
+  }) => {
     const helpers = new TestHelpers(page);
     const audioPage = helpers.audioProcessingPage;
     const isLiveMode = process.env.LIVE_MODE === 'true';
@@ -29,13 +31,11 @@ test.describe('testUser2', () => {
 
     // Credits before first processing
     const initialCredits = await helpers.authPage.getCreditsAmount();
-      console.log(`Initial credits: ${initialCredits}`);
 
     // Process and wait (single-processing pattern: wait for /status/)
-      const audioResponsePromise = page.waitForResponse(
+    const audioResponsePromise = page.waitForResponse(
       res => res.url().includes('/audio') && res.ok()
     );
-    console.log(`Initial credits: ${initialCredits}`);
     await page.getByTestId('process-button').click();
     await audioResponsePromise;
     await page.waitForTimeout(isLiveMode ? 5000 : 2000);
@@ -64,7 +64,9 @@ test.describe('testUser2', () => {
     const creditsAfterFirst = await helpers.authPage.getCreditsAmount();
     if (isLiveMode) {
       const expectedDeduction = 0.2;
-      const actualDeduction = parseFloat((initialCredits - creditsAfterFirst).toFixed(3));
+      const actualDeduction = parseFloat(
+        (initialCredits - creditsAfterFirst).toFixed(3)
+      );
       expect(actualDeduction).toBeGreaterThanOrEqual(expectedDeduction - 0.2);
       expect(actualDeduction).toBeLessThanOrEqual(expectedDeduction + 0.2);
     } else {
@@ -72,13 +74,12 @@ test.describe('testUser2', () => {
       const actualRemaining = parseFloat(creditsAfterFirst.toFixed(3));
       expect(actualRemaining).toBe(expectedRemaining);
     }
-    console.log(`Credits after first processing: ${creditsAfterFirst}`);
 
     // Second processing (same pattern)
-      const audioResponseAgain = page.waitForResponse(
+    const audioResponseAgain = page.waitForResponse(
       res => res.url().includes('/audio') && res.ok()
     );
-  
+
     await page.getByTestId('process-button').click();
     await audioResponseAgain;
     await page.waitForTimeout(isLiveMode ? 5000 : 2000);
@@ -128,7 +129,9 @@ test.describe('testUser2', () => {
     const finalCredits = await helpers.authPage.getCreditsAmount();
     if (isLiveMode) {
       const expectedDeduction = 0.2;
-      const actualDeduction = parseFloat((creditsAfterFirst - finalCredits).toFixed(3));
+      const actualDeduction = parseFloat(
+        (creditsAfterFirst - finalCredits).toFixed(3)
+      );
       expect(actualDeduction).toBeGreaterThanOrEqual(expectedDeduction - 0.2);
       expect(actualDeduction).toBeLessThanOrEqual(expectedDeduction + 0.2);
     } else {
@@ -136,7 +139,5 @@ test.describe('testUser2', () => {
       const actualRemaining = parseFloat(finalCredits.toFixed(3));
       expect(actualRemaining).toBe(expectedRemaining);
     }
-    console.log(`Final credits: ${finalCredits}`);
-  
   });
 });
