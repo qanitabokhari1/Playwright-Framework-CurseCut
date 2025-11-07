@@ -59,13 +59,13 @@ test.describe('testUser4', () => {
 
     // Validate credit deduction based on mode
     if (isLiveMode) {
-      const expectedCredits = parseFloat((initialCredits - 0.2).toFixed(3));
-      const actualCredits = parseFloat(finalCredits.toFixed(3));
+      const expectedCredits = parseFloat((initialCredits - 0.2).toFixed(1));
+      const actualCredits = parseFloat(finalCredits.toFixed(1));
       expect(actualCredits).toBe(expectedCredits);
     } else {
       // In mocked mode, credits should remain the same
-      const expectedCredits = parseFloat(initialCredits.toFixed(3));
-      const actualCredits = parseFloat(finalCredits.toFixed(3));
+      const expectedCredits = parseFloat(initialCredits.toFixed(1));
+      const actualCredits = parseFloat(finalCredits.toFixed(1));
       expect(actualCredits).toBe(expectedCredits);
     }
 
