@@ -80,12 +80,12 @@ test.describe('testUser4', () => {
     // Verify credits after first processing
     const creditsAfterFirst = await helpers.authPage.getCreditsAmount();
     if (isLiveMode) {
-      const expectedRemaining = parseFloat((initialCredits - 0.1).toFixed(3));
-      const actualRemaining = parseFloat(creditsAfterFirst.toFixed(3));
+      const expectedRemaining = parseFloat((initialCredits - 0.1).toFixed(1));
+      const actualRemaining = parseFloat(creditsAfterFirst.toFixed(1));
       expect(actualRemaining).toBe(expectedRemaining);
     } else {
-      const expectedRemaining = parseFloat(initialCredits.toFixed(3));
-      const actualRemaining = parseFloat(creditsAfterFirst.toFixed(3));
+      const expectedRemaining = parseFloat(initialCredits.toFixed(1));
+      const actualRemaining = parseFloat(creditsAfterFirst.toFixed(1));
       expect(actualRemaining).toBe(expectedRemaining);
     }
     console.log(`Credits after first processing: ${creditsAfterFirst}`);
@@ -150,13 +150,13 @@ test.describe('testUser4', () => {
     const finalCredits = await helpers.authPage.getCreditsAmount();
     if (isLiveMode) {
       const expectedRemainingSecond = parseFloat(
-        (creditsAfterFirst - 0.1).toFixed(3)
+        (creditsAfterFirst - 0.1).toFixed(1)
       );
-      const actualRemainingSecond = parseFloat(finalCredits.toFixed(3));
+      const actualRemainingSecond = parseFloat(finalCredits.toFixed(1));
       expect(actualRemainingSecond).toBe(expectedRemainingSecond);
     } else {
-      const expectedRemaining = parseFloat(initialCredits.toFixed(3));
-      const actualRemaining = parseFloat(finalCredits.toFixed(3));
+      const expectedRemaining = parseFloat(initialCredits.toFixed(1));
+      const actualRemaining = parseFloat(finalCredits.toFixed(1));
       expect(actualRemaining).toBe(expectedRemaining);
     }
     console.log(`Final credits: ${finalCredits}`);

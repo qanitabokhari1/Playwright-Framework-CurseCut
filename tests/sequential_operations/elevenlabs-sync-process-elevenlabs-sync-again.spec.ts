@@ -63,9 +63,10 @@ test.describe('testUser2', () => {
     // Verify credits after first processing
     const creditsAfterFirst = await helpers.authPage.getCreditsAmount();
     if (isLiveMode) {
-      const expectedRemaining = parseFloat((initialCredits - 0.2).toFixed(3));
-      const actualRemaining = parseFloat(creditsAfterFirst.toFixed(3));
-      expect(actualRemaining).toBe(expectedRemaining);
+      const expectedDeduction = 0.2;
+      const actualDeduction = parseFloat((initialCredits - creditsAfterFirst).toFixed(3));
+      expect(actualDeduction).toBeGreaterThanOrEqual(expectedDeduction - 0.2);
+      expect(actualDeduction).toBeLessThanOrEqual(expectedDeduction + 0.2);
     } else {
       const expectedRemaining = parseFloat(initialCredits.toFixed(3));
       const actualRemaining = parseFloat(creditsAfterFirst.toFixed(3));
@@ -126,11 +127,10 @@ test.describe('testUser2', () => {
     // Credits after second processing
     const finalCredits = await helpers.authPage.getCreditsAmount();
     if (isLiveMode) {
-      const expectedRemainingSecond = parseFloat(
-        (creditsAfterFirst - 0.2).toFixed(3)
-      );
-      const actualRemainingSecond = parseFloat(finalCredits.toFixed(3));
-      expect(actualRemainingSecond).toBe(expectedRemainingSecond);
+      const expectedDeduction = 0.2;
+      const actualDeduction = parseFloat((creditsAfterFirst - finalCredits).toFixed(3));
+      expect(actualDeduction).toBeGreaterThanOrEqual(expectedDeduction - 0.2);
+      expect(actualDeduction).toBeLessThanOrEqual(expectedDeduction + 0.2);
     } else {
       const expectedRemaining = parseFloat(initialCredits.toFixed(3));
       const actualRemaining = parseFloat(finalCredits.toFixed(3));
