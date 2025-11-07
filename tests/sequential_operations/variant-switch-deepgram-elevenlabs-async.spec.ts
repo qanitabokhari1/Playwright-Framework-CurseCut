@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { TestHelpers } from '../../helpers/testHelpers';
 import { TestData } from '../../fixtures/testData';
 
-test.describe('testUser5', () => {
+test.describe('testUser1', () => {
   test('Deepgram → Process ElevenLabs ASYNC (variant switch)', async ({
     page,
   }) => {
@@ -17,7 +17,7 @@ test.describe('testUser5', () => {
     }
 
     // Login and ensure session (use POM helpers)
-    await helpers.setupTestUser5();
+    await helpers.setupTestUser1();
     await expect(page.getByTestId('login-button')).toBeHidden();
 
     // Start flow

@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { TestHelpers } from '../../helpers/testHelpers';
 import { TestData } from '../../fixtures/testData';
 
-test.describe('testUser2', () => {
+test.describe('testUser4', () => {
   test('ElevenLabs SYNC → Process ElevenLabs ASYNC (variant switch)', async ({
     page,
   }) => {
@@ -16,7 +16,7 @@ test.describe('testUser2', () => {
     }
 
     // Setup authentication with real user
-    await helpers.setupTestUser2();
+    await helpers.setupTestUser4();
 
     // Start processing flow
     await helpers.audioProcessingPage.clickStartNow();
