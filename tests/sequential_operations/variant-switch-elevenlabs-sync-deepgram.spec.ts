@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { TestHelpers } from '../../helpers/testHelpers';
 import { TestData } from '../../fixtures/testData';
-test.describe('ElevenLabs SYNC → Process Deepgram (variant switch)', () => {
+test.describe('testUser1', () => {
   test('ElevenLabs SYNC → Process Deepgram (variant switch)', async ({
     page,
   }) => {
@@ -14,7 +14,7 @@ test.describe('ElevenLabs SYNC → Process Deepgram (variant switch)', () => {
       await helpers.apiMocks.mock30SecFile();
     }
     // Login and ensure session (use POM helpers)
-    await helpers.setupTestUser2();
+    await helpers.setupTestUser1();
     await expect(page.getByTestId('login-button')).toBeHidden();
 
     // Start flow

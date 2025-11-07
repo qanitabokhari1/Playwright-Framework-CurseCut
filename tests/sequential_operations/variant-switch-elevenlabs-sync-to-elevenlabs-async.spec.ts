@@ -2,8 +2,8 @@ import { test, expect } from '@playwright/test';
 import { TestHelpers } from '../../helpers/testHelpers';
 import { TestData } from '../../fixtures/testData';
 
-test.describe('ElevenLabs SYNC → Process ElevenLabs ASYNC (variant switch)', () => {
-  test('Deepgram → Reprocess (free) - verify button enabled', async ({
+test.describe('testUser2', () => {
+  test('ElevenLabs SYNC → Process ElevenLabs ASYNC (variant switch)', async ({
     page,
   }) => {
     const helpers = new TestHelpers(page);
@@ -16,7 +16,7 @@ test.describe('ElevenLabs SYNC → Process ElevenLabs ASYNC (variant switch)', (
     }
 
     // Setup authentication with real user
-    await helpers.setupRealUserTest();
+    await helpers.setupTestUser2();
 
     // Start processing flow
     await helpers.audioProcessingPage.clickStartNow();
