@@ -44,7 +44,6 @@ test.describe('testUser1', () => {
     // Wait for UI to update after processing
     await page.waitForTimeout(isLiveMode ? 5000 : 2000);
 
-
     // Validate Censored Words tab shows the censored word with correct timestamp
     await audioPage.openCensoredWordsTab();
     for (const text of [
