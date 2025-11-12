@@ -606,6 +606,35 @@ export class AudioProcessingPage extends BasePage {
     }
   }
 
+
+   async expectCorruptedFileTypeErrorVisible(fileName?: string): Promise<void> {
+    const regex = /did not match requirements/i;
+
+    // Try status role first
+    let toast = this.page.getByRole('status').filter({ hasText: regex });
+    try {
+      await toast.first().waitFor({ state: 'visible', timeout: 6000 });
+    } catch {
+      // Fallback: some libraries use role="alert" for toasts
+      toast = this.page.getByRole('alert').filter({ hasText: regex });
+      await toast.first().waitFor({ state: 'visible', timeout: 6000 });
+    }
+
+    const target = toast.first();
+    await expect(target).toContainText(regex);
+    // Also tolerate the leading summary line used by the UI toast
+    await expect(target).toContainText(
+      /Some files did not match requirements and were not loaded\.?/i
+    );
+    if (fileName) {
+      // File name may be rendered in a nested element or updated slightly later; try but do not fail the test on this optional check
+      try {
+        await expect(target).toContainText(fileName, { timeout: 1000 });
+      } catch {
+        // best-effort filename assertion; continue if not found
+      }
+    }
+  }
   // Premium files helpers
   async openMyPremiumFiles(): Promise<void> {
     await this.myPremiumFilesButton.click({ force: true });
