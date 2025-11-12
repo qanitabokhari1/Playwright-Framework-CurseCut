@@ -53,6 +53,7 @@ export const TestData = {
     audio46Min: path.resolve(__dirname, 'audio/46MinuteLong.mp3'),
     short3Sec_cleaned: path.resolve(__dirname, 'audio/short3Sec_cleaned.mp3'),
     short30Sec_cleaned: path.resolve(__dirname, 'audio/short30Sec_cleaned.mp3'),
+    corrupfile: path.resolve(__dirname, 'audio/corrupt_file.mp3'),
   },
   unsupportedFiles: {
     txt: path.resolve(__dirname, 'unsupported_files/profile.txt'),
