@@ -133,6 +133,35 @@ export class AudioProcessingPage extends BasePage {
     await expect(this.secondUploadedFile).toBeVisible();
   }
 
+  async verifyPremiumProcessingPopup(): Promise<void> {
+    await expect(
+      this.page.getByRole('heading', { name: 'BETA Premium Processing' })
+    ).toBeVisible();
+    await expect(this.page.getByText('Premium processing is')).toBeVisible();
+    await expect(
+      this.page.getByText(
+        'Premium processing is currently in BETA and limited to 1 file at a time to ensure reliability.'
+      )
+    ).toBeVisible();
+    await expect(
+      this.page.getByText('Only the first file will be processed')
+    ).toBeVisible();
+    await expect(
+      this.page.getByText('Additional files have been removed from the queue')
+    ).toBeVisible();
+  }
+
+  async clickIUnderstandButton(): Promise<void> {
+    await this.page.getByRole('button', { name: 'I understand' }).click();
+    await this.page.waitForTimeout(2000);
+  }
+
+  async verifySingleFileRemains(): Promise<void> {
+    await expect(
+      this.page.locator('div').filter({ hasText: /^short3Sec\.mp3Browser$/ }).first()
+    ).toBeVisible();
+  }
+
   // Video file upload helper
   async uploadVideoFile(
     filePath: string | { name: string; mimeType: string; buffer: Buffer }
