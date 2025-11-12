@@ -170,6 +170,12 @@ export class AudioProcessingPage extends BasePage {
     ).toBeVisible();
   }
 
+  async verifySingleFileRemainsAsync(): Promise<void> {
+    await expect(
+      this.page.locator('div').filter({ hasText: /^short3Sec\.mp3Premium$/ }).first()
+    ).toBeVisible();
+  }
+
   // Video file upload helper
   async uploadVideoFile(
     filePath: string | { name: string; mimeType: string; buffer: Buffer }
