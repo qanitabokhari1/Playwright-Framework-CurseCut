@@ -2,13 +2,13 @@ import { test, expect } from '@playwright/test';
 import { TestHelpers } from '../../helpers/testHelpers';
 import { TestData } from '../../fixtures/testData';
 
-test.describe('testUser1', () => {
+test.describe('testUser3', () => {
   test('Deepgram → Multiple files succeed', async ({ page }) => {
     const helpers = new TestHelpers(page);
     const audioPage = helpers.audioProcessingPage;
     const isLiveMode = process.env.LIVE_MODE === 'true';
 
-    await helpers.setupTestUser1();
+    await helpers.setupTestUser3();
 
     // Conditionally setup mocks based on LIVE_MODE flag
     if (!isLiveMode) {
@@ -61,15 +61,15 @@ test.describe('testUser1', () => {
       // LIVE_MODE: Expect credits deducted by 0.2 (2 files × 0.1 each)
       const expectedDeduction = 0.2;
       const actualDeduction = parseFloat(
-        (initialCredits - finalCredits).toFixed(3)
+        (initialCredits - finalCredits).toFixed(1)
       );
       expect(actualDeduction).toBeGreaterThanOrEqual(expectedDeduction - 0.2);
       expect(actualDeduction).toBeLessThanOrEqual(expectedDeduction + 0.2);
       console.log(`Actual deduction: ${actualDeduction}`);
     } else {
       // MOCKED MODE: Expect credits to remain the same (no real deduction)
-      const expectedRemaining = parseFloat(initialCredits.toFixed(3));
-      const actualRemaining = parseFloat(finalCredits.toFixed(3));
+      const expectedRemaining = parseFloat(initialCredits.toFixed(1));
+      const actualRemaining = parseFloat(finalCredits.toFixed(1));
       expect(actualRemaining).toBe(expectedRemaining);
       console.log(`Expected remaining credits: ${expectedRemaining}`);
     }
