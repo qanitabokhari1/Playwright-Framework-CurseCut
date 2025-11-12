@@ -314,6 +314,20 @@ export class AudioProcessingPage extends BasePage {
     await expect(this.processButton).toBeEnabled();
   }
 
+  async verifyProcessButtonEnableAfterPageRefresh(timeout: number = 15000): Promise<void> {
+    // Page may refresh after closing dialogs; wait for load and for the button to reattach
+    try {
+      await this.page.waitForLoadState('domcontentloaded', { timeout });
+    } catch {
+      // ignore if already loaded
+    }
+    // Wait for the process button to be present and visible
+    await this.processButton.waitFor({ state: 'attached', timeout });
+    await this.processButton.waitFor({ state: 'visible', timeout });
+    await this.processButton.scrollIntoViewIfNeeded().catch(() => { });
+    await expect(this.processButton).toBeEnabled();
+  }
+
   async verifyProcessingStarted(): Promise<void> {
     // Use the same locator as the working test
     const processingButton = this.page.getByRole('button', {
