@@ -54,6 +54,10 @@ export const TestData = {
     short3Sec_cleaned: path.resolve(__dirname, 'audio/short3Sec_cleaned.mp3'),
     short30Sec_cleaned: path.resolve(__dirname, 'audio/short30Sec_cleaned.mp3'),
   },
+  unsupportedFiles: {
+    txt: path.resolve(__dirname, 'unsupported_files/profile.txt'),
+    pdf: path.resolve(__dirname, 'unsupported_files/details.pdf'),
+  },
   videoFiles: {
     video: path.resolve(__dirname, 'videos/short3Sec.mp4'),
     video30Sec: path.resolve(__dirname, 'videos/short30Sec.mp4'),

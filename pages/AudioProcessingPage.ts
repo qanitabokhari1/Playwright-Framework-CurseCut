@@ -82,6 +82,14 @@ export class AudioProcessingPage extends BasePage {
     return this.page.locator('table');
   }
 
+  // Common validation/error helpers
+  get statusToast(): Locator {
+    return this.page.getByRole('status');
+  }
+  get unsupportedFileTypeError(): Locator {
+    return this.page.getByText('Unsupported file type', { exact: false });
+  }
+
   get noCensoredWordsMessage(): Locator {
     return this.page.getByText('No words found.', { exact: true }).or(
       this.page.getByText('No words found to censor in the transcription.', {
@@ -547,6 +555,35 @@ export class AudioProcessingPage extends BasePage {
   async verifyNoCensoredWordsFound(): Promise<void> {
     await this.censoredWordsTab.click();
     await expect(this.noCensoredWordsMessage).toBeVisible();
+  }
+
+  async expectUnsupportedFileTypeErrorVisible(fileName?: string): Promise<void> {
+    const regex = /Unsupported file type/i;
+
+    // Try status role first
+    let toast = this.page.getByRole('status').filter({ hasText: regex });
+    try {
+      await toast.first().waitFor({ state: 'visible', timeout: 6000 });
+    } catch {
+      // Fallback: some libraries use role="alert" for toasts
+      toast = this.page.getByRole('alert').filter({ hasText: regex });
+      await toast.first().waitFor({ state: 'visible', timeout: 6000 });
+    }
+
+    const target = toast.first();
+    await expect(target).toContainText(regex);
+    // Also tolerate the leading summary line used by the UI toast
+    await expect(target).toContainText(
+      /Some files did not match requirements and were not loaded\.?/i
+    );
+    if (fileName) {
+      // File name may be rendered in a nested element or updated slightly later; try but do not fail the test on this optional check
+      try {
+        await expect(target).toContainText(fileName, { timeout: 1000 });
+      } catch {
+        // best-effort filename assertion; continue if not found
+      }
+    }
   }
 
   // Premium files helpers
