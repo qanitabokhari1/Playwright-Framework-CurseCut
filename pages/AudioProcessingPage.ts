@@ -103,9 +103,34 @@ export class AudioProcessingPage extends BasePage {
     return this.page.getByRole('button', { name: 'Download' });
   }
 
+  // Batch file upload locators
+  get firstUploadedFile(): Locator {
+    return this.page
+      .locator('div')
+      .filter({ hasText: /^short3Sec\.mp3Browser$/ })
+      .first();
+  }
+
+  get secondUploadedFile(): Locator {
+    return this.page
+      .locator('div')
+      .filter({ hasText: /^short3Sec\.mp3Browser$/ })
+      .nth(1);
+  }
+
   // File upload actions
   async uploadAudioFile(filePath: string): Promise<void> {
     await this.uploadInput.setInputFiles(filePath);
+  }
+
+  // Batch file upload actions
+  async uploadMultipleAudioFiles(filePaths: string[]): Promise<void> {
+    await this.uploadInput.setInputFiles(filePaths);
+  }
+
+  async verifyMultipleFilesUploaded(): Promise<void> {
+    await expect(this.firstUploadedFile).toBeVisible();
+    await expect(this.secondUploadedFile).toBeVisible();
   }
 
   // Video file upload helper
