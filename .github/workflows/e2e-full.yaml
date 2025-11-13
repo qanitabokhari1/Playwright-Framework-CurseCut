@@ -76,7 +76,7 @@ jobs:
             grep: '46min file - credits and censoring'
             excludeHeavy: false
           - name: heavy-46min-again
-            grep: '45+ minute file - premium long processing route'
+            grep: '46 minute file - premium long processing route'
             excludeHeavy: false
           - name: heavy-31min
             grep: '31min file - credits and censoring'
@@ -92,7 +92,7 @@ jobs:
             npx playwright test --grep "${{ matrix.grep }}"
           else
             # Run the selected user group; exclude the heavy specs from user groups
-            npx playwright test --grep "${{ matrix.grep }}" --grep-invert "46min file - credits and censoring|45\+ minute file - premium long processing route|31min file - credits and censoring"
+            npx playwright test --grep "${{ matrix.grep }}" --grep-invert "46min file - credits and censoring|46 minute file - premium long processing route|31min file - credits and censoring"
           fi
       - name: Upload Playwright HTML Report
         if: ${{ !cancelled() }}
