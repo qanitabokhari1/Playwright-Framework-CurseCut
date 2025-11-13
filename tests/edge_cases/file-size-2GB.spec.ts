@@ -10,6 +10,7 @@ test.describe('testUser8', () => {
 
     const audioPage = helpers.audioProcessingPage;
 
+    await page.waitForTimeout(3000);
     // Capture initial credits
     const initialCredits = await audioPage.getCreditsAmount();
 
@@ -56,6 +57,7 @@ test.describe('testUser8', () => {
     await audioPage.verifyProcessButtonDisabled();
 
     // Verify no credits deducted
+    await page.waitForTimeout(3000);
     const finalCredits = await audioPage.getCreditsAmount();
     expect(finalCredits).toBe(initialCredits);
   });
