@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { TestHelpers } from '../../helpers/testHelpers';
 import { TestData } from '../../fixtures/testData';
 
-test.describe('ElevenLabs SYNC auto-download - file downloads automatically', () => {
+test.describe('testUser3', () => {
   test('ElevenLabs SYNC auto-download - file downloads automatically', async ({
     page,
   }) => {
@@ -11,7 +11,7 @@ test.describe('ElevenLabs SYNC auto-download - file downloads automatically', ()
     const isLiveMode = process.env.LIVE_MODE === 'true';
 
     // Ensure user is logged in (real backend flow)
-    await helpers.setupRealUserTest();
+    await helpers.setupTestUser3();
     // Setup mocks unless LIVE_MODE is true
     if (!isLiveMode) {
       await helpers.setupMockingForTest('elevenlabs-sync');

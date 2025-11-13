@@ -2,13 +2,13 @@ import { test, expect } from '@playwright/test';
 import { TestHelpers } from '../../helpers/testHelpers';
 import { TestData } from '../../fixtures/testData';
 
-test.describe('Deepgram processing - 3sec file - credits and censoring', () => {
+test.describe('testUser3', () => {
   test('3sec file - credits and censoring', async ({ page }) => {
     const helpers = new TestHelpers(page);
     const audioPage = helpers.audioProcessingPage;
     const isLiveMode = process.env.LIVE_MODE === 'true';
 
-    await helpers.setupRealUserTest();
+    await helpers.setupTestUser3();
 
     // Conditionally setup mocks based on LIVE_MODE flag
     if (!isLiveMode) {
@@ -27,11 +27,13 @@ test.describe('Deepgram processing - 3sec file - credits and censoring', () => {
       initialCreditsText?.replace(/[^\d.]/g, '') || '0'
     );
 
+    await audioPage.clickProcessButton();
+
     const statusResponsePromise = page.waitForResponse(
       res => res.url().includes('/status/') && res.ok(),
       { timeout: isLiveMode ? 60000 : 10000 }
     );
-    await audioPage.clickProcessButton();
+
     await statusResponsePromise;
 
     // Wait for UI to update after processing
@@ -50,7 +52,9 @@ test.describe('Deepgram processing - 3sec file - credits and censoring', () => {
       expect(actualRemaining).toBe(expectedRemaining);
     } else {
       // MOCKED MODE: Expect credits to remain the same (no real deduction)
-      expect(finalCredits).toBe(initialCredits);
+      const expectedRemaining = parseFloat(initialCredits.toFixed(3));
+      const actualRemaining = parseFloat(finalCredits.toFixed(3));
+      expect(actualRemaining).toBe(expectedRemaining);
     }
 
     await page.getByRole('tab', { name: 'Censored Words' }).click();

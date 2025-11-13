@@ -299,7 +299,7 @@ export class ApiMocks {
   /**
    * Mock /audio and /status for 30sec ElevenLabs SYNC file with extended transcription
    */
-  async mockElevenLabsSync30SecFile(
+  async mock30SecFile(
     taskId: string = '6d22cbfc-60e5-4475-9ca3-3f71772ee2f9'
   ): Promise<void> {
     await this.page.route('**/audio', async route => {
@@ -314,6 +314,19 @@ export class ApiMocks {
           is_song: true,
           is_premium: false,
           using_premium_processing: true,
+        }),
+      });
+    });
+    await this.page.route('**/upload-chunk', async route => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          task_id: '6d22cbfc-60e5-4475-9ca3-3f71772ee2f9',
+          estimated_time: 401.1022041,
+          upload_id: '1760998827958qln1ob0cc',
+          message: 'File successfully uploaded and processing started',
+          is_complete: true,
         }),
       });
     });
@@ -443,6 +456,1249 @@ export class ApiMocks {
           file_url: null,
           processing_type: 'browser',
           words_to_censor: null,
+        }),
+      });
+    });
+  }
+
+  async mock30SecFileAsyncFlow(): Promise<void> {
+    await this.page.route('**/upload-chunk', async route => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          task_id: '6d22cbfc-60e5-4475-9ca3-3f71772ee2f9',
+          estimated_time: 401.1022041,
+          upload_id: '1760998827958qln1ob0cc',
+          message: 'File successfully uploaded and processing started',
+          is_complete: true,
+        }),
+      });
+    });
+
+    await this.page.route(`**/status/**`, async route => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          status: 'succeeded',
+          transcription: [
+            {
+              word: 'Oh',
+              start: 0.179,
+              end: 0.379,
+            },
+            {
+              word: ' ',
+              start: 0.379,
+              end: 0.439,
+            },
+            {
+              word: 'my',
+              start: 0.439,
+              end: 0.6,
+            },
+            {
+              word: ' ',
+              start: 0.6,
+              end: 0.679,
+            },
+            {
+              word: 'lord.',
+              start: 0.68,
+              end: 1.079,
+            },
+            {
+              word: ' ',
+              start: 1.079,
+              end: 1.799,
+            },
+            {
+              word: "Aren't",
+              start: 1.799,
+              end: 2.039,
+            },
+            {
+              word: ' ',
+              start: 2.039,
+              end: 2.059,
+            },
+            {
+              word: 'you',
+              start: 2.059,
+              end: 2.159,
+            },
+            {
+              word: ' ',
+              start: 2.159,
+              end: 2.219,
+            },
+            {
+              word: 'twats',
+              start: 2.22,
+              end: 2.619,
+            },
+            {
+              word: ' ',
+              start: 2.619,
+              end: 2.679,
+            },
+            {
+              word: 'lucky',
+              start: 2.679,
+              end: 2.919,
+            },
+            {
+              word: ' ',
+              start: 2.919,
+              end: 2.939,
+            },
+            {
+              word: 'that',
+              start: 2.939,
+              end: 3.059,
+            },
+            {
+              word: ' ',
+              start: 3.059,
+              end: 3.079,
+            },
+            {
+              word: 'I',
+              start: 3.079,
+              end: 3.179,
+            },
+            {
+              word: ' ',
+              start: 3.179,
+              end: 3.279,
+            },
+            {
+              word: 'showed',
+              start: 3.279,
+              end: 3.559,
+            },
+            {
+              word: ' ',
+              start: 3.559,
+              end: 3.619,
+            },
+            {
+              word: 'up,',
+              start: 3.619,
+              end: 3.799,
+            },
+            {
+              word: ' ',
+              start: 3.799,
+              end: 3.819,
+            },
+            {
+              word: 'eh?',
+              start: 3.819,
+              end: 4.139,
+            },
+            {
+              word: ' ',
+              start: 4.139,
+              end: 4.199,
+            },
+            {
+              word: 'Pardon',
+              start: 4.199,
+              end: 4.48,
+            },
+            {
+              word: ' ',
+              start: 4.48,
+              end: 4.519,
+            },
+            {
+              word: 'my',
+              start: 4.519,
+              end: 4.699,
+            },
+            {
+              word: ' ',
+              start: 4.699,
+              end: 4.739,
+            },
+            {
+              word: 'French.',
+              start: 4.739,
+              end: 5.059,
+            },
+            {
+              word: ' ',
+              start: 5.059,
+              end: 5.099,
+            },
+            {
+              word: 'Fuck',
+              start: 5.099,
+              end: 5.319,
+            },
+            {
+              word: ' ',
+              start: 5.319,
+              end: 5.339,
+            },
+            {
+              word: 'those',
+              start: 5.339,
+              end: 5.559,
+            },
+            {
+              word: ' ',
+              start: 5.559,
+              end: 5.619,
+            },
+            {
+              word: 'fuckers.',
+              start: 5.619,
+              end: 6.079,
+            },
+            {
+              word: ' ',
+              start: 6.079,
+              end: 6.139,
+            },
+            {
+              word: 'You',
+              start: 6.139,
+              end: 6.219,
+            },
+            {
+              word: ' ',
+              start: 6.219,
+              end: 6.219,
+            },
+            {
+              word: 'should',
+              start: 6.219,
+              end: 6.379,
+            },
+            {
+              word: ' ',
+              start: 6.379,
+              end: 6.459,
+            },
+            {
+              word: 'fuck',
+              start: 6.46,
+              end: 6.639,
+            },
+            {
+              word: ' ',
+              start: 6.639,
+              end: 6.679,
+            },
+            {
+              word: 'off,',
+              start: 6.679,
+              end: 6.859,
+            },
+            {
+              word: ' ',
+              start: 6.859,
+              end: 6.879,
+            },
+            {
+              word: 'Hughie.',
+              start: 6.879,
+              end: 7.179,
+            },
+            {
+              word: ' ',
+              start: 7.179,
+              end: 7.399,
+            },
+            {
+              word: 'Fucking',
+              start: 7.399,
+              end: 7.679,
+            },
+            {
+              word: ' ',
+              start: 7.679,
+              end: 7.739,
+            },
+            {
+              word: 'diabolical.',
+              start: 7.739,
+              end: 8.599,
+            },
+            {
+              word: ' ',
+              start: 8.599,
+              end: 8.64,
+            },
+            {
+              word: 'We',
+              start: 8.64,
+              end: 8.719,
+            },
+            {
+              word: ' ',
+              start: 8.719,
+              end: 8.72,
+            },
+            {
+              word: "don't",
+              start: 8.72,
+              end: 8.84,
+            },
+            {
+              word: ' ',
+              start: 8.84,
+              end: 8.859,
+            },
+            {
+              word: 'want',
+              start: 8.859,
+              end: 8.98,
+            },
+            {
+              word: ' ',
+              start: 8.98,
+              end: 9.02,
+            },
+            {
+              word: 'your',
+              start: 9.02,
+              end: 9.159,
+            },
+            {
+              word: ' ',
+              start: 9.159,
+              end: 9.219,
+            },
+            {
+              word: 'fucking',
+              start: 9.22,
+              end: 9.5,
+            },
+            {
+              word: ' ',
+              start: 9.5,
+              end: 9.599,
+            },
+            {
+              word: 'money.',
+              start: 9.599,
+              end: 9.9,
+            },
+            {
+              word: ' ',
+              start: 9.9,
+              end: 9.94,
+            },
+            {
+              word: 'With',
+              start: 9.94,
+              end: 10.059,
+            },
+            {
+              word: ' ',
+              start: 10.059,
+              end: 10.1,
+            },
+            {
+              word: 'a',
+              start: 10.1,
+              end: 10.119,
+            },
+            {
+              word: ' ',
+              start: 10.119,
+              end: 10.18,
+            },
+            {
+              word: 'simple',
+              start: 10.18,
+              end: 10.5,
+            },
+            {
+              word: ' ',
+              start: 10.5,
+              end: 10.579,
+            },
+            {
+              word: 'fuck',
+              start: 10.579,
+              end: 10.8,
+            },
+            {
+              word: ' ',
+              start: 10.8,
+              end: 10.859,
+            },
+            {
+              word: 'you',
+              start: 10.859,
+              end: 10.94,
+            },
+            {
+              word: ' ',
+              start: 10.94,
+              end: 10.96,
+            },
+            {
+              word: 'would',
+              start: 10.96,
+              end: 11.099,
+            },
+            {
+              word: ' ',
+              start: 11.099,
+              end: 11.119,
+            },
+            {
+              word: 'suffice.',
+              start: 11.119,
+              end: 11.659,
+            },
+            {
+              word: ' ',
+              start: 11.659,
+              end: 11.699,
+            },
+            {
+              word: 'Fucking',
+              start: 11.699,
+              end: 11.94,
+            },
+            {
+              word: ' ',
+              start: 11.94,
+              end: 11.98,
+            },
+            {
+              word: 'twats.',
+              start: 11.98,
+              end: 12.5,
+            },
+            {
+              word: ' ',
+              start: 12.5,
+              end: 12.519,
+            },
+            {
+              word: 'That',
+              start: 12.519,
+              end: 12.619,
+            },
+            {
+              word: ' ',
+              start: 12.619,
+              end: 12.659,
+            },
+            {
+              word: 'is',
+              start: 12.659,
+              end: 12.739,
+            },
+            {
+              word: ' ',
+              start: 12.739,
+              end: 12.759,
+            },
+            {
+              word: 'a',
+              start: 12.759,
+              end: 12.859,
+            },
+            {
+              word: ' ',
+              start: 12.859,
+              end: 12.899,
+            },
+            {
+              word: 'cunt',
+              start: 12.899,
+              end: 13.139,
+            },
+            {
+              word: ' ',
+              start: 13.139,
+              end: 13.18,
+            },
+            {
+              word: 'move.',
+              start: 13.18,
+              end: 13.36,
+            },
+            {
+              word: ' ',
+              start: 13.36,
+              end: 13.4,
+            },
+            {
+              word: "They're",
+              start: 13.4,
+              end: 13.48,
+            },
+            {
+              word: ' ',
+              start: 13.48,
+              end: 13.48,
+            },
+            {
+              word: 'the',
+              start: 13.48,
+              end: 13.56,
+            },
+            {
+              word: ' ',
+              start: 13.56,
+              end: 13.72,
+            },
+            {
+              word: 'smallest',
+              start: 13.72,
+              end: 14.02,
+            },
+            {
+              word: ' ',
+              start: 14.02,
+              end: 14.079,
+            },
+            {
+              word: 'cunts',
+              start: 14.079,
+              end: 14.319,
+            },
+            {
+              word: ' ',
+              start: 14.319,
+              end: 14.339,
+            },
+            {
+              word: 'in',
+              start: 14.34,
+              end: 14.42,
+            },
+            {
+              word: ' ',
+              start: 14.42,
+              end: 14.42,
+            },
+            {
+              word: 'the',
+              start: 14.42,
+              end: 14.519,
+            },
+            {
+              word: ' ',
+              start: 14.519,
+              end: 14.56,
+            },
+            {
+              word: 'country.',
+              start: 14.56,
+              end: 15.0,
+            },
+            {
+              word: ' ',
+              start: 15.0,
+              end: 15.0,
+            },
+            {
+              word: 'Can',
+              start: 15.0,
+              end: 15.079,
+            },
+            {
+              word: ' ',
+              start: 15.079,
+              end: 15.079,
+            },
+            {
+              word: 'we',
+              start: 15.079,
+              end: 15.159,
+            },
+            {
+              word: ' ',
+              start: 15.159,
+              end: 15.22,
+            },
+            {
+              word: 'just',
+              start: 15.22,
+              end: 15.359,
+            },
+            {
+              word: ' ',
+              start: 15.359,
+              end: 15.399,
+            },
+            {
+              word: 'skip',
+              start: 15.399,
+              end: 15.599,
+            },
+            {
+              word: ' ',
+              start: 15.599,
+              end: 15.619,
+            },
+            {
+              word: 'to',
+              start: 15.619,
+              end: 15.739,
+            },
+            {
+              word: ' ',
+              start: 15.739,
+              end: 15.759,
+            },
+            {
+              word: 'the',
+              start: 15.759,
+              end: 15.899,
+            },
+            {
+              word: ' ',
+              start: 15.899,
+              end: 15.94,
+            },
+            {
+              word: 'part',
+              start: 15.94,
+              end: 16.158,
+            },
+            {
+              word: ' ',
+              start: 16.158,
+              end: 16.219,
+            },
+            {
+              word: 'where',
+              start: 16.219,
+              end: 16.34,
+            },
+            {
+              word: ' ',
+              start: 16.34,
+              end: 16.36,
+            },
+            {
+              word: 'you',
+              start: 16.36,
+              end: 16.459,
+            },
+            {
+              word: ' ',
+              start: 16.459,
+              end: 16.5,
+            },
+            {
+              word: 'laser',
+              start: 16.5,
+              end: 16.76,
+            },
+            {
+              word: ' ',
+              start: 16.76,
+              end: 16.799,
+            },
+            {
+              word: 'my',
+              start: 16.799,
+              end: 16.959,
+            },
+            {
+              word: ' ',
+              start: 16.959,
+              end: 17.0,
+            },
+            {
+              word: 'fucking',
+              start: 17.0,
+              end: 17.279,
+            },
+            {
+              word: ' ',
+              start: 17.279,
+              end: 17.319,
+            },
+            {
+              word: 'brains',
+              start: 17.319,
+              end: 17.579,
+            },
+            {
+              word: ' ',
+              start: 17.579,
+              end: 17.659,
+            },
+            {
+              word: 'out?',
+              start: 17.659,
+              end: 17.879,
+            },
+            {
+              word: ' ',
+              start: 17.879,
+              end: 18.019,
+            },
+            {
+              word: 'Oh,',
+              start: 18.02,
+              end: 18.219,
+            },
+            {
+              word: ' ',
+              start: 18.219,
+              end: 18.279,
+            },
+            {
+              word: 'fuck',
+              start: 18.279,
+              end: 18.5,
+            },
+            {
+              word: ' ',
+              start: 18.5,
+              end: 18.559,
+            },
+            {
+              word: 'me.',
+              start: 18.559,
+              end: 18.7,
+            },
+            {
+              word: ' ',
+              start: 18.7,
+              end: 18.7,
+            },
+            {
+              word: 'Potato,',
+              start: 18.7,
+              end: 19.139,
+            },
+            {
+              word: ' ',
+              start: 19.139,
+              end: 19.159,
+            },
+            {
+              word: 'fucking',
+              start: 19.159,
+              end: 19.399,
+            },
+            {
+              word: ' ',
+              start: 19.399,
+              end: 19.459,
+            },
+            {
+              word: 'potato.',
+              start: 19.459,
+              end: 19.939,
+            },
+            {
+              word: ' ',
+              start: 19.939,
+              end: 19.94,
+            },
+            {
+              word: "We're",
+              start: 19.94,
+              end: 20.079,
+            },
+            {
+              word: ' ',
+              start: 20.079,
+              end: 20.1,
+            },
+            {
+              word: 'both',
+              start: 20.1,
+              end: 20.26,
+            },
+            {
+              word: ' ',
+              start: 20.26,
+              end: 20.28,
+            },
+            {
+              word: 'in',
+              start: 20.28,
+              end: 20.359,
+            },
+            {
+              word: ' ',
+              start: 20.359,
+              end: 20.399,
+            },
+            {
+              word: 'a',
+              start: 20.399,
+              end: 20.459,
+            },
+            {
+              word: ' ',
+              start: 20.459,
+              end: 20.5,
+            },
+            {
+              word: 'shitload',
+              start: 20.5,
+              end: 20.8,
+            },
+            {
+              word: ' ',
+              start: 20.8,
+              end: 20.819,
+            },
+            {
+              word: 'of',
+              start: 20.819,
+              end: 20.86,
+            },
+            {
+              word: ' ',
+              start: 20.86,
+              end: 20.919,
+            },
+            {
+              word: 'trouble.',
+              start: 20.92,
+              end: 21.319,
+            },
+            {
+              word: ' ',
+              start: 21.319,
+              end: 21.359,
+            },
+            {
+              word: 'What',
+              start: 21.359,
+              end: 21.44,
+            },
+            {
+              word: ' ',
+              start: 21.44,
+              end: 21.479,
+            },
+            {
+              word: 'the',
+              start: 21.479,
+              end: 21.639,
+            },
+            {
+              word: ' ',
+              start: 21.639,
+              end: 21.679,
+            },
+            {
+              word: 'fuck',
+              start: 21.68,
+              end: 21.839,
+            },
+            {
+              word: ' ',
+              start: 21.84,
+              end: 21.899,
+            },
+            {
+              word: 'are',
+              start: 21.899,
+              end: 21.979,
+            },
+            {
+              word: ' ',
+              start: 21.979,
+              end: 22.0,
+            },
+            {
+              word: 'you',
+              start: 22.0,
+              end: 22.079,
+            },
+            {
+              word: ' ',
+              start: 22.079,
+              end: 22.12,
+            },
+            {
+              word: 'waiting',
+              start: 22.12,
+              end: 22.459,
+            },
+            {
+              word: ' ',
+              start: 22.459,
+              end: 22.519,
+            },
+            {
+              word: 'for?',
+              start: 22.519,
+              end: 22.779,
+            },
+            {
+              word: ' ',
+              start: 22.779,
+              end: 22.84,
+            },
+            {
+              word: 'Get',
+              start: 22.84,
+              end: 22.979,
+            },
+            {
+              word: ' ',
+              start: 22.979,
+              end: 23.0,
+            },
+            {
+              word: 'out',
+              start: 23.0,
+              end: 23.12,
+            },
+            {
+              word: ' ',
+              start: 23.12,
+              end: 23.12,
+            },
+            {
+              word: 'of',
+              start: 23.12,
+              end: 23.12,
+            },
+            {
+              word: ' ',
+              start: 23.12,
+              end: 23.14,
+            },
+            {
+              word: 'the',
+              start: 23.14,
+              end: 23.259,
+            },
+            {
+              word: ' ',
+              start: 23.26,
+              end: 23.3,
+            },
+            {
+              word: 'fucking',
+              start: 23.3,
+              end: 23.539,
+            },
+            {
+              word: ' ',
+              start: 23.539,
+              end: 23.639,
+            },
+            {
+              word: 'way.',
+              start: 23.639,
+              end: 23.92,
+            },
+            {
+              word: ' ',
+              start: 23.92,
+              end: 23.94,
+            },
+            {
+              word: 'I',
+              start: 23.94,
+              end: 23.999,
+            },
+            {
+              word: ' ',
+              start: 24.0,
+              end: 24.04,
+            },
+            {
+              word: 'fucking',
+              start: 24.04,
+              end: 24.239,
+            },
+            {
+              word: ' ',
+              start: 24.239,
+              end: 24.299,
+            },
+            {
+              word: 'swear',
+              start: 24.299,
+              end: 24.54,
+            },
+            {
+              word: ' ',
+              start: 24.54,
+              end: 24.579,
+            },
+            {
+              word: 'to',
+              start: 24.579,
+              end: 24.7,
+            },
+            {
+              word: ' ',
+              start: 24.7,
+              end: 24.72,
+            },
+            {
+              word: 'God,',
+              start: 24.72,
+              end: 24.959,
+            },
+            {
+              word: ' ',
+              start: 24.959,
+              end: 24.979,
+            },
+            {
+              word: "he's",
+              start: 24.979,
+              end: 25.12,
+            },
+            {
+              word: ' ',
+              start: 25.12,
+              end: 25.14,
+            },
+            {
+              word: 'got',
+              start: 25.14,
+              end: 25.259,
+            },
+            {
+              word: ' ',
+              start: 25.26,
+              end: 25.319,
+            },
+            {
+              word: 'rashes',
+              start: 25.319,
+              end: 25.639,
+            },
+            {
+              word: ' ',
+              start: 25.639,
+              end: 25.679,
+            },
+            {
+              word: 'down',
+              start: 25.68,
+              end: 25.84,
+            },
+            {
+              word: ' ',
+              start: 25.84,
+              end: 25.899,
+            },
+            {
+              word: 'there.',
+              start: 25.899,
+              end: 26.239,
+            },
+            {
+              word: ' ',
+              start: 26.239,
+              end: 26.319,
+            },
+            {
+              word: 'Fucking',
+              start: 26.319,
+              end: 26.859,
+            },
+            {
+              word: ' ',
+              start: 26.859,
+              end: 26.919,
+            },
+            {
+              word: 'diabolical.',
+              start: 26.92,
+              end: 27.86,
+            },
+            {
+              word: ' ',
+              start: 27.86,
+              end: 27.88,
+            },
+            {
+              word: 'Skip',
+              start: 27.88,
+              end: 28.099,
+            },
+            {
+              word: ' ',
+              start: 28.099,
+              end: 28.139,
+            },
+            {
+              word: 'the',
+              start: 28.139,
+              end: 28.239,
+            },
+            {
+              word: ' ',
+              start: 28.239,
+              end: 28.299,
+            },
+            {
+              word: 'fucking',
+              start: 28.299,
+              end: 28.559,
+            },
+            {
+              word: ' ',
+              start: 28.559,
+              end: 28.579,
+            },
+            {
+              word: 'hors',
+              start: 28.579,
+              end: 28.76,
+            },
+            {
+              word: ' ',
+              start: 28.76,
+              end: 28.78,
+            },
+            {
+              word: "d'oeuvres,",
+              start: 28.78,
+              end: 29.059,
+            },
+            {
+              word: ' ',
+              start: 29.059,
+              end: 29.1,
+            },
+            {
+              word: 'if',
+              start: 29.1,
+              end: 29.18,
+            },
+            {
+              word: ' ',
+              start: 29.18,
+              end: 29.219,
+            },
+            {
+              word: 'you',
+              start: 29.219,
+              end: 29.319,
+            },
+            {
+              word: ' ',
+              start: 29.319,
+              end: 29.359,
+            },
+            {
+              word: "don't",
+              start: 29.359,
+              end: 29.559,
+            },
+            {
+              word: ' ',
+              start: 29.559,
+              end: 29.6,
+            },
+            {
+              word: 'mind.',
+              start: 29.6,
+              end: 29.979,
+            },
+          ],
+          file_url:
+            'https://cursecut-uploads.s3.amazonaws.com/c450c009-0ffe-463f-9f4f-aa37f85792fa.mp3?AWSAccessKeyId=AKIAUAPBFKPPKOZQZINF&Signature=UoEVMcpndr27KtuG9aeYU8SwNuc%3D&Expires=1762458725',
+          processing_type: 'server',
+          words_to_censor: [
+            {
+              end: 2619,
+              word: 'twats',
+              start: 2220,
+            },
+            {
+              end: 5319,
+              word: 'Fuck',
+              start: 5099,
+            },
+            {
+              end: 6079,
+              word: 'fuckers.',
+              start: 5619,
+            },
+            {
+              end: 6639,
+              word: 'fuck',
+              start: 6460,
+            },
+            {
+              end: 7679,
+              word: 'Fucking',
+              start: 7399,
+            },
+            {
+              end: 9500,
+              word: 'fucking',
+              start: 9220,
+            },
+            {
+              end: 10800,
+              word: 'fuck',
+              start: 10579,
+            },
+            {
+              end: 11940,
+              word: 'Fucking',
+              start: 11699,
+            },
+            {
+              end: 12500,
+              word: 'twats.',
+              start: 11980,
+            },
+            {
+              end: 17279,
+              word: 'fucking',
+              start: 17000,
+            },
+            {
+              end: 18500,
+              word: 'fuck',
+              start: 18279,
+            },
+            {
+              end: 19399,
+              word: 'fucking',
+              start: 19159,
+            },
+            {
+              end: 21839,
+              word: 'fuck',
+              start: 21680,
+            },
+            {
+              end: 23539,
+              word: 'fucking',
+              start: 23300,
+            },
+            {
+              end: 24239,
+              word: 'fucking',
+              start: 24040,
+            },
+            {
+              end: 26859,
+              word: 'Fucking',
+              start: 26319,
+            },
+            {
+              end: 28559,
+              word: 'fucking',
+              start: 28299,
+            },
+          ],
         }),
       });
     });

@@ -2,13 +2,13 @@ import { test } from '@playwright/test';
 import { TestHelpers } from '../../helpers/testHelpers';
 import { TestData } from '../../fixtures/testData';
 
-test.describe('Session Management - prevent double processing', () => {
+test.describe('testUser2 - prevent double processing', () => {
   test('deepgram', async ({ page }) => {
     const helpers = new TestHelpers(page);
     const isLiveMode = process.env.LIVE_MODE === 'true';
 
     // Setup: Authenticate with sufficient credits
-    await helpers.setupSufficientCreditsTest();
+    await helpers.setupTestUser2();
 
     // Conditionally setup mocks based on LIVE_MODE flag
     if (!isLiveMode) {
@@ -40,7 +40,7 @@ test.describe('Session Management - prevent double processing', () => {
     const isLiveMode = process.env.LIVE_MODE === 'true';
 
     // Setup: Authenticate with sufficient credits
-    await helpers.setupSufficientCreditsTest();
+    await helpers.setupTestUser2();
 
     // Conditionally setup mocks based on LIVE_MODE flag
     if (!isLiveMode) {
@@ -72,7 +72,7 @@ test.describe('Session Management - prevent double processing', () => {
     const isLiveMode = process.env.LIVE_MODE === 'true';
 
     // Setup: Authenticate with sufficient credits
-    await helpers.setupSufficientCreditsTest();
+    await helpers.setupTestUser2();
 
     // Conditionally setup mocks based on LIVE_MODE flag
     if (!isLiveMode) {

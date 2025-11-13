@@ -2,17 +2,17 @@ import { test, expect } from '@playwright/test';
 import { TestHelpers } from '../../helpers/testHelpers';
 import { TestData } from '../../fixtures/testData';
 
-test.describe('Censored Words tab verification - multiple words', () => {
+test.describe('testUser3', () => {
   test('censored Words tab verification - multiple words', async ({ page }) => {
     const helpers = new TestHelpers(page);
     const audioPage = helpers.audioProcessingPage;
     const isLiveMode = process.env.LIVE_MODE === 'true';
 
-    await helpers.setupRealUserTest();
+    await helpers.setupTestUser3();
 
     if (!isLiveMode) {
       // Use the 30-second file mock that includes multiple censored words
-      await helpers.apiMocks.mockElevenLabsSync30SecFile();
+      await helpers.apiMocks.mock30SecFile();
     }
 
     await audioPage.clickStartNow();

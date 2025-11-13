@@ -23,8 +23,8 @@ export class BasePage {
   }
 
   get processButton(): Locator {
-    // Use aria-label locator for process button
-    return this.page.getByRole('button', { name: 'Process' });
+    // Use data-testid to avoid strict mode ambiguity with "Re-process"
+    return this.page.getByTestId('process-button');
   }
 
   get uploadInput(): Locator {
@@ -119,5 +119,12 @@ export class BasePage {
         body: JSON.stringify({ credits }),
       });
     });
+  }
+
+  // Parse numeric credits from the credits button
+  async getCreditsAmount(): Promise<number> {
+    const text = await this.creditsButton.textContent();
+    const value = parseFloat(text?.replace(/[^\d.]/g, '') ?? '0');
+    return Number.isFinite(value) ? value : 0;
   }
 }

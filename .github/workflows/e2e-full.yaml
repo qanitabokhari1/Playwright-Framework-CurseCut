@@ -3,7 +3,7 @@ name: E2E Full Tests with Code Quality
 # Workflow with code quality gate
 on:
   push:
-    branches: [main, dev, dev-musab]
+    branches: [main, dev, milestone-3-update]
 
   pull_request:
     branches: [main, dev, dev-musab]
@@ -33,51 +33,63 @@ jobs:
       LIVE_MODE: ${{ secrets.LIVE_MODE }}
       TEST_USER_EMAIL: ${{ secrets.TEST_USER_EMAIL }}
       TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+      TEST_USER_1_EMAIL: ${{ secrets.TEST_USER_1_EMAIL }}
+      TEST_USER_1_PASSWORD: ${{ secrets.TEST_USER_1_PASSWORD }}
+      TEST_USER_2_EMAIL: ${{ secrets.TEST_USER_2_EMAIL }}
+      TEST_USER_2_PASSWORD: ${{ secrets.TEST_USER_2_PASSWORD }}
+      TEST_USER_3_EMAIL: ${{ secrets.TEST_USER_3_EMAIL }}
+      TEST_USER_3_PASSWORD: ${{ secrets.TEST_USER_3_PASSWORD }}
+      TEST_USER_4_EMAIL: ${{ secrets.TEST_USER_4_EMAIL }}
+      TEST_USER_4_PASSWORD: ${{ secrets.TEST_USER_4_PASSWORD }}
+      TEST_USER_5_EMAIL: ${{ secrets.TEST_USER_5_EMAIL }}
+      TEST_USER_5_PASSWORD: ${{ secrets.TEST_USER_5_PASSWORD }}
     container:
       image: mcr.microsoft.com/playwright:v1.56.0-jammy
     strategy:
       fail-fast: false
       matrix:
         include:
-          - shardIndex: 1
-            shardTotal: 4
-            grep: ''
-          - shardIndex: 2
-            shardTotal: 4
-            grep: ''
-          - shardIndex: 3
-            shardTotal: 4
-            grep: ''
-          - shardIndex: 4
-            shardTotal: 4
-            grep: ''
-          # Dedicated job for the heavy test; use a unique shardIndex for artifact naming
-          - shardIndex: 5
-            shardTotal: 5
-            grep: 'elevenlabs-async-46min-credits-censoring'
+          # Run each user group in isolation via grep against the describe title
+          - name: testUser1
+            grep: 'testUser1'
+            excludeHeavy: true
+          - name: testUser2
+            grep: 'testUser2'
+            excludeHeavy: true
+          - name: testUser3
+            grep: 'testUser3'
+            excludeHeavy: true
+          - name: testUser4
+            grep: 'testUser4'
+            excludeHeavy: true
+          # Dedicated job for the heavy 46‑minute test
+          - name: heavy-46min
+            grep: '46min file - credits and censoring'
+            excludeHeavy: false
     steps:
       - uses: actions/checkout@v5
       - name: Install dependencies
         run: npm ci
       - name: Run Playwright tests
         run: |
-          if [ -z "${{ matrix.grep }}" ]; then
-            npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --grep-invert "elevenlabs-async-46min-credits-censoring"
-          else
-            # Run the heavy test in isolation (no sharding here)
+          if [ "${{ matrix.name }}" = "heavy-46min" ]; then
+            # Run the heavy test alone
             npx playwright test --grep "${{ matrix.grep }}"
+          else
+            # Run the selected user group; exclude the heavy spec from user groups
+            npx playwright test --grep "${{ matrix.grep }}" --grep-invert "46min file - credits and censoring"
           fi
       - name: Upload Playwright HTML Report
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-report-${{ matrix.shardIndex }}
+          name: playwright-report-${{ matrix.name }}
           path: playwright-report/
           retention-days: 30
       - name: Upload test results
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4
         with:
-          name: test-results-${{ matrix.shardIndex }}
+          name: test-results-${{ matrix.name }}
           path: test-results/
           retention-days: 30

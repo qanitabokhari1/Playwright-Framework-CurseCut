@@ -2,7 +2,7 @@ import { test } from '@playwright/test';
 import { TestHelpers } from '../../helpers/testHelpers';
 import { TestData } from '../../fixtures/testData';
 
-test.describe('Session Management', () => {
+test.describe('testUser3', () => {
   test('File switching in same session - upload new file, verify previous state cleared', async ({
     page,
   }) => {
@@ -10,7 +10,7 @@ test.describe('Session Management', () => {
     const isLiveMode = process.env.LIVE_MODE === 'true';
 
     // Setup: Authenticate with real user and sufficient credits
-    await helpers.setupRealUserTest();
+    await helpers.setupTestUser3();
 
     // Conditionally setup mocks based on LIVE_MODE flag
     if (!isLiveMode) {
