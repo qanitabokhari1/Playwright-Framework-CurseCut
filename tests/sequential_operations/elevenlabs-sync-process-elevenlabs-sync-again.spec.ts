@@ -36,7 +36,6 @@ test.describe('testUser2', () => {
     const audioResponsePromise = page.waitForResponse(
       res => res.url().includes('/audio') && res.ok()
     );
-
     await page.getByTestId('process-button').click();
     await audioResponsePromise;
     await page.waitForTimeout(isLiveMode ? 5000 : 2000);

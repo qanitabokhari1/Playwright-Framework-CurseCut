@@ -35,7 +35,6 @@ test.describe('testUser4', () => {
     const audioResponsePromise = page.waitForResponse(
       res => res.url().includes('/audio') && res.ok()
     );
-
     await page.getByTestId('process-button').click();
     await audioResponsePromise;
 
@@ -88,7 +87,6 @@ test.describe('testUser4', () => {
       const actualRemaining = parseFloat(creditsAfterFirst.toFixed(1));
       expect(actualRemaining).toBe(expectedRemaining);
     }
-
     // Update approx words and process again (charged)
     await helpers.audioProcessingPage.fillApproxWord('fuck twats');
     const audioResponseAgain = page.waitForResponse(

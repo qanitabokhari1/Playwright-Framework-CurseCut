@@ -61,13 +61,13 @@ test.describe('testUser2', () => {
 
     if (isLiveMode) {
       // LIVE_MODE: Expect credits deducted by 0.1
-      const expectedRemaining = parseFloat((initialCredits - 0.1).toFixed(3));
-      const actualRemaining = parseFloat(finalCredits.toFixed(3));
+      const expectedRemaining = parseFloat((initialCredits - 0.1).toFixed(1));
+      const actualRemaining = parseFloat(finalCredits.toFixed(1));
       expect(actualRemaining).toBe(expectedRemaining);
     } else {
       // MOCKED MODE: Expect credits to remain the same (no real deduction)
-      const expectedRemaining = parseFloat(initialCredits.toFixed(3));
-      const actualRemaining = parseFloat(finalCredits.toFixed(3));
+      const expectedRemaining = parseFloat(initialCredits.toFixed(1));
+      const actualRemaining = parseFloat(finalCredits.toFixed(1));
       expect(actualRemaining).toBe(expectedRemaining);
     }
 

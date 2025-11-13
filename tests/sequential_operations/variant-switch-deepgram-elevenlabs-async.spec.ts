@@ -33,12 +33,16 @@ test.describe('testUser1', () => {
     // Enter exact match censor word
     await audioPage.fillCensorWord('fuck');
 
-    // Process the file (first processing - Deepgram)
-    const audioResponsePromise = page.waitForResponse(
-      res => res.url().includes('/audio') && res.ok()
-    );
-    await audioPage.clickProcessButton();
-    await audioResponsePromise;
+    const [download1] = await Promise.all([
+      page.waitForEvent('download'),
+      audioPage.clickProcessButton(),
+    ]);
+
+    // Assert that the download event fired successfully
+    expect(download1).toBeTruthy();
+
+    // Wait for UI to update after processing
+    await page.waitForTimeout(isLiveMode ? 5000 : 2000);
 
     // Validate Censored Words tab shows the censored word with correct timestamp
     await audioPage.openCensoredWordsTab();
