@@ -72,7 +72,12 @@ test.describe('testUser1', () => {
         await page.getByTestId('timeout-dialog-close').click();
         
         // Verify credits restored to initial amount
-        await page.waitForTimeout(15000);
+        const creditsResponsePromise = page.waitForResponse(
+            res => res.url().includes('/credits') && res.ok()
+        );
+        await creditsResponsePromise;
+
+        await page.waitForTimeout(2000);
         const finalCredits = await audioPage.getCreditsAmount();
         expect(finalCredits).toBe(initialCredits);
 

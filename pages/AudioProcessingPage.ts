@@ -127,8 +127,16 @@ export class AudioProcessingPage extends BasePage {
   }
 
   // File upload actions
-  async uploadAudioFile(filePath: string): Promise<void> {
-    await this.uploadInput.setInputFiles(filePath);
+  async uploadAudioFile(
+    file:
+      | string
+      | {
+          name: string;
+          mimeType: string;
+          buffer: Buffer;
+        }
+  ): Promise<void> {
+    await this.uploadInput.setInputFiles(file);
   }
 
   // Batch file upload actions
@@ -604,6 +612,23 @@ export class AudioProcessingPage extends BasePage {
         // best-effort filename assertion; continue if not found
       }
     }
+  }
+
+  async expectFileTooLargeErrorVisible(): Promise<void> {
+    const regex = /File bigger than 1\.9GB/i;
+
+    // Try status role first
+    let toast = this.page.getByRole('status').filter({ hasText: regex });
+    try {
+      await toast.first().waitFor({ state: 'visible', timeout: 6000 });
+    } catch {
+      // Fallback: some libraries use role="alert" for toasts
+      toast = this.page.getByRole('alert').filter({ hasText: regex });
+      await toast.first().waitFor({ state: 'visible', timeout: 6000 });
+    }
+
+    const target = toast.first();
+    await expect(target).toContainText(regex);
   }
 
 
