@@ -1733,22 +1733,19 @@ export class ApiMocks {
   async mock46MinutesAudioFile(
     taskId: string = 'b2329148-a881-4851-a98e-563d76efcf73'
   ): Promise<void> {
-    await this.page.route('**/audio', async route => {
+await this.page.route('**/upload-chunk', async route => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
         body: JSON.stringify({
-          message: 'Job started',
-          task_id: taskId,
-          estimated_time: 2760, // ~46 minutes
-          model: 'deepgram',
-          is_song: false,
-          is_premium: false,
-          using_premium_processing: false,
+          task_id: 'eb760ef4-f734-4068-9d19-861a8e71f7e5',
+          estimated_time: 401.1022041,
+          upload_id: '1760998827958qln1ob0cc',
+          message: 'File successfully uploaded and processing started',
+          is_complete: true,
         }),
       });
     });
-
     await this.page.route(`**/status/**`, async route => {
       await route.fulfill({
         status: 200,
