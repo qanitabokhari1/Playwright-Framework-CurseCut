@@ -3,7 +3,7 @@ import { TestHelpers } from '../../helpers/testHelpers';
 import { TestData } from '../../fixtures/testData';
 import { handleUploadAndPollStatus } from '../../helpers/liveAsyncPolling';
 
-test.describe('testUser5', () => {
+test.describe('testUser7', () => {
   test('31min file - credits and censoring', async ({ page }) => {
     // Set test timeout to 20 minutes (1200 seconds) for long file processing
     test.setTimeout(1200000);

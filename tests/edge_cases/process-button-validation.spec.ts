@@ -2,14 +2,14 @@ import { test } from '@playwright/test';
 import { TestHelpers } from '../../helpers/testHelpers';
 import { TestData } from '../../fixtures/testData';
 
-test.describe('testUser1', () => {
+test.describe('testUser8', () => {
   test('Process button disabled when file uploaded but no censor words', async ({
     page,
   }) => {
     const helpers = new TestHelpers(page);
 
     // Login as test user
-    await helpers.setupTestUser1();
+    await helpers.setupTestUser8();
 
     const audioPage = helpers.audioProcessingPage;
 

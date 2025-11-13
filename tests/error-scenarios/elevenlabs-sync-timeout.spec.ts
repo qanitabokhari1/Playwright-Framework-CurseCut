@@ -2,12 +2,12 @@ import { test, expect } from '@playwright/test';
 import { TestHelpers } from '../../helpers/testHelpers';
 import { TestData } from '../../fixtures/testData';
 
-test.describe('testUser1', () => {
+test.describe('testUser8', () => {
   test('should handle timeout error gracefully', async ({ page }) => {
     const helpers = new TestHelpers(page);
 
     // Setup authentication and credits
-    await helpers.setupTestUser1();
+    await helpers.setupTestUser8();
 
     // Mock the /audio endpoint to start a job (inline mock for timeout testing)
     await page.route('**/audio', async route => {

@@ -144,6 +144,15 @@ export class AuthPage extends BasePage {
   async loginWithTestUser5(): Promise<void> {
     await this.login(TestData.testUser5.email, TestData.testUser5.password);
   }
+  async loginWithTestUser6(): Promise<void> {
+    await this.login(TestData.testUser6.email, TestData.testUser6.password);
+  }
+  async loginWithTestUser7(): Promise<void> {
+    await this.login(TestData.testUser7.email, TestData.testUser7.password);
+  }
+  async loginWithTestUser8(): Promise<void> {
+    await this.login(TestData.testUser8.email, TestData.testUser8.password);
+  }
 
   // Verification methods
   async verifyLoggedIn(): Promise<void> {

@@ -31,6 +31,21 @@ export const TestData = {
     password: process.env.TEST_USER_5_PASSWORD || '',
     id: 'test-user-5',
   },
+  testUser6: {
+    email: process.env.TEST_USER_6_EMAIL || '',
+    password: process.env.TEST_USER_6_PASSWORD || '',
+    id: 'test-user-6',
+  },
+    testUser7: {
+    email: process.env.TEST_USER_7_EMAIL || '',
+    password: process.env.TEST_USER_7_PASSWORD || '',
+    id: 'test-user-7',
+  },
+    testUser8: {
+    email: process.env.TEST_USER_8_EMAIL || '',
+    password: process.env.TEST_USER_8_PASSWORD || '',
+    id: 'test-user-8',
+  },
 
   // Real user credentials for testing
   realUser: {

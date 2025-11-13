@@ -1,12 +1,12 @@
 import { test, expect } from '@playwright/test';
 import { TestHelpers } from '../../helpers/testHelpers';
 
-test.describe('testUser1', () => {
+test.describe('testUser8', () => {
   test('Oversized file shows error and blocks processing', async ({ page }) => {
     const helpers = new TestHelpers(page);
 
     // Login as test user
-    await helpers.setupTestUser1();
+    await helpers.setupTestUser8();
 
     const audioPage = helpers.audioProcessingPage;
 

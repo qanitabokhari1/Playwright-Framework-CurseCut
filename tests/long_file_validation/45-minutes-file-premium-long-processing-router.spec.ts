@@ -4,7 +4,7 @@ import { TestData } from '../../fixtures/testData';
 import { handleUploadAndPollStatus } from '../../helpers/liveAsyncPolling';
 
 test.describe('testUser3', () => {
-  test('45+ minute file → premium long processing route', async ({ page }) => {
+  test('45+ minute file - premium long processing route', async ({ page }) => {
     // Set test timeout to 20 minutes (1200 seconds) for long file processing
     test.setTimeout(1200000);
 

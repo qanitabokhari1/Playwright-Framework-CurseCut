@@ -2,13 +2,13 @@ import { test, expect } from '@playwright/test';
 import { TestHelpers } from '../../helpers/testHelpers';
 import { TestData } from '../../fixtures/testData';
 
-test.describe('testUser3', () => {
+test.describe('testUser8', () => {
   test('Deepgram → Multiple files succeed', async ({ page }) => {
     const helpers = new TestHelpers(page);
     const audioPage = helpers.audioProcessingPage;
     const isLiveMode = process.env.LIVE_MODE === 'true';
 
-    await helpers.setupTestUser3();
+    await helpers.setupTestUser8();
 
     // Conditionally setup mocks based on LIVE_MODE flag
     if (!isLiveMode) {
