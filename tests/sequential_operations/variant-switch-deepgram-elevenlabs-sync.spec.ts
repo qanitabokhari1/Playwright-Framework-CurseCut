@@ -31,7 +31,7 @@ test.describe('testUser2', () => {
 
     // Process and verify initial results
     const creditsBeforeFirst = await h.authPage.getCreditsAmount();
-    await h.audioProcessingPage.processFileAndWaitForResponse();
+    await h.audioProcessingPage.clickProcessAndWaitForDownload();
     await h.audioProcessingPage.openCensoredWordsTab();
     for (const text of [
       'fuck',

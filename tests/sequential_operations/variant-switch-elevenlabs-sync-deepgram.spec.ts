@@ -31,13 +31,7 @@ test.describe('testUser3', () => {
     await audioPage.fillCensorWord('fuck');
 
     // Process the file (single-processing pattern)
-    await audioPage.clickProcessButton();
-    const statusResponsePromise1 = page.waitForResponse(
-      res => res.url().includes('/status/') && res.ok(),
-      { timeout: isLiveMode ? 60000 : 10000 }
-    );
-    await statusResponsePromise1;
-    await page.waitForTimeout(isLiveMode ? 5000 : 2000);
+    await audioPage.clickProcessAndWaitForDownload();
 
     // Validate Censored Words tab shows the censored word with correct timestamp
     await audioPage.openCensoredWordsTab();

@@ -12,7 +12,7 @@ test.describe('testUser7', () => {
     const audioPage = helpers.audioProcessingPage;
     const isLiveMode = process.env.LIVE_MODE === 'true';
 
-    await helpers.setupTestUser5();
+    await helpers.setupTestUser7();
 
     // Conditionally setup mocks based on LIVE_MODE flag
     if (!isLiveMode) {

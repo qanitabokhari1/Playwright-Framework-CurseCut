@@ -31,7 +31,7 @@ test.describe('testUser4', () => {
 
     // Process the file and wait for completion
     const creditsBeforeFirst = await helpers.authPage.getCreditsAmount();
-    await helpers.audioProcessingPage.processFileAndWaitForResponse();
+    await helpers.audioProcessingPage.clickProcessAndWaitForDownload();
 
     // Validate Censored Words tab shows the censored words
     await helpers.audioProcessingPage.openCensoredWordsTab();
@@ -76,13 +76,8 @@ test.describe('testUser4', () => {
     const creditsBeforeSecond = await helpers.authPage.getCreditsAmount();
 
     // Process with async variant and wait for download
-    const [download] = await Promise.all([
-      page.waitForEvent('download'),
-      helpers.audioProcessingPage.processButton.click({ force: true }),
-    ]);
+    await helpers.audioProcessingPage.clickProcessAndWaitForDownload();
 
-    // Verify download was triggered
-    expect(download).toBeTruthy();
     // Validate Censored Words tab shows all censored words from async processing
     await helpers.audioProcessingPage.openCensoredWordsTab();
     for (const text of [
