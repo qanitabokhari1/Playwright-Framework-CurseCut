@@ -19,7 +19,6 @@ export async function handleUploadAndPollStatus(page: Page) {
 
         // Check if this is the final chunk with task_id and is_complete: true
         if (data.task_id && data.is_complete === true) {
-          console.log('✅ Final upload-chunk response received:', data);
           return true;
         }
 

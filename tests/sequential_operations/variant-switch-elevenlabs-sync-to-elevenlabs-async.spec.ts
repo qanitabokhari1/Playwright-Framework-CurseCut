@@ -31,7 +31,6 @@ test.describe('testUser4', () => {
 
     // Process the file and wait for completion
     const creditsBeforeFirst = await helpers.authPage.getCreditsAmount();
-    console.log(`Credits before first processing: ${creditsBeforeFirst}`);
     await helpers.audioProcessingPage.processFileAndWaitForResponse();
 
     // Validate Censored Words tab shows the censored words
@@ -58,7 +57,6 @@ test.describe('testUser4', () => {
       const actualDeduction = +(creditsBeforeFirst - afterFirst).toFixed(3);
       expect(actualDeduction).toBeGreaterThanOrEqual(expectedDeduction - 0.2);
       expect(actualDeduction).toBeLessThanOrEqual(expectedDeduction + 0.2);
-      console.log(`Credits after first processing: ${afterFirst}`);
     } else {
       const afterFirst = +(await helpers.authPage.getCreditsAmount()).toFixed(
         3
@@ -85,10 +83,6 @@ test.describe('testUser4', () => {
 
     // Verify download was triggered
     expect(download).toBeTruthy();
-    console.log(
-      '🎯 Download event triggered successfully:',
-      download.suggestedFilename()
-    );
     // Validate Censored Words tab shows all censored words from async processing
     await helpers.audioProcessingPage.openCensoredWordsTab();
     for (const text of [

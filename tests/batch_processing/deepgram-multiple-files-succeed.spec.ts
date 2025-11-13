@@ -33,7 +33,6 @@ test.describe('testUser3', () => {
 
     // Capture initial credits from UI
     const initialCredits = await helpers.authPage.getCreditsAmount();
-    console.log(`Initial credits: ${initialCredits}`);
 
     // Process batch and wait for downloads (verify both files processed successfully)
     const [download1, download2] = await Promise.all([
@@ -45,18 +44,12 @@ test.describe('testUser3', () => {
     // Verify both downloads were triggered
     expect(download1).toBeTruthy();
     expect(download2).toBeTruthy();
-    console.log(
-      '🎯 Both files downloaded successfully:',
-      download1.suggestedFilename(),
-      download2.suggestedFilename()
-    );
 
     // Wait for UI to update after processing
     await page.waitForTimeout(isLiveMode ? 5000 : 2000);
 
     // Verify credits deducted correctly (2x file cost)
     const finalCredits = await helpers.authPage.getCreditsAmount();
-    console.log(`Final credits: ${finalCredits}`);
     if (isLiveMode) {
       // LIVE_MODE: Expect credits deducted by 0.2 (2 files × 0.1 each)
       const expectedDeduction = 0.2;
@@ -65,13 +58,11 @@ test.describe('testUser3', () => {
       );
       expect(actualDeduction).toBeGreaterThanOrEqual(expectedDeduction - 0.2);
       expect(actualDeduction).toBeLessThanOrEqual(expectedDeduction + 0.2);
-      console.log(`Actual deduction: ${actualDeduction}`);
     } else {
       // MOCKED MODE: Expect credits to remain the same (no real deduction)
       const expectedRemaining = parseFloat(initialCredits.toFixed(1));
       const actualRemaining = parseFloat(finalCredits.toFixed(1));
       expect(actualRemaining).toBe(expectedRemaining);
-      console.log(`Expected remaining credits: ${expectedRemaining}`);
     }
 
     // Verify both files appear in results

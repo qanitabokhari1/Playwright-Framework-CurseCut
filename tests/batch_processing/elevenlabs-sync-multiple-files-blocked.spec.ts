@@ -45,7 +45,6 @@ test.describe('testUser4', () => {
 
     // Capture initial credits (should show cost for ONLY first file)
     const initialCredits = await helpers.authPage.getCreditsAmount();
-    console.log(`Initial credits: ${initialCredits}`);
 
     // Process file and wait for single download (only first file processed)
     const [download] = await Promise.all([
@@ -55,17 +54,12 @@ test.describe('testUser4', () => {
 
     // Verify only one download was triggered
     expect(download).toBeTruthy();
-    console.log(
-      '🎯 Only first file downloaded successfully:',
-      download.suggestedFilename()
-    );
 
     // Wait for UI to update after processing
     await page.waitForTimeout(isLiveMode ? 5000 : 2000);
 
     // Verify credits deducted correctly (only for first file, not batch total)
     const finalCredits = await helpers.authPage.getCreditsAmount();
-    console.log(`Final credits: ${finalCredits}`);
     if (isLiveMode) {
       // LIVE_MODE: Expect credits deducted by 0.2 (only 1 file × 0.2)
       const expectedDeduction = 0.1;
@@ -74,13 +68,11 @@ test.describe('testUser4', () => {
       );
       expect(actualDeduction).toBeGreaterThanOrEqual(expectedDeduction - 0.1);
       expect(actualDeduction).toBeLessThanOrEqual(expectedDeduction + 0.1);
-      console.log(`Actual deduction: ${actualDeduction}`);
     } else {
       // MOCKED MODE: Expect credits to remain the same (no real deduction)
       const expectedRemaining = parseFloat(initialCredits.toFixed(1));
       const actualRemaining = parseFloat(finalCredits.toFixed(1));
       expect(actualRemaining).toBe(expectedRemaining);
-      console.log(`Expected remaining credits: ${expectedRemaining}`);
     }
 
     // Verify only first file appears in results

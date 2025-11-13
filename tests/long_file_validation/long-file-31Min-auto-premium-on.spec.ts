@@ -25,7 +25,7 @@ test.describe('testUser5', () => {
     const understandButton = page.getByRole('button', { name: 'I understand' });
     await understandButton.click();
 
-        // Validate: premium-yes auto-selected, song-yes not selected
+    // Validate: premium-yes auto-selected, song-yes not selected
     await expect(audioPage.premiumYesButton).toHaveClass(/bg-slate-900/, {
       timeout: 40000,
     });
@@ -81,7 +81,6 @@ test.describe('testUser5', () => {
       expect(finalCredits).toBe(initialCredits);
     }
 
-
     // Validate Censored Words tab shows the censored word with correct timestamp
     await page.getByRole('tab', { name: 'Censored Words' }).click();
     await page.locator('table').scrollIntoViewIfNeeded();
@@ -90,7 +89,7 @@ test.describe('testUser5', () => {
     );
     await expect(page.locator('table')).toContainText('00:00:18');
     await expect(page.locator('table')).toContainText(
-        TestData.censorWords.default
+      TestData.censorWords.default
     );
     await expect(page.locator('table')).toContainText('00:08:45');
     await expect(page.locator('table')).toContainText(

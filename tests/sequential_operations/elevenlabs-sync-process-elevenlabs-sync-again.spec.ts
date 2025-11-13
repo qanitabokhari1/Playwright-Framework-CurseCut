@@ -31,13 +31,12 @@ test.describe('testUser2', () => {
 
     // Credits before first processing
     const initialCredits = await helpers.authPage.getCreditsAmount();
-    console.log(`Initial credits: ${initialCredits}`);
 
     // Process and wait (single-processing pattern: wait for /status/)
     const audioResponsePromise = page.waitForResponse(
       res => res.url().includes('/audio') && res.ok()
     );
-    console.log(`Initial credits: ${initialCredits}`);
+
     await page.getByTestId('process-button').click();
     await audioResponsePromise;
     await page.waitForTimeout(isLiveMode ? 5000 : 2000);
@@ -76,7 +75,6 @@ test.describe('testUser2', () => {
       const actualRemaining = parseFloat(creditsAfterFirst.toFixed(3));
       expect(actualRemaining).toBe(expectedRemaining);
     }
-    console.log(`Credits after first processing: ${creditsAfterFirst}`);
 
     // Second processing (same pattern)
     const audioResponseAgain = page.waitForResponse(
@@ -142,6 +140,5 @@ test.describe('testUser2', () => {
       const actualRemaining = parseFloat(finalCredits.toFixed(3));
       expect(actualRemaining).toBe(expectedRemaining);
     }
-    console.log(`Final credits: ${finalCredits}`);
   });
 });

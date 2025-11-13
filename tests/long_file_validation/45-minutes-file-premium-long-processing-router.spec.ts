@@ -48,7 +48,6 @@ test.describe('testUser3', () => {
 
     await page.waitForTimeout(isLiveMode ? 5000 : 2000);
 
-
     // Validate Censored Words tab shows the censored word with correct timestamp
     await page.getByRole('tab', { name: 'Censored Words' }).click();
     await page.locator('table').scrollIntoViewIfNeeded();

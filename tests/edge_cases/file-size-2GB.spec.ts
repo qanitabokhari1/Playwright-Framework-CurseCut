@@ -1,6 +1,5 @@
 import { test, expect } from '@playwright/test';
 import { TestHelpers } from '../../helpers/testHelpers';
-import { TestData } from '../../fixtures/testData';
 
 test.describe('testUser1', () => {
   test('Oversized file shows error and blocks processing', async ({ page }) => {
@@ -24,7 +23,7 @@ test.describe('testUser1', () => {
       const originalGetter = orig.get;
       try {
         Object.defineProperty(Blob.prototype, 'size', {
-          get: function (this: any) {
+          get: function (this: Blob & { name?: string }) {
             if (
               this &&
               typeof this.name === 'string' &&
