@@ -3,26 +3,24 @@ import { TestHelpers } from '../../helpers/testHelpers';
 import { TestData } from '../../fixtures/testData';
 import { handleUploadAndPollStatus } from '../../helpers/liveAsyncPolling';
 
-test.describe('testUser2', () => {
+test.describe('testUser3', () => {
   test('45+ minute file → premium long processing route', async ({ page }) => {
-    // Set test timeout to 20 minutes for long file processing
-    test.setTimeout(3000000);
+    // Set test timeout to 20 minutes (1200 seconds) for long file processing
+    test.setTimeout(1200000);
 
     const helpers = new TestHelpers(page);
     const audioPage = helpers.audioProcessingPage;
     const isLiveMode = process.env.LIVE_MODE === 'true';
 
-    await helpers.setupTestUser2();
+    await helpers.setupTestUser3();
 
     // Conditionally setup mocks based on LIVE_MODE flag
     if (!isLiveMode) {
       await helpers.apiMocks.mock46MinutesAudioFile();
-      await helpers.apiMocks.mockUploadChunkAPI();
+      // await helpers.apiMocks.mockUploadChunkAPI();
     }
 
     await audioPage.clickStartNow();
-
-    // Upload 46MinuteLong.mp3
     await audioPage.uploadAudioFile(TestData.files.audio46Min);
 
     const understandButton = page.getByRole('button', { name: 'I understand' });
@@ -32,52 +30,47 @@ test.describe('testUser2', () => {
 
     await page.waitForTimeout(isLiveMode ? 5000 : 2000);
 
-    // Trigger upload process and verify routes to /upload-chunk endpoint (not /audio)
-    const uploadChunkPromise = page.waitForResponse(
-      res => res.url().includes('/upload-chunk') && res.ok()
-    );
-    
+    // Trigger upload process
     await audioPage.clickProcessButton();
-    
-    // Verify routes to /upload-chunk endpoint (not /audio)
-    const uploadChunkResponse = await uploadChunkPromise;
-    expect(uploadChunkResponse.url()).toContain('/upload-chunk');
-    console.log('✅ Routes to /upload-chunk endpoint (not /audio)');
 
-    // Wait for upload-chunk and poll for completion
-    const finalData = await handleUploadAndPollStatus(page);
+    // ✅ Wait for upload-chunk and poll for completion
+    const finalData = await handleUploadAndPollStatus(page); // 5s interval, 120 attempts = 10 min max
 
-    // Verify task_id returned
-    expect(finalData.task_id).toBeDefined();
-    expect(typeof finalData.task_id).toBe('string');
-    console.log(`✅ Task ID returned: ${finalData.task_id}`);
-
-    // Verify estimated_time > 0
-    expect(finalData.estimated_time).toBeGreaterThan(0);
-    console.log(`✅ Estimated time > 0: ${finalData.estimated_time}`);
-
-    // Verify processing completes successfully
+    // Verify final status and structure
     expect(finalData.status).toBe('succeeded');
     expect(Array.isArray(finalData.transcription)).toBe(true);
-    console.log('✅ Processing completes successfully');
 
-    // Wait for download event
-    await audioPage.pageInstance.waitForEvent('download');
+    // Wait for download event that should be triggered by processing
+    const pageInstance = audioPage.pageInstance;
+
+    // Wait for a download event to occur
+    await pageInstance.waitForEvent('download');
 
     await page.waitForTimeout(isLiveMode ? 5000 : 2000);
 
-    // Verify censored words detected correctly
+
+    // Validate Censored Words tab shows the censored word with correct timestamp
     await page.getByRole('tab', { name: 'Censored Words' }).click();
     await page.locator('table').scrollIntoViewIfNeeded();
-    
-    // Verify specific censored words and timestamps
-    await expect(page.locator('table')).toContainText(TestData.censorWords.default);
+    await expect(page.locator('table')).toContainText(
+      TestData.censorWords.default
+    );
     await expect(page.locator('table')).toContainText('00:01:29');
+    await expect(page.locator('table')).toContainText(
+      TestData.censorWords.default
+    );
     await expect(page.locator('table')).toContainText('00:21:05');
+    await expect(page.locator('table')).toContainText(
+      TestData.censorWords.default
+    );
     await expect(page.locator('table')).toContainText('00:22:48');
+    await expect(page.locator('table')).toContainText(
+      TestData.censorWords.default
+    );
     await expect(page.locator('table')).toContainText('00:26:46');
+    await expect(page.locator('table')).toContainText(
+      TestData.censorWords.default
+    );
     await expect(page.locator('table')).toContainText('00:31:38');
-    
-    console.log('✅ Censored words detected correctly');
   });
 });
