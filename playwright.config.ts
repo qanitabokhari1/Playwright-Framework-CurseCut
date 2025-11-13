@@ -47,7 +47,7 @@ export default defineConfig({
     video: 'retain-on-failure',
 
     /* Set a consistent viewport for local and CI (e.g., GitHub Actions) */
-    viewport: { width: 1728, height: 1117 }, // Adjust size 
+    viewport: { width: 1728, height: 1117 }, // Adjust size
   },
 
   /* Configure projects for major browsers */
