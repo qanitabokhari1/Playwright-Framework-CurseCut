@@ -45,6 +45,9 @@ export default defineConfig({
 
     /* Record video on failure */
     video: 'retain-on-failure',
+
+    /* Set a consistent viewport for local and CI (e.g., GitHub Actions) */
+    viewport: { width: 1440, height: 900 }, // Adjust size as per your Mac
   },
 
   /* Configure projects for major browsers */
