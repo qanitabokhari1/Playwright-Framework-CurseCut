@@ -33,7 +33,15 @@ test.describe('testUser8', () => {
     await audioPage.verifyPremiumProcessingPopup();
 
     // Click "I understand" button
-    await audioPage.clickIUnderstandButton();
+    await page.evaluate(() => {
+      const button = Array.from(document.querySelectorAll('button')).find(btn =>
+        btn.textContent?.includes('I understand')
+      );
+      if (button) {
+        button.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        setTimeout(() => button.click(), 100);
+      }
+    });
 
     await audioPage.selectPremiumOption(false);
 

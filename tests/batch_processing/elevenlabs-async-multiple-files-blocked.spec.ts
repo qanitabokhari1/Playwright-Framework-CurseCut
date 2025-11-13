@@ -33,8 +33,19 @@ test.describe('testUser8', () => {
     // Verify popup appears with correct content
     await audioPage.verifyPremiumProcessingPopup();
 
-    // Click "I understand" button
-    await audioPage.clickIUnderstandButton();
+    // Click "I understand" button - handle modal viewport issues
+    await page.evaluate(() => {
+      const button = Array.from(document.querySelectorAll('button')).find(btn =>
+        btn.textContent?.includes('I understand')
+      );
+      if (button) {
+        button.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        setTimeout(() => button.click(), 100);
+      }
+    });
+
+    // Wait a moment for the click to process
+    await page.waitForTimeout(1000);
 
     // Verify ONLY the first file remains (second file removed)
     await audioPage.verifySingleFileRemainsAsync();

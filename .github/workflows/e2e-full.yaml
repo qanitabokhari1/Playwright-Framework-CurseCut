@@ -3,7 +3,7 @@ name: E2E Full Tests with Code Quality
 # Workflow with code quality gate
 on:
   push:
-    branches: [main, dev, milestone-4-musab]
+    branches: [main, dev, milestone-4-musab, milestone-4]
 
   pull_request:
     branches: [main, dev, dev-musab]
