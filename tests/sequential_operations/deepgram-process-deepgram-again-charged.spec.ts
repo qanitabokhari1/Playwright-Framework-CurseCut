@@ -91,7 +91,7 @@ test.describe('testUser4', () => {
     console.log(`Credits after first processing: ${creditsAfterFirst}`);
     // Update approx words and process again (charged)
     await helpers.audioProcessingPage.fillApproxWord('fuck twats');
-        const audioResponseAgain = page.waitForResponse(
+    const audioResponseAgain = page.waitForResponse(
       res => res.url().includes('/audio') && res.ok()
     );
     await page.getByTestId('process-button').click();
@@ -110,7 +110,7 @@ test.describe('testUser4', () => {
     } catch {
       // No download occurred; acceptable
     }
-    
+
     // Validate expanded censored words and timestamps
     await helpers.audioProcessingPage.openCensoredWordsTab();
     for (const text of [

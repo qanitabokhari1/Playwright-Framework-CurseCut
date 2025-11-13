@@ -20,8 +20,10 @@ test.describe('testUser4', () => {
 
     // Start processing flow
     await helpers.audioProcessingPage.clickStartNow();
-    await helpers.audioProcessingPage.uploadAudioFile(TestData.files.audio30Sec);
-    
+    await helpers.audioProcessingPage.uploadAudioFile(
+      TestData.files.audio30Sec
+    );
+
     // Configure ElevenLabs sync processing (Song=Yes, Premium=No)
     await helpers.audioProcessingPage.selectSongOption(true);
     await helpers.audioProcessingPage.selectPremiumOption(false);
@@ -29,7 +31,7 @@ test.describe('testUser4', () => {
 
     // Process the file and wait for completion
     const creditsBeforeFirst = await helpers.authPage.getCreditsAmount();
-    console.log(`Credits before first processing: ${creditsBeforeFirst}`)
+    console.log(`Credits before first processing: ${creditsBeforeFirst}`);
     await helpers.audioProcessingPage.processFileAndWaitForResponse();
 
     // Validate Censored Words tab shows the censored words
@@ -56,18 +58,19 @@ test.describe('testUser4', () => {
       const actualDeduction = +(creditsBeforeFirst - afterFirst).toFixed(3);
       expect(actualDeduction).toBeGreaterThanOrEqual(expectedDeduction - 0.2);
       expect(actualDeduction).toBeLessThanOrEqual(expectedDeduction + 0.2);
-      console.log(`Credits after first processing: ${afterFirst}`)
+      console.log(`Credits after first processing: ${afterFirst}`);
     } else {
-      const afterFirst = +(await helpers.authPage.getCreditsAmount()).toFixed(3);
+      const afterFirst = +(await helpers.authPage.getCreditsAmount()).toFixed(
+        3
+      );
       expect(afterFirst).toBe(+creditsBeforeFirst.toFixed(3));
     }
-
 
     // Switch to ElevenLabs async processing (Song=No, Premium=Yes)
     await helpers.audioProcessingPage.selectSongOption(false);
     await helpers.audioProcessingPage.selectPremiumOption(true);
     await helpers.audioProcessingPage.fillApproxWord('fuck twats');
-    
+
     // Wait for UI to update
     await page.waitForTimeout(5000);
 
@@ -134,7 +137,9 @@ test.describe('testUser4', () => {
       expect(actualDeduction).toBeGreaterThanOrEqual(expectedDeduction - 0.2);
       expect(actualDeduction).toBeLessThanOrEqual(expectedDeduction + 0.2);
     } else {
-      const afterSecond = +(await helpers.authPage.getCreditsAmount()).toFixed(3);
+      const afterSecond = +(await helpers.authPage.getCreditsAmount()).toFixed(
+        3
+      );
       expect(afterSecond).toBe(+creditsBeforeSecond.toFixed(3));
     }
   });

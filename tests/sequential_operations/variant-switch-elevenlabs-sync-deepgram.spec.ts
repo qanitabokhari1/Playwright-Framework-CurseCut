@@ -62,8 +62,8 @@ test.describe('testUser3', () => {
     await page.waitForTimeout(2000);
 
     // Capture initial credits from UI before second processing
-     const initialCredits = await helpers.authPage.getCreditsAmount();
-     
+    const initialCredits = await helpers.authPage.getCreditsAmount();
+
     // Second processing (single-processing pattern)
     await audioPage.clickProcessButton();
     const statusResponsePromise2 = page.waitForResponse(
@@ -71,9 +71,9 @@ test.describe('testUser3', () => {
       { timeout: isLiveMode ? 60000 : 10000 }
     );
     await statusResponsePromise2;
-    
+
     // Wait for download event
-      const [download] = await Promise.all([
+    const [download] = await Promise.all([
       page.waitForEvent('download'), // :white_check_mark: Listen for download start // Trigger processing
     ]);
 
@@ -82,10 +82,10 @@ test.describe('testUser3', () => {
     console.log(
       ':dart: Download event triggered successfully:',
       download.suggestedFilename()
-    )
+    );
     // Wait for UI to update after processing
     await page.waitForTimeout(isLiveMode ? 5000 : 2000);
-  
+
     // Validate Censored Words tab shows the censored word with correct timestamp
     await audioPage.openCensoredWordsTab();
     for (const text of [
@@ -124,7 +124,7 @@ test.describe('testUser3', () => {
     ]) {
       await audioPage.expectInResultsTable(text);
     }
-    
+
     // Verify credits based on LIVE_MODE
     const finalCreditsText = await audioPage.creditsButton.textContent();
     const finalCredits = parseFloat(

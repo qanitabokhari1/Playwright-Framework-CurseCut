@@ -131,7 +131,9 @@ test.describe('testUser1', () => {
     if (isLiveMode) {
       // LIVE_MODE: Expect credits deducted by 0.2
       const expectedDeduction = 0.2;
-      const actualDeduction = parseFloat((initialCredits - finalCredits).toFixed(3));
+      const actualDeduction = parseFloat(
+        (initialCredits - finalCredits).toFixed(3)
+      );
       expect(actualDeduction).toBeGreaterThanOrEqual(expectedDeduction - 0.2);
       expect(actualDeduction).toBeLessThanOrEqual(expectedDeduction + 0.2);
     } else {

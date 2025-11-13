@@ -39,8 +39,6 @@ test.describe('testUser4', () => {
 
     // Verify ONLY the first file remains (second file removed)
     await audioPage.verifySingleFileRemains();
-    
-
 
     // Add censor word
     await audioPage.fillCensorWord(TestData.censorWords.default);

@@ -101,13 +101,16 @@ export class BasePage {
     await this.waitForCreditsButtonVisible(timeout);
 
     await expect
-      .poll(async () => {
-        try {
-          return await this.getCreditsAmount();
-        } catch {
-          return -1; // transient during refresh
-        }
-      }, { timeout })
+      .poll(
+        async () => {
+          try {
+            return await this.getCreditsAmount();
+          } catch {
+            return -1; // transient during refresh
+          }
+        },
+        { timeout }
+      )
       .toBe(expected);
   }
 

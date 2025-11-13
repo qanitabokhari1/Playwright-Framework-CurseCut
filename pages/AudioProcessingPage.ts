@@ -174,13 +174,19 @@ export class AudioProcessingPage extends BasePage {
 
   async verifySingleFileRemains(): Promise<void> {
     await expect(
-      this.page.locator('div').filter({ hasText: /^short3Sec\.mp3Browser$/ }).first()
+      this.page
+        .locator('div')
+        .filter({ hasText: /^short3Sec\.mp3Browser$/ })
+        .first()
     ).toBeVisible();
   }
 
   async verifySingleFileRemainsAsync(): Promise<void> {
     await expect(
-      this.page.locator('div').filter({ hasText: /^short3Sec\.mp3Premium$/ }).first()
+      this.page
+        .locator('div')
+        .filter({ hasText: /^short3Sec\.mp3Premium$/ })
+        .first()
     ).toBeVisible();
   }
 
@@ -291,7 +297,6 @@ export class AudioProcessingPage extends BasePage {
     await this.processButton.waitFor({ state: 'visible', timeout: 10000 });
     await this.processButton.click({ force: true });
 
-
     if (isLiveMode) {
       // When running live, wait until the app's status polling reaches succeeded
       await handleUploadAndPollStatus(this.page);
@@ -322,7 +327,9 @@ export class AudioProcessingPage extends BasePage {
     await expect(this.processButton).toBeEnabled();
   }
 
-  async verifyProcessButtonEnableAfterPageRefresh(timeout: number = 15000): Promise<void> {
+  async verifyProcessButtonEnableAfterPageRefresh(
+    timeout: number = 15000
+  ): Promise<void> {
     // Page may refresh after closing dialogs; wait for load and for the button to reattach
     try {
       await this.page.waitForLoadState('domcontentloaded', { timeout });
@@ -332,7 +339,7 @@ export class AudioProcessingPage extends BasePage {
     // Wait for the process button to be present and visible
     await this.processButton.waitFor({ state: 'attached', timeout });
     await this.processButton.waitFor({ state: 'visible', timeout });
-    await this.processButton.scrollIntoViewIfNeeded().catch(() => { });
+    await this.processButton.scrollIntoViewIfNeeded().catch(() => {});
     await expect(this.processButton).toBeEnabled();
   }
 
@@ -424,13 +431,13 @@ export class AudioProcessingPage extends BasePage {
 
     while (Date.now() - startMs < timeoutMs) {
       for (const candidate of candidates) {
-        await candidate.scrollIntoViewIfNeeded().catch(() => { });
+        await candidate.scrollIntoViewIfNeeded().catch(() => {});
         if (await candidate.isVisible()) {
           return;
         }
       }
       // Small nudge to help lazy layouts
-      await this.page.evaluate(() => window.scrollBy(0, 150)).catch(() => { });
+      await this.page.evaluate(() => window.scrollBy(0, 150)).catch(() => {});
       await this.page.waitForTimeout(intervalMs);
     }
   }
@@ -585,7 +592,9 @@ export class AudioProcessingPage extends BasePage {
     await expect(this.noCensoredWordsMessage).toBeVisible();
   }
 
-  async expectUnsupportedFileTypeErrorVisible(fileName?: string): Promise<void> {
+  async expectUnsupportedFileTypeErrorVisible(
+    fileName?: string
+  ): Promise<void> {
     const regex = /Unsupported file type/i;
 
     // Try status role first
@@ -631,8 +640,7 @@ export class AudioProcessingPage extends BasePage {
     await expect(target).toContainText(regex);
   }
 
-
-   async expectCorruptedFileTypeErrorVisible(fileName?: string): Promise<void> {
+  async expectCorruptedFileTypeErrorVisible(fileName?: string): Promise<void> {
     const regex = /did not match requirements/i;
 
     // Try status role first

@@ -2,8 +2,6 @@ import { test, expect } from '@playwright/test';
 import { TestHelpers } from '../../helpers/testHelpers';
 import { TestData } from '../../fixtures/testData';
 
-
-
 test.describe('testUser1', () => {
   test('Oversized file shows error and blocks processing', async ({ page }) => {
     const helpers = new TestHelpers(page);
@@ -19,7 +17,6 @@ test.describe('testUser1', () => {
     // Start flow and make other fields valid so file size is the only blocker
     await audioPage.clickStartNow();
 
-
     // Patch Blob.prototype.size to simulate >2GB only for a specific filename
     await page.evaluate(() => {
       const orig = Object.getOwnPropertyDescriptor(Blob.prototype, 'size');
@@ -28,7 +25,11 @@ test.describe('testUser1', () => {
       try {
         Object.defineProperty(Blob.prototype, 'size', {
           get: function (this: any) {
-            if (this && typeof this.name === 'string' && this.name === 'large-file.mp3') {
+            if (
+              this &&
+              typeof this.name === 'string' &&
+              this.name === 'large-file.mp3'
+            ) {
               // 2GB + 1 byte
               return 2 * 1024 * 1024 * 1024 + 1;
             }

@@ -33,7 +33,7 @@ test.describe('testUser3', () => {
 
     // Validate Censored Words tab shows the censored word with correct timestamp
     await h.audioProcessingPage.openCensoredWordsTab();
-    for (const text of [     
+    for (const text of [
       'fuck',
       '00:00:05',
       'fuck',

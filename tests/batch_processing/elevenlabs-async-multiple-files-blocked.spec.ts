@@ -54,7 +54,10 @@ test.describe('testUser1', () => {
 
     // Verify only one download was triggered
     expect(download).toBeTruthy();
-    console.log('🎯 Only first file downloaded successfully:', download.suggestedFilename());
+    console.log(
+      '🎯 Only first file downloaded successfully:',
+      download.suggestedFilename()
+    );
 
     // Wait for UI to update after processing
     await page.waitForTimeout(isLiveMode ? 5000 : 2000);
@@ -65,7 +68,9 @@ test.describe('testUser1', () => {
     if (isLiveMode) {
       // LIVE_MODE: Expect credits deducted by 0.2 (only 1 file × 0.2)
       const expectedDeduction = 0.1;
-      const actualDeduction = parseFloat((initialCredits - finalCredits).toFixed(1));
+      const actualDeduction = parseFloat(
+        (initialCredits - finalCredits).toFixed(1)
+      );
       expect(actualDeduction).toBeGreaterThanOrEqual(expectedDeduction - 0.1);
       expect(actualDeduction).toBeLessThanOrEqual(expectedDeduction + 0.1);
       console.log(`Actual deduction: ${actualDeduction}`);

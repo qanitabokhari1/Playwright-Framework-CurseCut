@@ -16,18 +16,25 @@ test.describe('testUser2', () => {
 
     // Conditionally setup mocks based on LIVE_MODE flag
     if (!isLiveMode) {
-      await helpers.apiMocks.mock46MinutesAudioFile();
-      // await helpers.apiMocks.mockUploadChunkAPI();
+      await helpers.apiMocks.mock31MinutesAudioFile();
+    //   await helpers.apiMocks.mockUploadChunkAPI();
     }
 
     await audioPage.clickStartNow();
 
-    // Upload 46MinuteLong.mp3
-    await audioPage.uploadAudioFile(TestData.files.audio46Min);
+    // Upload 31MinuteLong.mp3
+    await audioPage.uploadAudioFile(TestData.files.audio31Min);
 
     const understandButton = page.getByRole('button', { name: 'I understand' });
     await understandButton.click();
-
+    // Validate: premium-yes auto-selected, song-yes not selected
+    await expect(audioPage.premiumYesButton).toHaveClass(/bg-slate-900/, {
+      timeout: 40000,
+    });
+    await expect(audioPage.songYesButton).not.toHaveClass(/bg-slate-900/, {
+      timeout: 40000,
+    });
+    
     await audioPage.fillCensorWord(TestData.censorWords.default);
 
     await page.waitForTimeout(isLiveMode ? 5000 : 2000);
