@@ -31,6 +31,21 @@ export const TestData = {
     password: process.env.TEST_USER_5_PASSWORD || '',
     id: 'test-user-5',
   },
+  testUser6: {
+    email: process.env.TEST_USER_6_EMAIL || '',
+    password: process.env.TEST_USER_6_PASSWORD || '',
+    id: 'test-user-6',
+  },
+  testUser7: {
+    email: process.env.TEST_USER_7_EMAIL || '',
+    password: process.env.TEST_USER_7_PASSWORD || '',
+    id: 'test-user-7',
+  },
+  testUser8: {
+    email: process.env.TEST_USER_8_EMAIL || '',
+    password: process.env.TEST_USER_8_PASSWORD || '',
+    id: 'test-user-8',
+  },
 
   // Real user credentials for testing
   realUser: {
@@ -51,8 +66,14 @@ export const TestData = {
     audio30Sec: path.resolve(__dirname, 'audio/short30Sec.mp3'),
     censoredAudio: path.resolve(__dirname, 'audio/censored_audio.mp3'),
     audio46Min: path.resolve(__dirname, 'audio/46MinuteLong.mp3'),
+    audio31Min: path.resolve(__dirname, 'audio/31MinuteLong.mp3'),
     short3Sec_cleaned: path.resolve(__dirname, 'audio/short3Sec_cleaned.mp3'),
     short30Sec_cleaned: path.resolve(__dirname, 'audio/short30Sec_cleaned.mp3'),
+    corrupfile: path.resolve(__dirname, 'audio/corrupt_file.mp3'),
+  },
+  unsupportedFiles: {
+    txt: path.resolve(__dirname, 'unsupported_files/profile.txt'),
+    pdf: path.resolve(__dirname, 'unsupported_files/details.pdf'),
   },
   videoFiles: {
     video: path.resolve(__dirname, 'videos/short3Sec.mp4'),

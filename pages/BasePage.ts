@@ -88,6 +88,32 @@ export class BasePage {
     await expect(locator).toContainText(text);
   }
 
+  // Credits helpers
+  async waitForCreditsButtonVisible(timeout: number = 10000): Promise<void> {
+    await this.creditsButton.waitFor({ state: 'visible', timeout });
+  }
+
+  async expectCreditsRestoredTo(
+    expected: number,
+    timeout: number = 40000
+  ): Promise<void> {
+    // Ensure the credits button is present before polling
+    await this.waitForCreditsButtonVisible(timeout);
+
+    await expect
+      .poll(
+        async () => {
+          try {
+            return await this.getCreditsAmount();
+          } catch {
+            return -1; // transient during refresh
+          }
+        },
+        { timeout }
+      )
+      .toBe(expected);
+  }
+
   // Common API mocking methods
   async mockSupabaseLogin(): Promise<void> {
     await this.page.route(

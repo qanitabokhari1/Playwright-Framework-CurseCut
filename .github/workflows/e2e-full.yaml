@@ -43,6 +43,12 @@ jobs:
       TEST_USER_4_PASSWORD: ${{ secrets.TEST_USER_4_PASSWORD }}
       TEST_USER_5_EMAIL: ${{ secrets.TEST_USER_5_EMAIL }}
       TEST_USER_5_PASSWORD: ${{ secrets.TEST_USER_5_PASSWORD }}
+      TEST_USER_6_EMAIL: ${{ secrets.TEST_USER_6_EMAIL }}
+      TEST_USER_6_PASSWORD: ${{ secrets.TEST_USER_6_PASSWORD }}
+      TEST_USER_7_EMAIL: ${{ secrets.TEST_USER_7_EMAIL }}
+      TEST_USER_7_PASSWORD: ${{ secrets.TEST_USER_7_PASSWORD }}
+      TEST_USER_8_EMAIL: ${{ secrets.TEST_USER_8_EMAIL }}
+      TEST_USER_8_PASSWORD: ${{ secrets.TEST_USER_8_PASSWORD }}
     container:
       image: mcr.microsoft.com/playwright:v1.56.0-jammy
     strategy:
@@ -62,9 +68,18 @@ jobs:
           - name: testUser4
             grep: 'testUser4'
             excludeHeavy: true
+          - name: testUser8
+            grep: 'testUser8'
+            excludeHeavy: true
           # Dedicated job for the heavy 46‑minute test
           - name: heavy-46min
             grep: '46min file - credits and censoring'
+            excludeHeavy: false
+          - name: heavy-46min-again
+            grep: '46 minute file - premium long processing route'
+            excludeHeavy: false
+          - name: heavy-31min
+            grep: '31min file - credits and censoring'
             excludeHeavy: false
     steps:
       - uses: actions/checkout@v5
@@ -72,12 +87,12 @@ jobs:
         run: npm ci
       - name: Run Playwright tests
         run: |
-          if [ "${{ matrix.name }}" = "heavy-46min" ]; then
+          if [ "${{ matrix.name }}" = "heavy-46min" ] || [ "${{ matrix.name }}" = "heavy-46min-again" ] || [ "${{ matrix.name }}" = "heavy-31min" ]; then
             # Run the heavy test alone
             npx playwright test --grep "${{ matrix.grep }}"
           else
-            # Run the selected user group; exclude the heavy spec from user groups
-            npx playwright test --grep "${{ matrix.grep }}" --grep-invert "46min file - credits and censoring"
+            # Run the selected user group; exclude the heavy specs from user groups
+            npx playwright test --grep "${{ matrix.grep }}" --grep-invert "46min file - credits and censoring|46 minute file - premium long processing route|31min file - credits and censoring"
           fi
       - name: Upload Playwright HTML Report
         if: ${{ !cancelled() }}

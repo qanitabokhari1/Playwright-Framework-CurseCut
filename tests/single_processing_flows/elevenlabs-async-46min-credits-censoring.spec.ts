@@ -17,7 +17,7 @@ test.describe('testUser5', () => {
     // Conditionally setup mocks based on LIVE_MODE flag
     if (!isLiveMode) {
       await helpers.apiMocks.mock46MinutesAudioFile();
-      await helpers.apiMocks.mockUploadChunkAPI();
+      // await helpers.apiMocks.mockUploadChunkAPI();
     }
 
     await audioPage.clickStartNow();

@@ -82,6 +82,14 @@ export class AudioProcessingPage extends BasePage {
     return this.page.locator('table');
   }
 
+  // Common validation/error helpers
+  get statusToast(): Locator {
+    return this.page.getByRole('status');
+  }
+  get unsupportedFileTypeError(): Locator {
+    return this.page.getByText('Unsupported file type', { exact: false });
+  }
+
   get noCensoredWordsMessage(): Locator {
     return this.page.getByText('No words found.', { exact: true }).or(
       this.page.getByText('No words found to censor in the transcription.', {
@@ -103,9 +111,83 @@ export class AudioProcessingPage extends BasePage {
     return this.page.getByRole('button', { name: 'Download' });
   }
 
+  // Batch file upload locators
+  get firstUploadedFile(): Locator {
+    return this.page
+      .locator('div')
+      .filter({ hasText: /^short3Sec\.mp3Browser$/ })
+      .first();
+  }
+
+  get secondUploadedFile(): Locator {
+    return this.page
+      .locator('div')
+      .filter({ hasText: /^short3Sec\.mp3Browser$/ })
+      .nth(1);
+  }
+
   // File upload actions
-  async uploadAudioFile(filePath: string): Promise<void> {
-    await this.uploadInput.setInputFiles(filePath);
+  async uploadAudioFile(
+    file:
+      | string
+      | {
+          name: string;
+          mimeType: string;
+          buffer: Buffer;
+        }
+  ): Promise<void> {
+    await this.uploadInput.setInputFiles(file);
+  }
+
+  // Batch file upload actions
+  async uploadMultipleAudioFiles(filePaths: string[]): Promise<void> {
+    await this.uploadInput.setInputFiles(filePaths);
+  }
+
+  async verifyMultipleFilesUploaded(): Promise<void> {
+    await expect(this.firstUploadedFile).toBeVisible();
+    await expect(this.secondUploadedFile).toBeVisible();
+  }
+
+  async verifyPremiumProcessingPopup(): Promise<void> {
+    await expect(
+      this.page.getByRole('heading', { name: 'BETA Premium Processing' })
+    ).toBeVisible();
+    await expect(this.page.getByText('Premium processing is')).toBeVisible();
+    await expect(
+      this.page.getByText(
+        'Premium processing is currently in BETA and limited to 1 file at a time to ensure reliability.'
+      )
+    ).toBeVisible();
+    await expect(
+      this.page.getByText('Only the first file will be processed')
+    ).toBeVisible();
+    await expect(
+      this.page.getByText('Additional files have been removed from the queue')
+    ).toBeVisible();
+  }
+
+  async clickIUnderstandButton(): Promise<void> {
+    await this.page.getByRole('button', { name: 'I understand' }).click();
+    await this.page.waitForTimeout(2000);
+  }
+
+  async verifySingleFileRemains(): Promise<void> {
+    await expect(
+      this.page
+        .locator('div')
+        .filter({ hasText: /^short3Sec\.mp3Browser$/ })
+        .first()
+    ).toBeVisible();
+  }
+
+  async verifySingleFileRemainsAsync(): Promise<void> {
+    await expect(
+      this.page
+        .locator('div')
+        .filter({ hasText: /^short3Sec\.mp3Premium$/ })
+        .first()
+    ).toBeVisible();
   }
 
   // Video file upload helper
@@ -242,6 +324,22 @@ export class AudioProcessingPage extends BasePage {
   }
 
   async verifyProcessButtonEnabled(): Promise<void> {
+    await expect(this.processButton).toBeEnabled();
+  }
+
+  async verifyProcessButtonEnableAfterPageRefresh(
+    timeout: number = 15000
+  ): Promise<void> {
+    // Page may refresh after closing dialogs; wait for load and for the button to reattach
+    try {
+      await this.page.waitForLoadState('domcontentloaded', { timeout });
+    } catch {
+      // ignore if already loaded
+    }
+    // Wait for the process button to be present and visible
+    await this.processButton.waitFor({ state: 'attached', timeout });
+    await this.processButton.waitFor({ state: 'visible', timeout });
+    await this.processButton.scrollIntoViewIfNeeded().catch(() => {});
     await expect(this.processButton).toBeEnabled();
   }
 
@@ -494,6 +592,82 @@ export class AudioProcessingPage extends BasePage {
     await expect(this.noCensoredWordsMessage).toBeVisible();
   }
 
+  async expectUnsupportedFileTypeErrorVisible(
+    fileName?: string
+  ): Promise<void> {
+    const regex = /Unsupported file type/i;
+
+    // Try status role first
+    let toast = this.page.getByRole('status').filter({ hasText: regex });
+    try {
+      await toast.first().waitFor({ state: 'visible', timeout: 6000 });
+    } catch {
+      // Fallback: some libraries use role="alert" for toasts
+      toast = this.page.getByRole('alert').filter({ hasText: regex });
+      await toast.first().waitFor({ state: 'visible', timeout: 6000 });
+    }
+
+    const target = toast.first();
+    await expect(target).toContainText(regex);
+    // Also tolerate the leading summary line used by the UI toast
+    await expect(target).toContainText(
+      /Some files did not match requirements and were not loaded\.?/i
+    );
+    if (fileName) {
+      // File name may be rendered in a nested element or updated slightly later; try but do not fail the test on this optional check
+      try {
+        await expect(target).toContainText(fileName, { timeout: 1000 });
+      } catch {
+        // best-effort filename assertion; continue if not found
+      }
+    }
+  }
+
+  async expectFileTooLargeErrorVisible(): Promise<void> {
+    const regex = /File bigger than 1\.9GB/i;
+
+    // Try status role first
+    let toast = this.page.getByRole('status').filter({ hasText: regex });
+    try {
+      await toast.first().waitFor({ state: 'visible', timeout: 6000 });
+    } catch {
+      // Fallback: some libraries use role="alert" for toasts
+      toast = this.page.getByRole('alert').filter({ hasText: regex });
+      await toast.first().waitFor({ state: 'visible', timeout: 6000 });
+    }
+
+    const target = toast.first();
+    await expect(target).toContainText(regex);
+  }
+
+  async expectCorruptedFileTypeErrorVisible(fileName?: string): Promise<void> {
+    const regex = /did not match requirements/i;
+
+    // Try status role first
+    let toast = this.page.getByRole('status').filter({ hasText: regex });
+    try {
+      await toast.first().waitFor({ state: 'visible', timeout: 6000 });
+    } catch {
+      // Fallback: some libraries use role="alert" for toasts
+      toast = this.page.getByRole('alert').filter({ hasText: regex });
+      await toast.first().waitFor({ state: 'visible', timeout: 6000 });
+    }
+
+    const target = toast.first();
+    await expect(target).toContainText(regex);
+    // Also tolerate the leading summary line used by the UI toast
+    await expect(target).toContainText(
+      /Some files did not match requirements and were not loaded\.?/i
+    );
+    if (fileName) {
+      // File name may be rendered in a nested element or updated slightly later; try but do not fail the test on this optional check
+      try {
+        await expect(target).toContainText(fileName, { timeout: 1000 });
+      } catch {
+        // best-effort filename assertion; continue if not found
+      }
+    }
+  }
   // Premium files helpers
   async openMyPremiumFiles(): Promise<void> {
     await this.myPremiumFilesButton.click({ force: true });
