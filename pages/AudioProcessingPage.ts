@@ -318,6 +318,18 @@ export class AudioProcessingPage extends BasePage {
     await this.selectSilenceReplacement();
   }
 
+    // Complete workflow methods for async processing
+  async configureAudioProcessingAsync(
+    isSong: boolean,
+    isPremium: boolean,
+    censorWord: string
+  ): Promise<void> {
+    // Note: clickStartNow() is called by the caller, not here
+    await this.selectSongOption(isSong);
+    await this.selectPremiumOption(isPremium);
+    await this.fillApproxWord(censorWord);
+  }
+
   // Verification methods
   async verifyProcessButtonDisabled(): Promise<void> {
     await this.expectElementToBeDisabled(this.processButton);
@@ -376,7 +388,7 @@ export class AudioProcessingPage extends BasePage {
   async configureElevenLabsAsyncWorkflow(
     censorWord: string = 'fuck'
   ): Promise<void> {
-    await this.configureAudioProcessing(false, true, censorWord);
+    await this.configureAudioProcessingAsync(false, true, censorWord);
   }
 
   // New methods for the enhanced workflow
