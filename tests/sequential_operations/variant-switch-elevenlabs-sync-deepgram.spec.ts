@@ -73,7 +73,6 @@ test.describe('testUser3', () => {
 
     // :white_check_mark: Assert that the download event fired successfully
     expect(download).toBeTruthy();
-
     // Wait for UI to update after processing
     await page.waitForTimeout(isLiveMode ? 5000 : 2000);
 

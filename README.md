@@ -36,6 +36,16 @@ TypeScript Playwright end-to-end framework using the Page Object Model to test a
 │   │   ├── credits-0-elevenlabs-sync.spec.ts
 │   │   ├── file-switching-in-session.spec.ts
 │   │   └── prevent-double-processing.spec.ts
+│   ├── sequential_operations/         # Multi-step flows (reprocess, variant switch; LIVE_MODE-aware)
+│   │   ├── deepgram-process-deepgram-again-charged.spec.ts
+│   │   ├── deepgram-reprocess-button-enable.spec.ts
+│   │   ├── elevenlab-async-verify-reprocess-button-disable.spec.ts
+│   │   ├── elevenlab-sync-reprocess-button-enable.spec.ts
+│   │   ├── elevenlabs-sync-process-elevenlabs-sync-again.spec.ts
+│   │   ├── variant-switch-deepgram-elevenlabs-async.spec.ts
+│   │   ├── variant-switch-deepgram-elevenlabs-sync.spec.ts
+│   │   ├── variant-switch-elevenlabs-sync-deepgram.spec.ts
+│   │   └── variant-switch-elevenlabs-sync-to-elevenlabs-async.spec.ts
 │   └── single_processing_flows/       # Variant-specific flows and UI verifications
 │       ├── censored-words-tab-multiple-words-verification.spec.ts
 │       ├── deepgram-3Sec-credits-censoring.spec.ts
@@ -182,6 +192,9 @@ Folders
 - `critical_business_logic/` – approximate/exact matching, toggle exclusivity, timeout handling, charging, video route
 - `session_management/` – credits=0 states, file switching, double processing prevention
 - `single_processing_flows/` – per-variant flows, word tabs, premium list/download, tags
+- `sequential_operations/` – multi-step flows (reprocess + variant switch) with LIVE_MODE-aware credit checks and download/response-based waits
+
+ 
 
 Reports
 
