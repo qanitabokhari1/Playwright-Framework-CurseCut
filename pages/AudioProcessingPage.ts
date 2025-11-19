@@ -318,7 +318,7 @@ export class AudioProcessingPage extends BasePage {
     await this.selectSilenceReplacement();
   }
 
-    // Complete workflow methods for async processing
+  // Complete workflow methods for async processing
   async configureAudioProcessingAsync(
     isSong: boolean,
     isPremium: boolean,

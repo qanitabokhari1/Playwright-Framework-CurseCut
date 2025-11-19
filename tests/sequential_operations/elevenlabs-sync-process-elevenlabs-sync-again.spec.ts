@@ -38,7 +38,7 @@ test.describe('testUser2', () => {
     await audioPage.openCensoredWordsTab();
     for (const text of [
       'Fuck',
-      '00:00:05',   
+      '00:00:05',
       'fuck',
       '00:00:06',
       'fuck',

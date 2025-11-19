@@ -7,6 +7,7 @@ test.describe('testUser3', () => {
     page,
   }) => {
     const h = new TestHelpers(page);
+    const audioPage = h.audioProcessingPage;
 
     const isLiveMode = process.env.LIVE_MODE === 'true';
     if (!isLiveMode) {
@@ -56,7 +57,12 @@ test.describe('testUser3', () => {
       'twats',
       'twat',
     ]);
+    const pageInstance = audioPage.pageInstance;
+    const [download] = await Promise.all([
+      pageInstance.waitForEvent('download'),
+    ]);
 
+    expect(download).toBeTruthy();
     // Validate Reprocess button is disabled and Process button is enabled
     await h.audioProcessingPage.verifyReprocessButtonDisabled();
   });

@@ -194,8 +194,6 @@ Folders
 - `single_processing_flows/` – per-variant flows, word tabs, premium list/download, tags
 - `sequential_operations/` – multi-step flows (reprocess + variant switch) with LIVE_MODE-aware credit checks and download/response-based waits
 
- 
-
 Reports
 
 - HTML: `playwright-report/index.html`
