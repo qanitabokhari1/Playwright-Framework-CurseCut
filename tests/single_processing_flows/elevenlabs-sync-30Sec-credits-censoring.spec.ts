@@ -18,7 +18,7 @@ test.describe('testUser4', () => {
       await helpers.apiMocks.mock30SecFile();
     }
 
-    await page.waitForTimeout(isLiveMode ? 5000 : 2000);
+    await page.waitForTimeout(5000);
 
     // Capture initial credits
     const initialCreditsText = await audioPage.creditsButton.textContent();
@@ -40,16 +40,7 @@ test.describe('testUser4', () => {
     // Enter exact match censor word
     await audioPage.fillCensorWord(TestData.censorWords.default);
 
-    // Process the file
-    const statusResponsePromise = page.waitForResponse(
-      res => res.url().includes('/status/') && res.ok(),
-      { timeout: isLiveMode ? 60000 : 10000 }
-    );
-    await audioPage.clickProcessButton();
-    await statusResponsePromise;
-
-    // Wait for processing (longer timeout for live mode)
-    await page.waitForTimeout(isLiveMode ? 5000 : 2000);
+    await audioPage.clickProcessAndWaitForDownload();
 
     // Capture final credits
     const finalCreditsText = await audioPage.creditsButton.textContent();

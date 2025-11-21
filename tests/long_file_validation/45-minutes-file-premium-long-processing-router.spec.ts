@@ -3,7 +3,7 @@ import { TestHelpers } from '../../helpers/testHelpers';
 import { TestData } from '../../fixtures/testData';
 import { handleUploadAndPollStatus } from '../../helpers/liveAsyncPolling';
 
-test.describe('testUser3', () => {
+test.describe('testUser6', () => {
   test('46 minute file - premium long processing route', async ({ page }) => {
     // Set test timeout to 20 minutes (1200 seconds) for long file processing
     test.setTimeout(1200000);
@@ -12,7 +12,7 @@ test.describe('testUser3', () => {
     const audioPage = helpers.audioProcessingPage;
     const isLiveMode = process.env.LIVE_MODE === 'true';
 
-    await helpers.setupTestUser3();
+    await helpers.setupTestUser6();
 
     // Conditionally setup mocks based on LIVE_MODE flag
     if (!isLiveMode) {
@@ -23,8 +23,9 @@ test.describe('testUser3', () => {
     await audioPage.clickStartNow();
     await audioPage.uploadAudioFile(TestData.files.audio46Min);
 
-    const understandButton = page.getByRole('button', { name: 'I understand' });
-    await understandButton.click();
+    // const understandButton = page.getByRole('button', { name: 'I understand' });
+    // await understandButton.click();
+    await audioPage.selectPremiumOption(true);
 
     await audioPage.fillCensorWord(TestData.censorWords.default);
 

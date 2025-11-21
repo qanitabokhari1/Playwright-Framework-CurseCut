@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test } from '@playwright/test';
 import { TestHelpers } from '../../helpers/testHelpers';
 import { TestData } from '../../fixtures/testData';
 
@@ -25,12 +25,6 @@ test.describe('testUser3', () => {
     await audioPage.fillCensorWord(TestData.censorWords.default);
 
     // Wait for download event that should be triggered by processing
-    const pageInstance = audioPage.pageInstance;
-    const [download] = await Promise.all([
-      pageInstance.waitForEvent('download'),
-      audioPage.clickProcessButton(),
-    ]);
-
-    expect(download).toBeTruthy();
+    await audioPage.clickProcessAndWaitForDownload();
   });
 });

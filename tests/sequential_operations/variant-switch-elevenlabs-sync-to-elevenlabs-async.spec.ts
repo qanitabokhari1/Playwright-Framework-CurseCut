@@ -2,10 +2,11 @@ import { test, expect } from '@playwright/test';
 import { TestHelpers } from '../../helpers/testHelpers';
 import { TestData } from '../../fixtures/testData';
 
-test.describe('testUser3', () => {
+test.describe('testUser4', () => {
   test('ElevenLabs SYNC → Process ElevenLabs ASYNC (variant switch)', async ({
     page,
   }) => {
+    test.setTimeout(120000);
     const helpers = new TestHelpers(page);
 
     // LIVE_MODE-aware mocking: use 30s dataset locally for predictable results

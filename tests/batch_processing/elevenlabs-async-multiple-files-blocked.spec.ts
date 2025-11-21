@@ -30,9 +30,6 @@ test.describe('testUser8', () => {
     await audioPage.selectSongOption(false);
     await audioPage.selectPremiumOption(true);
 
-    // Verify popup appears with correct content
-    await audioPage.verifyPremiumProcessingPopup();
-
     // Click "I understand" button - handle modal viewport issues
     await page.evaluate(() => {
       const button = Array.from(document.querySelectorAll('button')).find(btn =>

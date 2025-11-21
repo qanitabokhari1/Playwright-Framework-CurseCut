@@ -21,7 +21,7 @@ test.describe('testUser4', () => {
     await audioPage.selectPremiumOption(false);
     await audioPage.fillCensorWord(TestData.censorWords.default);
 
-    await audioPage.clickProcessButton();
+    await audioPage.clickProcessAndWaitForDownload();
 
     // Use the POM's page instance to interact with the View All Words tab and table
     const pageInstance = audioPage.pageInstance;

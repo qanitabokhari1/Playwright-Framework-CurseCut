@@ -21,14 +21,7 @@ test.describe('testUser1', () => {
     await audioPage.uploadAudioFile(TestData.files.audio);
     await audioPage.configureDeepgramWorkflow(TestData.censorWords.approx);
 
-    const audioResponsePromise = page.waitForResponse(
-      res => res.url().includes('/status/') && res.ok(),
-      { timeout: isLiveMode ? 60000 : 10000 }
-    );
-    await audioPage.clickProcessButton();
-    await audioResponsePromise;
-
-    await page.waitForTimeout(isLiveMode ? 5000 : 2000);
+    await audioPage.clickProcessAndWaitForDownload();
 
     await page.getByRole('tab', { name: 'Censored Words' }).click();
 
@@ -52,14 +45,7 @@ test.describe('testUser1', () => {
     await audioPage.uploadAudioFile(TestData.files.audio);
     await audioPage.configureElevenLabsSyncWorkflow('fuc');
 
-    const audioResponsePromise = page.waitForResponse(
-      res => res.url().includes('/status/') && res.ok(),
-      { timeout: isLiveMode ? 60000 : 10000 }
-    );
-    await audioPage.clickProcessButton();
-    await audioResponsePromise;
-
-    await page.waitForTimeout(isLiveMode ? 5000 : 2000);
+    await audioPage.clickProcessAndWaitForDownload();
 
     await page.getByRole('tab', { name: 'Censored Words' }).click();
     await expect(page.locator('table')).toContainText('fuck');

@@ -32,26 +32,7 @@ test.describe('testUser4', () => {
 
     // Capture initial credits, then process
     const initialCredits = await helpers.authPage.getCreditsAmount();
-    const audioResponsePromise = page.waitForResponse(
-      res => res.url().includes('/audio') && res.ok()
-    );
-    await page.getByTestId('process-button').click();
-    await audioResponsePromise;
-
-    // Additionally wait for the download to start/complete (live may auto-download)
-    try {
-      const download = await page.waitForEvent('download', {
-        timeout: isLiveMode ? 60000 : 10000,
-      });
-      try {
-        await download.path();
-      } catch {
-        // Ignore if no local path is available (e.g., CI)
-      }
-    } catch {
-      // No download occurred; acceptable for flows that only return JSON
-    }
-
+    await helpers.audioProcessingPage.clickProcessAndWaitForDownload();
     // Verify censored words after first processing (exact-only)
     await helpers.audioProcessingPage.openCensoredWordsTab();
     for (const text of [
@@ -89,25 +70,7 @@ test.describe('testUser4', () => {
     }
     // Update approx words and process again (charged)
     await helpers.audioProcessingPage.fillApproxWord('fuck twats');
-    const audioResponseAgain = page.waitForResponse(
-      res => res.url().includes('/audio') && res.ok()
-    );
-    await page.getByTestId('process-button').click();
-    await audioResponseAgain;
-
-    // Additionally wait for the download after second processing
-    try {
-      const download2 = await page.waitForEvent('download', {
-        timeout: isLiveMode ? 60000 : 10000,
-      });
-      try {
-        await download2.path();
-      } catch {
-        // Ignore if path not provided
-      }
-    } catch {
-      // No download occurred; acceptable
-    }
+    await helpers.audioProcessingPage.clickProcessAndWaitForDownload();
 
     // Validate expanded censored words and timestamps
     await helpers.audioProcessingPage.openCensoredWordsTab();

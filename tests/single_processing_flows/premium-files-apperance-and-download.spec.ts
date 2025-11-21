@@ -33,14 +33,7 @@ test.describe('testUser4', () => {
     await audioPage.fillCensorWord(TestData.censorWords.default);
 
     // Start processing
-    await audioPage.clickProcessButton();
-
-    // Wait for backend response during processing
-    const audioResponsePromise = page.waitForResponse(
-      res => res.url().includes('/upload-chunk') && res.ok()
-    );
-
-    await audioResponsePromise;
+    await audioPage.clickProcessAndWaitForDownload();
 
     // Navigate to premium files section
     await page.waitForTimeout(3000);
