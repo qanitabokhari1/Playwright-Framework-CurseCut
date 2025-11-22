@@ -1,9 +1,6 @@
 name: E2E Full Tests with Code Quality
 
 # Trigger only once when a PR targeting main is first opened.
-# "pull_request" default types include synchronize (new commits) which you DON'T want.
-# Limiting to types: [opened] stops runs on subsequent pushes to the PR branch.
-# If later you want it to also run when a draft is marked ready, add "ready_for_review".
 on:
   pull_request:
     types: [opened]
