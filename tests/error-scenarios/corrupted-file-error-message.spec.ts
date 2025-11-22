@@ -18,7 +18,7 @@ test.describe('testUser8', () => {
     const initialCredits = await helpers.authPage.getCreditsAmount();
 
     // Upload corrupted file
-    await audioPage.uploadAudioFile(TestData.files.corrupfile);
+    await audioPage.uploadAudioFile(TestData.files.corruptFile);
 
     // Verify error message appears
     await audioPage.expectCorruptedFileTypeErrorVisible('corrupt_file.mp3');

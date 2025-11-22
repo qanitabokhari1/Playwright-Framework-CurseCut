@@ -22,11 +22,11 @@ test.describe('testUser8', () => {
 
     // Attempt 1: Upload unsupported .txt file
     await audioPage.uploadAudioFile(TestData.unsupportedFiles.txt);
-    await audioPage.expectUnsupportedFileTypeErrorVisible('profile.txt');
+    await audioPage.expectUnsupportedFileTypeErrorVisible('test.txt');
 
     // Attempt 2: Upload unsupported .pdf file
     await audioPage.uploadAudioFile(TestData.unsupportedFiles.pdf);
-    await audioPage.expectUnsupportedFileTypeErrorVisible('details.pdf');
+    await audioPage.expectUnsupportedFileTypeErrorVisible('test.pdf');
 
     // Verify user cannot proceed (process button remains disabled)
     await audioPage.verifyProcessButtonDisabled();

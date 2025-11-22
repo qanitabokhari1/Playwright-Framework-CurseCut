@@ -21,7 +21,7 @@ test.describe('testUser3', () => {
     await audioPage.selectPremiumOption(false);
     await audioPage.fillCensorWord(TestData.censorWords.default);
 
-    await audioPage.clickProcessButton();
+    await audioPage.clickProcessAndWaitForDownload();
 
     // Use the page instance for censored words verification
     const pageInstance = audioPage.pageInstance;

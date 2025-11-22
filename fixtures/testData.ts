@@ -1,8 +1,12 @@
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { dirname } from 'path';
+import dotenv from 'dotenv';
+import { resolve, dirname } from 'path';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
+dotenv.config({ path: resolve(__dirname, '../.env') });
+
+const isLocal = process.env.IS_LOCAL === 'true';
 
 export const TestData = {
   // User credentials
@@ -69,11 +73,11 @@ export const TestData = {
     audio31Min: path.resolve(__dirname, 'audio/31MinuteLong.mp3'),
     short3Sec_cleaned: path.resolve(__dirname, 'audio/short3Sec_cleaned.mp3'),
     short30Sec_cleaned: path.resolve(__dirname, 'audio/short30Sec_cleaned.mp3'),
-    corrupfile: path.resolve(__dirname, 'audio/corrupt_file.mp3'),
+    corruptFile: path.resolve(__dirname, 'audio/corrupt_file.mp3'),
   },
   unsupportedFiles: {
-    txt: path.resolve(__dirname, 'unsupported_files/profile.txt'),
-    pdf: path.resolve(__dirname, 'unsupported_files/details.pdf'),
+    txt: path.resolve(__dirname, 'unsupported_files/test.txt'),
+    pdf: path.resolve(__dirname, 'unsupported_files/test.pdf'),
   },
   videoFiles: {
     video: path.resolve(__dirname, 'videos/short3Sec.mp4'),
@@ -103,10 +107,7 @@ export const TestData = {
 
   // URLs
   urls: {
-    base: 'https://frontend-dev-39a5.up.railway.app',
-    cut: 'https://frontend-dev-39a5.up.railway.app/cut',
-    localBase: 'http://localhost:3000',
-    localCut: 'http://localhost:3000/cut',
+    base: (isLocal ? process.env.LOCAL_BASE_URL : process.env.BASE_URL) || '',
   },
 
   // Processing variants

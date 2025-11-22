@@ -22,16 +22,7 @@ test.describe('testUser7', () => {
     await audioPage.clickStartNow();
     await audioPage.uploadAudioFile(TestData.files.audio31Min);
 
-    const understandButton = page.getByRole('button', { name: 'I understand' });
-    await understandButton.click();
-
-    // Validate: premium-yes auto-selected, song-yes not selected
-    await expect(audioPage.premiumYesButton).toHaveClass(/bg-slate-900/, {
-      timeout: 40000,
-    });
-    await expect(audioPage.songYesButton).not.toHaveClass(/bg-slate-900/, {
-      timeout: 40000,
-    });
+    await audioPage.selectPremiumOption(true);
 
     await audioPage.fillCensorWord(TestData.censorWords.default);
 

@@ -27,7 +27,8 @@ test.describe('testUser3', () => {
     await audioPage.selectLanguage();
     await audioPage.fillCensorWords('fuck', 'fuck');
     await audioPage.selectSineBleepReplacement();
-    await audioPage.waitForDownloadAndProcess();
+    await page.waitForTimeout(1000);
+    await audioPage.clickProcessAndWaitForDownload();
 
     // Test file switching: Upload replacement file
     await audioPage.uploadReplacementFileWithChooseFilesButton(

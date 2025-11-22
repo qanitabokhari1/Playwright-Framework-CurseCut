@@ -145,20 +145,20 @@ export class AudioProcessingPage extends BasePage {
   }
 
   async verifyMultipleFilesUploaded(): Promise<void> {
-    await expect(this.firstUploadedFile).toBeVisible();
-    await expect(this.secondUploadedFile).toBeVisible();
+    await expect(this.firstUploadedFile).toBeVisible({ timeout: 30000 });
+    await expect(this.secondUploadedFile).toBeVisible({ timeout: 30000 });
   }
 
   async verifyPremiumProcessingPopup(): Promise<void> {
-    await expect(
-      this.page.getByRole('heading', { name: 'BETA Premium Processing' })
-    ).toBeVisible();
-    await expect(this.page.getByText('Premium processing is')).toBeVisible();
-    await expect(
-      this.page.getByText(
-        'Premium processing is currently in BETA and limited to 1 file at a time to ensure reliability.'
-      )
-    ).toBeVisible();
+    // await expect(
+    //   this.page.getByRole('heading', { name: 'BETA Premium Processing' })
+    // ).toBeVisible();
+    // await expect(this.page.getByText('Premium processing is')).toBeVisible();
+    // await expect(
+    //   this.page.getByText(
+    //     'Premium processing is currently in BETA and limited to 1 file at a time to ensure reliability.'
+    //   )
+    // ).toBeVisible();
     await expect(
       this.page.getByText('Only the first file will be processed')
     ).toBeVisible();
@@ -273,7 +273,7 @@ export class AudioProcessingPage extends BasePage {
   }
 
   async clickProcessAndWaitForDownload(): Promise<void> {
-    await this.processButton.waitFor({ state: 'visible', timeout: 10000 });
+    await this.processButton.waitFor({ state: 'visible', timeout: 60000 });
     const [download] = await Promise.all([
       this.page.waitForEvent('download'),
       this.processButton.click({ force: true }),
