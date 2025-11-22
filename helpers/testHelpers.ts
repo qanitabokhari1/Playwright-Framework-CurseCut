@@ -22,8 +22,8 @@ export class TestHelpers {
     await this.apiMocks.mockAuthenticationFlow(credits);
     await this.authPage.navigateTo(TestData.urls.base);
     await this.authPage.login(
-      TestData.realUser.email,
-      TestData.realUser.password
+      TestData.testUser1.email,
+      TestData.testUser1.password
     );
     await this.authPage.verifyCreditsBalance(credits);
   }

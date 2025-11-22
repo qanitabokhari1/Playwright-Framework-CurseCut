@@ -32,13 +32,7 @@ test.describe('testUser2', () => {
     // Credits before first processing
     const initialCredits = await helpers.authPage.getCreditsAmount();
 
-    // Process and wait (single-processing pattern: wait for /status/)
-    const audioResponsePromise = page.waitForResponse(
-      res => res.url().includes('/audio') && res.ok()
-    );
-    await page.getByTestId('process-button').click();
-    await audioResponsePromise;
-    await page.waitForTimeout(isLiveMode ? 5000 : 2000);
+    await helpers.audioProcessingPage.clickProcessAndWaitForDownload();
 
     // Verify censored words (exact only)
     await audioPage.openCensoredWordsTab();
@@ -75,14 +69,7 @@ test.describe('testUser2', () => {
       expect(actualRemaining).toBe(expectedRemaining);
     }
 
-    // Second processing (same pattern)
-    const audioResponseAgain = page.waitForResponse(
-      res => res.url().includes('/audio') && res.ok()
-    );
-
-    await page.getByTestId('process-button').click();
-    await audioResponseAgain;
-    await page.waitForTimeout(isLiveMode ? 5000 : 2000);
+    await helpers.audioProcessingPage.clickProcessAndWaitForDownload();
 
     // Validate expanded censored words and timestamps
     await audioPage.openCensoredWordsTab();

@@ -33,16 +33,8 @@ test.describe('testUser1', () => {
     // Enter exact match censor word
     await audioPage.fillCensorWord('fuck');
 
-    const [download1] = await Promise.all([
-      page.waitForEvent('download'),
-      audioPage.clickProcessButton(),
-    ]);
-
-    // Assert that the download event fired successfully
-    expect(download1).toBeTruthy();
-
-    // Wait for UI to update after processing
-    await page.waitForTimeout(isLiveMode ? 5000 : 2000);
+    // Process the file (first processing - Deepgram)
+    await audioPage.clickProcessAndWaitForDownload();
 
     // Validate Censored Words tab shows the censored word with correct timestamp
     await audioPage.openCensoredWordsTab();
@@ -73,17 +65,7 @@ test.describe('testUser1', () => {
       initialCreditsText?.replace(/[^\d.]/g, '') || '0'
     );
 
-    // Second processing (ElevenLabs ASYNC with download)
-    const [download] = await Promise.all([
-      page.waitForEvent('download'),
-      audioPage.clickProcessButton(),
-    ]);
-
-    // Assert that the download event fired successfully
-    expect(download).toBeTruthy();
-
-    // Wait for UI to update after processing
-    await page.waitForTimeout(isLiveMode ? 5000 : 2000);
+    await audioPage.clickProcessAndWaitForDownload();
 
     // Validate Censored Words tab shows the censored word with correct timestamp
     await audioPage.openCensoredWordsTab();

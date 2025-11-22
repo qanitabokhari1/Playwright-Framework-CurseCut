@@ -30,7 +30,7 @@ test.describe('testUser2', () => {
     await audioPage.fillCensorWord(TestData.censorWords.default);
 
     // Process and wait for /audio
-    await audioPage.processFileAndWaitForResponse();
+    await audioPage.clickProcessAndWaitForDownload();
 
     // Verify censored words
     await audioPage.openCensoredWordsTab();

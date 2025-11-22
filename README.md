@@ -28,7 +28,7 @@ TypeScript Playwright end-to-end framework using the Page Object Model to test a
 │   │   ├── exact-match-censoring-works.spec.ts
 │   │   ├── enforces-toggle-mutual-exclusivity.spec.ts
 │   │   ├── elevenlabs-sync-timeout-error.spec.ts
-│   │   ├── route-46-video.spec.ts
+│   │   ├── file-31-min-doesnt-trigger-pop-up.spec.ts
 │   │   └── prevent-double-charging-elevenlabs-sync.spec.ts
 │   ├── session_management/            # Credits, prevention, switching
 │   │   ├── credits-0-deepgram.spec.ts
@@ -193,8 +193,6 @@ Folders
 - `session_management/` – credits=0 states, file switching, double processing prevention
 - `single_processing_flows/` – per-variant flows, word tabs, premium list/download, tags
 - `sequential_operations/` – multi-step flows (reprocess + variant switch) with LIVE_MODE-aware credit checks and download/response-based waits
-
- 
 
 Reports
 

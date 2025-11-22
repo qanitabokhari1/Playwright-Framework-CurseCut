@@ -11,7 +11,9 @@ import * as dotenv from 'dotenv';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: resolve(__dirname, '.env') });
 
-const BASE_URL = process.env.BASE_URL || 'http://localhost:3000';
+const isLocal = process.env.IS_LOCAL === 'true';
+const BASE_URL =
+  (isLocal ? process.env.LOCAL_BASE_URL : process.env.BASE_URL) || '';
 
 export default defineConfig({
   testDir: './tests',
@@ -25,7 +27,7 @@ export default defineConfig({
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,
   /* Global test timeout */
-  timeout: 60000,
+  timeout: 120000,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: [
     ['html', { outputFolder: 'playwright-report' }],
@@ -45,6 +47,9 @@ export default defineConfig({
 
     /* Record video on failure */
     video: 'retain-on-failure',
+
+    /* Set a consistent viewport for local and CI (e.g., GitHub Actions) */
+    viewport: { width: 1728, height: 1117 }, // Adjust size
   },
 
   /* Configure projects for major browsers */

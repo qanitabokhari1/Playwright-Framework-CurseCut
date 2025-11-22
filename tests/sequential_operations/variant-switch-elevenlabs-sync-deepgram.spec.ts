@@ -31,13 +31,7 @@ test.describe('testUser3', () => {
     await audioPage.fillCensorWord('fuck');
 
     // Process the file (single-processing pattern)
-    await audioPage.clickProcessButton();
-    const statusResponsePromise1 = page.waitForResponse(
-      res => res.url().includes('/status/') && res.ok(),
-      { timeout: isLiveMode ? 60000 : 10000 }
-    );
-    await statusResponsePromise1;
-    await page.waitForTimeout(isLiveMode ? 5000 : 2000);
+    await audioPage.clickProcessAndWaitForDownload();
 
     // Validate Censored Words tab shows the censored word with correct timestamp
     await audioPage.openCensoredWordsTab();
@@ -65,22 +59,7 @@ test.describe('testUser3', () => {
     const initialCredits = await helpers.authPage.getCreditsAmount();
 
     // Second processing (single-processing pattern)
-    await audioPage.clickProcessButton();
-    const statusResponsePromise2 = page.waitForResponse(
-      res => res.url().includes('/status/') && res.ok(),
-      { timeout: isLiveMode ? 60000 : 10000 }
-    );
-    await statusResponsePromise2;
-
-    // Wait for download event
-    const [download] = await Promise.all([
-      page.waitForEvent('download'), // :white_check_mark: Listen for download start // Trigger processing
-    ]);
-
-    // :white_check_mark: Assert that the download event fired successfully
-    expect(download).toBeTruthy();
-    // Wait for UI to update after processing
-    await page.waitForTimeout(isLiveMode ? 5000 : 2000);
+    await audioPage.clickProcessAndWaitForDownload();
 
     // Validate Censored Words tab shows the censored word with correct timestamp
     await audioPage.openCensoredWordsTab();

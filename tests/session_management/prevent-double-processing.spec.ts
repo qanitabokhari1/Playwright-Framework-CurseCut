@@ -86,7 +86,7 @@ test.describe('testUser2 - prevent double processing', () => {
 
     // Configure for ElevenLabs Async variant (not song, premium)
     const config = TestData.processingVariants['elevenlabs-async'];
-    await audioPage.configureAudioProcessing(
+    await audioPage.configureAudioProcessingAsync(
       config.isSong,
       config.isPremium,
       TestData.censorWords.default

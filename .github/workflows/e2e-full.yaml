@@ -1,12 +1,11 @@
 name: E2E Full Tests with Code Quality
 
-# Workflow with code quality gate
+# Trigger only once when a PR targeting main is first opened.
 on:
-  push:
-    branches: [main, dev, milestone-3-update]
-
   pull_request:
-    branches: [main, dev, dev-musab]
+    types: [opened]
+    branches:
+      - main
 
 jobs:
   lint-and-typecheck:

@@ -13,7 +13,9 @@ async function globalSetup(_config: FullConfig) {
   const browser = await chromium.launch();
   const page = await browser.newPage();
 
-  const BASE_URL = process.env.BASE_URL || 'http://localhost:3000';
+  const isLocal = process.env.IS_LOCAL === 'true';
+  const BASE_URL =
+    (isLocal ? process.env.LOCAL_BASE_URL : process.env.BASE_URL) || '';
   // Verify test environment is ready
   await page.goto(BASE_URL);
 

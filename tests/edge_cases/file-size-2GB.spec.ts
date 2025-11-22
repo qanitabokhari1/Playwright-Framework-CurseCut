@@ -10,7 +10,7 @@ test.describe('testUser8', () => {
 
     const audioPage = helpers.audioProcessingPage;
 
-    await page.waitForTimeout(3000);
+    await page.waitForTimeout(5000);
     // Capture initial credits
     const initialCredits = await audioPage.getCreditsAmount();
 

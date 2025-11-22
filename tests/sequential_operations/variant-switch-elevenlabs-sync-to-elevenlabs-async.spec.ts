@@ -2,10 +2,11 @@ import { test, expect } from '@playwright/test';
 import { TestHelpers } from '../../helpers/testHelpers';
 import { TestData } from '../../fixtures/testData';
 
-test.describe('testUser3', () => {
+test.describe('testUser4', () => {
   test('ElevenLabs SYNC → Process ElevenLabs ASYNC (variant switch)', async ({
     page,
   }) => {
+    test.setTimeout(120000);
     const helpers = new TestHelpers(page);
 
     // LIVE_MODE-aware mocking: use 30s dataset locally for predictable results
@@ -31,7 +32,7 @@ test.describe('testUser3', () => {
 
     // Process the file and wait for completion
     const creditsBeforeFirst = await helpers.authPage.getCreditsAmount();
-    await helpers.audioProcessingPage.processFileAndWaitForResponse();
+    await helpers.audioProcessingPage.clickProcessAndWaitForDownload();
 
     // Validate Censored Words tab shows the censored words
     await helpers.audioProcessingPage.openCensoredWordsTab();
@@ -76,13 +77,8 @@ test.describe('testUser3', () => {
     const creditsBeforeSecond = await helpers.authPage.getCreditsAmount();
 
     // Process with async variant and wait for download
-    const [download] = await Promise.all([
-      page.waitForEvent('download'),
-      helpers.audioProcessingPage.processButton.click({ force: true }),
-    ]);
+    await helpers.audioProcessingPage.clickProcessAndWaitForDownload();
 
-    // Verify download was triggered
-    expect(download).toBeTruthy();
     // Validate Censored Words tab shows all censored words from async processing
     await helpers.audioProcessingPage.openCensoredWordsTab();
     for (const text of [

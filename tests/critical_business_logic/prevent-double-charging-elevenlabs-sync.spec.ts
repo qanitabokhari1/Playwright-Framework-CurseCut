@@ -35,23 +35,8 @@ test.describe('testUser2', () => {
       initialCreditsText?.replace(/[^\d.]/g, '') || '0'
     );
 
-    // Click process and wait for audio upload completion
-    const audioResponsePromise = page.waitForResponse(
-      res => res.url().includes('/audio') && res.ok(),
-      { timeout: isLiveMode ? 180000 : 10000 }
-    );
-    await audioPage.clickProcessButton();
-    await audioResponsePromise;
-
-    // Wait for status completion
-    const statusResponsePromise = page.waitForResponse(
-      res => res.url().includes('/status/') && res.ok(),
-      { timeout: isLiveMode ? 180000 : 10000 }
-    );
-    await statusResponsePromise;
-
-    const download = await page.waitForEvent('download');
-    expect(download).toBeTruthy();
+    // Click process and wait for download completion
+    await audioPage.clickProcessAndWaitForDownload();
 
     // Verify credits based on LIVE_MODE
     const finalCreditsText = await audioPage.creditsButton.textContent();

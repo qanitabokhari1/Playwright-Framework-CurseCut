@@ -25,8 +25,9 @@ test.describe('testUser4', () => {
     await audioPage.fillCensorWord(TestData.censorWords.default);
 
     await audioPage.clickProcessButton();
-    await page.waitForTimeout(isLiveMode ? 10000 : 2000);
     // Wait for processing and check for no censored words using POM locator
-    await expect(audioPage.noCensoredWordsMessage).toBeVisible();
+    await expect(audioPage.noCensoredWordsMessage).toBeVisible({
+      timeout: 30000,
+    });
   });
 });

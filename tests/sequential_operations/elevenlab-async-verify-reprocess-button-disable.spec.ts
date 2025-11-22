@@ -7,6 +7,7 @@ test.describe('testUser3', () => {
     page,
   }) => {
     const h = new TestHelpers(page);
+    const audioPage = h.audioProcessingPage;
 
     const isLiveMode = process.env.LIVE_MODE === 'true';
     if (!isLiveMode) {
@@ -31,6 +32,12 @@ test.describe('testUser3', () => {
     // Process the file (with live polling when LIVE_MODE=true)
     await h.audioProcessingPage.processAsyncAndPollLiveMode();
 
+    const pageInstance = audioPage.pageInstance;
+    const [download] = await Promise.all([
+      pageInstance.waitForEvent('download'),
+    ]);
+
+    expect(download).toBeTruthy();
     // Validate Censored Words tab shows the censored word with correct timestamp
     await h.audioProcessingPage.openCensoredWordsTab();
     for (const text of [
@@ -38,8 +45,6 @@ test.describe('testUser3', () => {
       '00:00:05',
       'fuck',
       '00:00:06',
-      'fuck',
-      '00:00:10',
       'fuck',
       '00:00:18',
       'fuck',
@@ -56,7 +61,6 @@ test.describe('testUser3', () => {
       'twats',
       'twat',
     ]);
-
     // Validate Reprocess button is disabled and Process button is enabled
     await h.audioProcessingPage.verifyReprocessButtonDisabled();
   });

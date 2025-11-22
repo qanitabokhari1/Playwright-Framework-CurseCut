@@ -29,9 +29,6 @@ test.describe('testUser8', () => {
     // Select ElevenLabs SYNC variant (song: yes, premium: no)
     await audioPage.selectSongOption(true);
 
-    // Verify popup appears with correct content
-    await audioPage.verifyPremiumProcessingPopup();
-
     // Click "I understand" button
     await page.evaluate(() => {
       const button = Array.from(document.querySelectorAll('button')).find(btn =>

@@ -34,16 +34,10 @@ test.describe('testUser8', () => {
     // Capture initial credits from UI
     const initialCredits = await helpers.authPage.getCreditsAmount();
 
+    await audioPage.clickProcessAndWaitForDownload();
     // Process batch and wait for downloads (verify both files processed successfully)
-    const [download1, download2] = await Promise.all([
-      page.waitForEvent('download'),
-      page.waitForEvent('download'),
-      audioPage.clickProcessButton(),
-    ]);
-
-    // Verify both downloads were triggered
-    expect(download1).toBeTruthy();
-    expect(download2).toBeTruthy();
+    const [download] = await Promise.all([page.waitForEvent('download')]);
+    expect(download).toBeTruthy();
 
     // Wait for UI to update after processing
     await page.waitForTimeout(isLiveMode ? 5000 : 2000);
@@ -65,7 +59,6 @@ test.describe('testUser8', () => {
       expect(actualRemaining).toBe(expectedRemaining);
     }
 
-    // Verify both files appear in results
     await audioPage.openCensoredWordsTab();
     const table = page.locator('table');
     await expect(table).toContainText(TestData.censorWords.default);

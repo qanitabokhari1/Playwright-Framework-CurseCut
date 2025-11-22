@@ -23,8 +23,10 @@ test.describe('testUser5', () => {
     await audioPage.clickStartNow();
     await audioPage.uploadAudioFile(TestData.files.audio46Min);
 
-    const understandButton = page.getByRole('button', { name: 'I understand' });
-    await understandButton.click();
+    // const understandButton = page.getByRole('button', { name: 'I understand' });
+    // await understandButton.click();
+
+    await audioPage.selectPremiumOption(true);
 
     await audioPage.fillCensorWord(TestData.censorWords.default);
 

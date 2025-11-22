@@ -27,14 +27,7 @@ test.describe('testUser3', () => {
       initialCreditsText?.replace(/[^\d.]/g, '') || '0'
     );
 
-    await audioPage.clickProcessButton();
-
-    const statusResponsePromise = page.waitForResponse(
-      res => res.url().includes('/status/') && res.ok(),
-      { timeout: isLiveMode ? 60000 : 10000 }
-    );
-
-    await statusResponsePromise;
+    await audioPage.clickProcessAndWaitForDownload();
 
     // Wait for UI to update after processing
     await page.waitForTimeout(isLiveMode ? 5000 : 2000);
