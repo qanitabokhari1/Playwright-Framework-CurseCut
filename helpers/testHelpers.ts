@@ -63,7 +63,6 @@ export class TestHelpers {
     await this.authPage.navigateTo(TestData.urls.base);
     await this.authPage.loginWithRealCredentials();
   }
-  // cheking
   async setupTestUser1(): Promise<void> {
     await this.authPage.navigateTo(TestData.urls.base);
     await this.authPage.loginWithTestUser1();
