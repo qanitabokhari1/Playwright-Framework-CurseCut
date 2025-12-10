@@ -59,6 +59,10 @@ export class TestHelpers {
   /**
    * Setup test with real user credentials and sufficient credits (REAL BACKEND)
    */
+  async setupRealUserTest(): Promise<void> {
+    await this.authPage.navigateTo(TestData.urls.base);
+    await this.authPage.loginWithRealCredentials();
+  }
   async setupTestUser1(): Promise<void> {
     await this.authPage.navigateTo(TestData.urls.base);
     await this.authPage.loginWithTestUser1();
